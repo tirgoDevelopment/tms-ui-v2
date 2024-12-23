@@ -13,16 +13,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'admin-ui-v2'`, () => {
+  it(`should have as title 'tms-ui-v2'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('admin-ui-v2');
+    expect(app.title).toEqual('tms-ui-v2');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('admin-ui-v2 app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('tms-ui-v2 app is running!');
   });
 });
