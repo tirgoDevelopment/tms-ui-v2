@@ -1,0 +1,82 @@
+@import '/src/assets/styles/light-variables.scss';
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+
+  .left-panel {
+    background: $back-primary-color;
+    color: white;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .right-panel {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: white;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .create-account {
+      width: 60%;
+      text-align: center;
+
+      @media (max-width: 768px) {
+        width: 90%;
+      }
+
+      h2 {
+        margin-bottom: 20px;
+      }
+    }
+
+    .input-group {
+      margin: 5px 0;
+      height: 40px;
+    }
+
+    .login-button {
+      margin: 20px 0;
+      width: 100%;
+      height: 40px;
+    }
+  }
+}
+
+.left-panel>img,
+.create-account {
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.login-button {
+  transition: background-color 0.3s ease;
+}
+
+.error-message {
+  text-align: start;
+  color: red;
+  font-size: 12px;
+}
+.title {
+  font-weight: 700;
+}

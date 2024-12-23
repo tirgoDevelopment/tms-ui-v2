@@ -1,0 +1,184 @@
+<div class="container-page">
+    <div class="header-page">
+        <h2>{{ "services.title" | translate }}</h2>
+        <div class="button-group">
+            <button nz-button class="secondary-button" (click)="toggleFilter()">
+                <span nz-icon nzType="filter" nzTheme="fill"></span>
+                {{ "filter" | translate }}
+            </button>
+            <button nz-button class="success-button" (click)="addService()">
+                <span nz-icon nzType="plus"></span>
+                {{ "add" | translate }}
+            </button>
+        </div>
+    </div>
+
+    <div class="filter" [@showHideFilter]="isFilterVisible ? 'show' : 'hide'">
+        <div>
+            <nz-select nzAllowClear="true" [(ngModel)]="filter['serviceId']"
+                nzPlaceHolder="{{ 'services.serviceId' | translate }}">
+                <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of services">
+                </nz-option>
+            </nz-select>
+        </div>
+
+        <div>
+            <nz-input-group class="input-group">
+                <input [(ngModel)]="filter['driverId']" type="text" nz-input
+                    placeholder="{{ 'services.driverId' | translate }}" />
+            </nz-input-group>
+        </div>
+
+        <div>
+            <nz-select nzAllowClear="true" [(ngModel)]="filter['statusId']" nzPlaceHolder="{{ 'status' | translate }}">
+                <nz-option [nzValue]="status.id" [nzLabel]="status.name.toLowerCase() | translate"
+                    *ngFor="let status of statuses">
+                </nz-option>
+            </nz-select>
+        </div>
+
+        <div>
+            <nz-input-group class="input-group">
+                <nz-date-picker [(ngModel)]="filter['createdAtFrom']" type="date" nz-input [nzAllowClear]="false"
+                    nzPlaceHolder="{{ 'date_creation' | translate }}" class="custom-date-picker">
+                </nz-date-picker>
+            </nz-input-group>
+        </div>
+
+        <div>
+            <nz-input-group class="input-group">
+                <nz-date-picker [(ngModel)]="filter['createdAtTo']" type="date" nz-input [nzAllowClear]="false"
+                    nzPlaceHolder="{{ 'date_creation' | translate }}" class="custom-date-picker">
+                </nz-date-picker>
+            </nz-input-group>
+        </div>
+
+        <button nz-button nzType="primary" class="search-button" (click)="getAll()">
+            <span nz-icon nzType="search" nzTheme="outline"></span>
+        </button>
+        <button nz-button class="reset-button" (click)="resetFilter()">
+            <span nz-icon nzType="reload" nzTheme="outline"></span>
+        </button>
+    </div>
+
+    <div class="cards flex gap">
+        <nz-card class="balance-card">
+          <div class="card-inner">
+            <div class="card-title">{{ 'tirBalance' | translate }}</div>
+            <div class="card-content">
+              <span class="amount">{{tirBalance | priceFormat}}</span>
+              <span class="currency">Tir</span> 
+            </div>
+          </div>
+        </nz-card>
+        <nz-card class="balance-card">
+          <div class="card-inner">
+            <div class="card-title">{{ 'serviceBalance' | translate }}</div>
+            <div class="card-content">
+              <span class="amount">{{serviceBalance | priceFormat}}</span>
+              <span class="currency">Tir</span>
+            </div>
+          </div>
+        </nz-card>
+      </div>
+      
+    <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzScroll]="{ x: 'max-content' }"
+        [nzFrontPagination]="false" [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount"
+        [nzShowSizeChanger]="true" [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>{{ "services.serviceId" | translate }}</th>
+                <th>{{ "services.serviceName" | translate }}</th>
+                <th>{{ "services.driverId" | translate }}</th>
+                <th>{{ "state_number_truck" | translate }}</th>
+                <th>{{ "date_creation" | translate }}</th>
+                <th>{{ "services.processingTime" | translate }}</th>
+                <th>{{ "total" | translate }}</th>
+                <th nzRight>{{ "status" | translate }}</th>
+                <!-- <th nzRight></th> -->
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let item of data; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ item.id }}</td>
+                <td class="ellipsis">
+                    <div *ngFor="let service of item.services">{{ service.name }}</div>
+                </td>
+                <td>{{ item.driver.id }}</td>
+                <td class="ellipsis">
+                    <ng-container *ngIf="item.driver.driverTransports?.length; else noTransports">
+                        <div *ngFor="let truck of item.driver.driverTransports">
+                            {{ truck.transportNumber }}
+                        </div>
+                    </ng-container>
+                    <ng-template #noTransports>
+                        {{ "no_data" | translate }}
+                    </ng-template>
+                </td>
+                <td>{{ item.createdAt | date : "dd.MM.yyyy" }}</td>
+                <td>{{ item.status.createdAt | date : "dd.MM.yyyy HH:mm" }}</td>
+                <td>
+                    <div *ngIf="item.amountDetails && item.amountDetails.length > 0">
+                        {{ calculateSum(item.amountDetails) | priceFormat }}
+                    </div>
+                    <div *ngIf="!item.amountDetails || item.amountDetails.length === 0">
+                        {{ 'no_data' | translate }}
+                    </div>
+                </td>
+                <td nzRight>
+                    <span *ngIf="item.status.name.toLowerCase() !== 'priced'" class="status" [ngStyle]="{
+                color: item.status.color,
+                borderColor: item.status.color
+              }">
+                        {{ item.status.name.toLowerCase() | translate }}
+                    </span>
+                    <span *ngIf="item.status.name.toLowerCase() == 'priced'" class="status" [ngStyle]="{
+                color: item.status.color,
+                borderColor: item.status.color
+              }">
+                        {{ item.status.name.toLowerCase() | translate }}
+                    </span>
+                </td>
+                <!-- <td class="action-col" nzRight (click)="$event.stopPropagation()">
+            <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+              <i
+                nz-icon
+                nzType="ellipsis"
+                nzTheme="outline"
+                style="cursor: pointer"
+              ></i>
+            </a>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <li nz-menu-item>
+                  <div class="dropdown-menu">
+                    <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+                    <span>{{ "detail" | translate }}</span>
+                  </div>
+                </li>
+  
+                <li nz-menu-item>
+                  <div class="dropdown-menu">
+                    <span
+                      nz-icon
+                      nzType="edit"
+                      nzTheme="outline"
+                      class="edit-icon"
+                    ></span>
+                    <span>{{ "edit" | translate }}</span>
+                  </div>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </td> -->
+            </tr>
+        </tbody>
+    </nz-table>
+</div>
+
+<ng-template #empty>
+    <nz-empty></nz-empty>
+</ng-template>

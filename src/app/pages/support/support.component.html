@@ -1,0 +1,18 @@
+<h2>{{'support.title' | translate}}</h2>
+
+<nz-collapse class="mt-4">
+    <nz-collapse-panel *ngFor="let panel of panels" [nzHeader]="panel.name" [nzActive]="panel.active"
+        [nzDisabled]="panel.disabled">
+        <p style="margin:0;">
+            {{panel.content}}
+        </p>
+    </nz-collapse-panel>
+</nz-collapse>
+
+<div class="flex align-center  mt-3">
+    <button class="mr-5" nz-button nzType="primary">
+        <a href="https://t.me/tirgosupportbot">{{"support.tg_support"| translate}}</a> </button>
+
+    <h4 class="bold mr-2">{{"sidebar.support"| translate}}:</h4> <a href="tel:+998909960880">90 996 08 80</a>
+    <h4 class="bold ml-4 mr-2">{{"support.office_support"| translate}}: </h4> <a href="tel:+998555013333">55 501 33 33</a>
+</div>

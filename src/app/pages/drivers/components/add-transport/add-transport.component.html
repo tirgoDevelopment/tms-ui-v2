@@ -1,0 +1,228 @@
+<form [formGroup]="form">
+
+  <nz-input-group class="input-group">
+    <nz-form-label nzRequired>{{ 'named' | translate }}</nz-form-label>
+    <input formControlName="brand" type="text" nz-input placeholder="{{ 'named' | translate }}" required />
+    <div *ngIf="form.get('brand').touched && form.get('brand').hasError('required')" class="error-message">
+      {{ 'is_required' | translate }}
+    </div>
+  </nz-input-group>
+
+  <nz-input-group class="input-group">
+    <nz-form-label nzRequired>{{'transport_kind' | translate}}</nz-form-label>
+    <nz-select nzPlaceHolder="{{'transport_kind' | translate}}" formControlName="transportKindId"
+      style="width: 100% !important;">
+      <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of transportKinds"></nz-option>
+    </nz-select>
+    <div *ngIf="form.get('transportKindId').touched && form.get('transportKindId').hasError('required')"
+      class="error-message">
+      {{ 'is_required' | translate }}
+    </div>
+  </nz-input-group>
+
+  <nz-input-group class="input-group">
+    <nz-form-label nzRequired>{{'type_transport' | translate}}</nz-form-label>
+    <nz-select nzPlaceHolder="{{'type_transport' | translate}}" formControlName="transportTypeId"
+      style="width: 100% !important;">
+      <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of transportTypes"></nz-option>
+    </nz-select>
+    <div *ngIf="form.get('transportTypeId').touched && form.get('transportTypeId').hasError('required')"
+      class="error-message"></div>
+  </nz-input-group>
+
+  <nz-input-group class="input-group">
+    <nz-form-label>{{ 'volume_m' | translate }}</nz-form-label>
+    <input formControlName="capacity" type="text" nz-input placeholder="{{ 'volume_m' | translate }}"
+      mask="separator" />
+  </nz-input-group>
+
+  <nz-input-group class="input-group" *ngIf="isAutotransport">
+    <nz-form-label>{{ 'number_of_transporter' | translate }}</nz-form-label>
+    <input formControlName="refrigeratorCount" type="text" nz-input
+      placeholder="{{ 'number_of_transporter' | translate }}" mask="separator"  />
+  </nz-input-group>
+
+  <div style="display: flex; align-items: center; gap:10px" *ngIf="isContainer">
+    <nz-input-group class="input-group">
+      <nz-form-label nzRequired>{{'volume_f' | translate}}</nz-form-label>
+      <nz-select nzPlaceHolder="{{'volume_f' | translate}}" formControlName="heightCubature"
+        style="width: 100% !important;">
+        <nz-option [nzValue]="20" nzLabel="20(ф.)"></nz-option>
+        <nz-option [nzValue]="40" nzLabel="40(ф.)"></nz-option>
+        <nz-option [nzValue]="60" nzLabel="60(ф.)"></nz-option>
+      </nz-select>
+    </nz-input-group>
+    <!-- <div>
+      <label>{{ "Высокий куб" | translate | translate}}</label>
+      <nz-switch formControlName="heightCubature"> </nz-switch>
+    </div> -->
+  </div>
+
+  <div style="display: flex; align-items: center; gap:10px" *ngIf="isLoad">
+    <nz-input-group class="input-group">
+      <nz-form-label>{{ 'mode_from' | translate }}</nz-form-label>
+      <input formControlName="loadFrom" type="number" nz-input placeholder="{{ 'mode_from' | translate }}" />
+      <div *ngIf="form.get('loadFrom').hasError('min')" class="error-message">
+        {{'min_lengthRefFrom' | translate}}
+      </div>
+      <div *ngIf="form.get('loadFrom').hasError('max')" class="error-message">
+        {{'max_lengthRefFrom' | translate}}
+      </div>
+    </nz-input-group>
+
+    <nz-input-group class="input-group">
+      <nz-form-label>{{ 'mode_to' | translate }}</nz-form-label>
+      <input formControlName="loadTo" type="number" nz-input placeholder="{{ 'mode_to' | translate }}" />
+      <div *ngIf="form.get('loadTo').hasError('min')" class="error-message">
+        {{'min_lengthRefTo' | translate}}
+      </div>
+      <div *ngIf="form.get('loadTo').hasError('max')" class="error-message">
+        {{'max_lengthRefTo' | translate}}
+      </div>
+    </nz-input-group>
+  </div>
+
+  <div style="display: flex;gap:10px" *ngIf="isRefrigeratorMode">
+    <nz-input-group class="input-group">
+      <nz-form-label>{{ 'mode_from' | translate }}</nz-form-label>
+      <input formControlName="refrigeratorFromCount" type="number" nz-input
+        placeholder="{{ 'mode_from' | translate }}" />
+      <div *ngIf="form.get('refrigeratorFromCount').hasError('min')" class="error-message">
+        {{'min_lengthRefFrom' | translate}}
+      </div>
+      <div *ngIf="form.get('refrigeratorFromCount').hasError('max')" class="error-message">
+        {{'max_lengthRefFrom' | translate}}
+      </div>
+    </nz-input-group>
+
+    <nz-input-group class="input-group">
+      <nz-form-label>{{ 'mode_to' | translate }}</nz-form-label>
+      <input formControlName="refrigeratorToCount" type="number" nz-input placeholder="{{ 'mode_to' | translate }}" />
+      <div *ngIf="form.get('refrigeratorToCount').hasError('min')" class="error-message">
+        {{'min_lengthRefTo' | translate}}
+      </div>
+      <div *ngIf="form.get('refrigeratorToCount').hasError('max')" class="error-message">
+        {{'max_lengthRefTo' | translate}}
+      </div>
+    </nz-input-group>
+  </div>
+
+  <nz-input-group class="input-group" *ngIf="isRefrigerator">
+    <label nz-checkbox [ngModel]="isRefrigerator" (ngModelChange)="onCheckboxChange($event)"
+      [ngModelOptions]="{standalone: true}">{{ 'mode' | translate
+      }}</label>
+    <label nz-checkbox formControlName="isHook">{{ 'hook' | translate }}</label>
+  </nz-input-group>
+
+  <nz-input-group class="input-group" *ngIf="isCistern">
+    <nz-form-label>{{ 'volume_l' | translate }}</nz-form-label>
+    <input formControlName="cisternVolume" type="text" nz-input placeholder="{{ 'volume_l' | translate }}"
+      mask="separator" />
+  </nz-input-group>
+
+  <nz-input-group class="input-group">
+    <nz-form-label nzRequired>{{'state_number' | translate}}</nz-form-label>
+    <input formControlName="transportNumber" type="text" nz-input placeholder="{{ 'state_number' | translate }}" appUppercaseValidation/>
+    <div *ngIf="form.get('transportNumber').touched && form.get('transportNumber').hasError('required')"
+      class="error-message">
+      {{ 'is_required' | translate }}
+    </div>
+  </nz-input-group>
+
+  <!-- <nz-input-group class="input-group">
+    <nz-form-label nzRequired>{{'cargo_type' | translate}}</nz-form-label>
+    <nz-select nzPlaceHolder="{{'cargo_type' | translate}}" formControlName="cargoTypeIds"
+      style="width: 100% !important;" nzMode="multiple">
+      <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of cargoTypes"></nz-option>
+    </nz-select>
+  </nz-input-group> -->
+
+  <nz-input-group class="input-group">
+    <nz-form-label nzRequired>{{'loading_method' | translate}}</nz-form-label>
+    <nz-select nzPlaceHolder="{{'loading_method' | translate}}" formControlName="cargoLoadMethodIds"
+      style="width: 100% !important;" nzMode="multiple">
+      <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of cargoLoadingMethods"></nz-option>
+    </nz-select>
+  </nz-input-group>
+
+  <nz-input-group class="input-group">
+    <label nz-checkbox formControlName="isAdr">{{ 'isAdr' | translate }}</label>
+  </nz-input-group>
+
+  <div *ngIf="data && data.isVerified">
+    <ul class="gallery">
+      <li *ngIf="previewUrltechPassportFront">
+        <div class="photo">
+          <i class="delete_photo" nz-icon nzType="delete" (click)="removeFile('techPassportFront')"></i>
+          <img *ngIf="edit && !fileRemovedtechPassportFront"
+            [src]="previewUrltechPassportFront | fileFetch:'driver'| async" alt="{{previewUrltechPassportFront}}">
+          <img *ngIf="!edit || fileRemovedtechPassportFront" [src]="previewUrltechPassportFront"
+            alt="{{previewUrltechPassportFront}}">
+        </div>
+      </li>
+
+      <li>
+        <div class="upload_photo" *ngIf="!previewUrltechPassportFront">
+          <input type="file" id="uploadPhotos" accept="image/*" name="photo"
+            (change)="onFileSelected($event, 'techPassportFront')">
+          <span class="upload-icon" nz-icon nzType="upload"></span>
+          <span>{{'tech_passport_front' | translate}}</span>
+          <span style="color: red;">{{ 'is_required' | translate }}</span>
+        </div>
+      </li>
+    </ul>
+    <ul class="gallery">
+      <li *ngIf="previewUrltechPassportBack">
+        <div class="photo">
+          <i class="delete_photo" nz-icon nzType="delete" (click)="removeFile('techPassportBack')"></i>
+          <img *ngIf="edit && !fileRemovedtechPassportBack"
+            [src]="previewUrltechPassportBack | fileFetch:'driver'| async" alt="{{previewUrltechPassportBack}}">
+          <img *ngIf="!edit || fileRemovedtechPassportBack" [src]="previewUrltechPassportBack"
+            alt="{{previewUrltechPassportBack}}">
+        </div>
+      </li>
+
+      <li>
+        <div class="upload_photo" *ngIf="!previewUrltechPassportBack">
+          <input type="file" id="uploadPhotos" accept="image/*" name="photo"
+            (change)="onFileSelected($event, 'techPassportBack')">
+          <span class="upload-icon" nz-icon nzType="upload"></span>
+          <span>{{'tech_passport_back' | translate}}</span>
+          <span style="color: red;">{{ 'is_required' | translate }}</span>
+        </div>
+      </li>
+    </ul>
+    <ul class="gallery">
+      <li *ngIf="previewUrlTransportationLicense">
+        <div class="photo">
+          <i class="delete_photo" nz-icon nzType="delete" (click)="removeFile('transportationLicense')"></i>
+          <img *ngIf="edit && !fileRemovedTransportationLicense"
+            [src]="previewUrlTransportationLicense | fileFetch:'driver'| async"
+            alt="{{previewUrlTransportationLicense}}">
+          <img *ngIf="!edit || fileRemovedTransportationLicense" [src]="previewUrlTransportationLicense"
+            alt="{{previewUrlTransportationLicense}}">
+        </div>
+      </li>
+
+      <li>
+        <div class="upload_photo" *ngIf="!previewUrlTransportationLicense">
+          <input type="file" id="uploadPhotos" accept="image/*" name="photo"
+            (change)="onFileSelected($event, 'transportationLicense')">
+          <span class="upload-icon" nz-icon nzType="upload"></span>
+          <span>{{'good_transportation_lisense' | translate}}</span>
+          <span style="color: red;">{{ 'is_required' | translate }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="button-wrapper">
+    <button nz-button class="danger-button" (click)="remove()">
+      {{ 'remove' | translate }}
+    </button>
+    <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
+      [disabled]="form.invalid || loading">
+      {{ 'save' | translate }}
+    </button>
+  </div>
+</form>

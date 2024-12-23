@@ -1,0 +1,28 @@
+<form [formGroup]="form">
+
+    <nz-input-group class="input-group">
+        <nz-form-label nzRequired>{{'type' | translate}}</nz-form-label>
+        <nz-select nzPlaceHolder="{{'type' | translate}}" formControlName="type" style="width: 100% !important;">
+            <nz-option nzValue="all" nzLabel="{{'all' | translate}}"></nz-option>
+            <nz-option nzValue="single" nzLabel="{{'single' | translate}}"></nz-option>
+        </nz-select>
+    </nz-input-group>
+
+    <nz-input-group class="input-group">
+        <nz-form-label nzRequired>{{ 'theme' | translate }}</nz-form-label>
+        <input formControlName="text" type="text" nz-input placeholder="{{ 'theme' | translate }}" required />
+        <div *ngIf="form.get('text').touched && form.get('text').hasError('required')" class="error-message">
+            {{ 'is_empty' | translate }}
+        </div>
+    </nz-input-group>
+
+    <nz-input-group class="input-group">
+        <nz-form-label nzRequired>{{'message' | translate}}</nz-form-label>
+        <textarea formControlName="message" nz-input         [nzAutosize]="{ minRows: 3 }"
+            placeholder="{{'message' | translate}}"></textarea>
+        <div *ngIf="form.get('message').touched && form.get('message').hasError('required')"
+            class="error-message">
+            {{ 'is_empty' | translate }}
+        </div>
+    </nz-input-group>
+</form>

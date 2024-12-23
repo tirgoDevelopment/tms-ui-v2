@@ -1,0 +1,144 @@
+<nz-layout class="app-layout" *ngIf="authService.accessToken">
+
+  <nz-sider class="menu-sidebar" nzCollapsible nzWidth="256px" nzBreakpoint="md" [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null">
+    <div class="app-header">
+      <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+        <span class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></span>
+      </span>
+    </div>
+
+    <ul nz-menu nzTheme="light" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <!-- <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
+        [nzTooltipTitle]="isCollapsed ? ('sidebar.orders' | translate) : ''" routerLink="/orders">
+        <span class="sidebar-icon" nz-icon>
+          <img *ngIf="themeService.colorTheme == 'light-mode'" src="./assets/images/sidebar/tracking.svg"
+            alt="" width="15">
+          <img *ngIf="themeService.colorTheme == 'dark-mode'" src="./assets/images/sidebar/tracking-w.svg"
+            alt="" width="15">
+        </span>
+        <span>{{'sidebar.orders' | translate}}</span>
+      </li> -->
+      <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
+        [nzTooltipTitle]="isCollapsed ? ('drivers.title' | translate) : ''" routerLink="/drivers">
+        <span class="sidebar-icon" nz-icon>
+          <img *ngIf="themeService.colorTheme == 'light-mode'" src="./assets/images/sidebar/drivers.svg" alt=""
+            width="15">
+          <img *ngIf="themeService.colorTheme == 'dark-mode'" src="./assets/images/sidebar/driver-w.svg" alt=""
+            width="15">
+        </span>
+        <span>{{'drivers.title' | translate}}</span>
+      </li>
+
+      <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
+        [nzTooltipTitle]="isCollapsed ? ('services.title' | translate) : ''" routerLink="/services">
+        <!-- <span class="sidebar-icon" nz-icon>
+          <img *ngIf="themeService.colorTheme == 'light-mode'" src="./assets/images/sidebar/finance.svg"
+            alt="" width="15">
+          <img *ngIf="themeService.colorTheme == 'dark-mode'" src="./assets/images/sidebar/finance-d.svg"
+            alt="" width="15">
+        </span> -->
+        <span nz-icon nzType="file-text"></span>
+        <span>{{'services.title' | translate}}</span>
+      </li>
+
+      <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
+        [nzTooltipTitle]="isCollapsed ? ('sidebar.settings' | translate) : ''" routerLink="/settings">
+        <span nz-icon nzType="setting"></span>
+        <span>{{'sidebar.settings' | translate}}</span>
+      </li>
+      <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
+        [nzTooltipTitle]="isCollapsed ? ('sidebar.support' | translate) : ''" routerLink="/support">
+        <span nz-icon nzType="customer-service"></span>
+        <span>{{'sidebar.support' | translate}}</span>
+      </li>
+
+    </ul>
+  </nz-sider>
+
+  <nz-layout [class.dark-theme]="theme === 'dark'">
+
+    <nz-header>
+      <div class="app-header">
+        <div class="header-right">
+
+          <div nz-dropdown [nzDropdownMenu]="LangMenu" nzTrigger="click" style="cursor: pointer; margin-bottom: 5px;">
+            <img [src]="selectedFlag" alt="" width="25">
+          </div>
+
+          <nz-dropdown-menu #LangMenu="nzDropdownMenu">
+            <ul nz-menu class="nz-menu">
+              <li nz-menu-item style="display: flex; gap: 5px;"
+                (click)="changeLanguage('UZ', '../assets/images/flags/UZ.svg')">
+                <img src="../assets/images/flags/UZ.svg" alt="" width="25">
+                <span>O'zbekcha</span>
+              </li>
+              <li nz-menu-item style="display: flex; gap: 5px;"
+                (click)="changeLanguage('RU','../assets/images/flags/RU.svg')">
+                <img src="../assets/images/flags/RU.svg" alt="" width="25">
+                <span>Русский</span>
+              </li>
+              <!-- <li nz-menu-item style="display: flex; gap: 5px;"
+                (click)="changeLanguage('US','../assets/images/flags/US.svg')">
+                <img src="../assets/images/flags/US.svg" alt="" width="25">
+                <span>English</span>
+              </li> -->
+            </ul>
+          </nz-dropdown-menu>
+          <button nz-button nzType="link" (click)="toggleTheme()"
+            style="background-color: rgba(148,163,184,0.12); border-radius: 15px;">
+            <svg *ngIf="themeService.colorTheme === 'light-mode'" style="color: rgb(100,116,139);"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" fit=""
+              height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+              <path fill-rule="evenodd"
+                d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+                clip-rule="evenodd"></path>
+            </svg>
+            <svg *ngIf="themeService.colorTheme === 'dark-mode'" style="color: rgb(100,116,139);"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" fit=""
+              height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+              <path
+                d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z">
+              </path>
+            </svg>
+          </button>
+
+          <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+            <nz-avatar [nzSize]="38" [nzText]="this.userName.slice(0, 1).toUpperCase()"
+              style="margin-bottom: 3px; color:#f56a00; background-color:#fde3cf;cursor: pointer;font-size: 16px; font-weight: bold;"></nz-avatar>
+          </div>
+
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu class="nz-menu">
+              <li nz-menu-item style="display: flex; gap: 5px;" (click)="logout()">
+                <i nz-icon nzType="logout"></i>
+                {{'logout' | translate}}
+            </ul>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+    </nz-header>
+
+    <nz-content>
+      <ng-template #indicatorTemplate> <img src="../assets/images/" alt=""> </ng-template>
+      <div class="inner-content">
+
+        <router-outlet></router-outlet>
+
+        <div style="position: relative;" (click)="toggleChat()">
+          <nz-badge [nzCount]="newMessageCount" class="chat-icon">
+            <div  class="chat-icon-content">
+              <i nz-icon nzType="wechat" nzTheme="outline" style="color: #fff;"></i>
+            </div>
+          </nz-badge>
+        </div>
+            <!-- <div (click)="toggleChat()" class="chat-icon">
+              <i nz-icon nzType="wechat" nzTheme="outline" style="color: #fff;"></i>
+            </div> -->
+
+        <app-chat *ngIf="isChatVisible" (newMessageCountChange)="updateNewMessageCount($event)" (closeChatEvent)="closeChat()"></app-chat>
+      </div>
+    </nz-content>
+
+  </nz-layout>
+</nz-layout>

@@ -1,0 +1,292 @@
+@import '/src/assets/styles/light-variables.scss';
+@import '/src/assets/styles/dark-variables.scss';
+
+// Menu Item Styles
+
+.ant-menu-item {
+  a {
+    color: var(--textColor);
+  }
+
+  span {
+    color: var(--textColor);
+  }
+
+  .menu-item-icon {
+    margin-right: 6px;
+  }
+
+  &:hover {
+    background-color: var(--menu-item-bgcolor-hover);
+  }
+
+  &.ant-menu-item-selected {
+    background-color: var(--menu-item-bgcolor-hover);
+    color: var(--textColor);
+  }
+}
+
+:host ::ng-deep .ant-menu-inline .ant-menu-item {
+  padding: 24px;
+  margin: 0;
+}
+
+.ant-menu-submenu-selected {
+  color: var(--textColor) !important;
+
+  &:hover {
+    color: var(--textColor);
+  }
+}
+
+:host ::ng-deep .ant-menu-vertical .ant-menu-sub {
+  background-color: var(--bgColor);
+}
+
+// Host Component Styles
+:host {
+  display: flex;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:host ::ng-deep .ant-menu-vertical .ant-menu-item,
+:host ::ng-deep .ant-menu-submenu-inline .ant-menu-submenu-title,
+:host ::ng-deep .ant-menu-vertical .ant-menu-submenu-title {
+  padding-left: 24px !important;
+}
+
+:host ::ng-deep .ant-menu-light .ant-menu-submenu-title:hover {
+  color: var(--textColor) !important;
+}
+
+:host ::ng-deep .ant-menu-submenu-title:active {
+  background-color: var(--bgColor);
+}
+
+:host ::ng-deep .ant-menu-submenu-title>.ant-menu-submenu-arrow,
+:host ::ng-deep .ant-menu-submenu:hover>.ant-menu-submenu-title>.ant-menu-submenu-arrow {
+  color: var(--textColor) !important;
+}
+
+ul {
+  background-color: var(--bgColor);
+}
+:host ::ng-deep .ant-menu-submenu {
+  color: var(--textColor);
+
+  li {
+    &:hover {
+      background-color: var(--menu-item-bgcolor-hover);
+    }
+  }
+}
+
+:host ::ng-deep .ant-menu-vertical {
+  background-color: var(--bgColor) !important;
+}
+::ng-deep .ant-menu-submenu {
+  background-color: var(--bgColor) !important;
+}
+.ant-menu-inline,
+.ant-menu-vertical,
+.ant-menu-vertical-left {
+  border-right: var(--bgColor);
+}
+
+:host ::ng-deep .ant-menu-item::after {
+  border-right: 4px solid $secondary-color;
+}
+
+.ant-menu ul,
+.ant-menu ol {
+  background-color: var(--bgColor);
+}
+
+// Layout Styles
+.app-layout {
+  height: 100vh;
+}
+
+// Sidebar Styles
+.ant-menu {
+  background-color: var(--bgColor);
+}
+
+.menu-sidebar {
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 10;
+  min-height: 100%;
+  box-shadow: var(--sidebar-box-shadow);
+  background-color: var(--bgColor);
+}
+
+.header-trigger {
+  height: 45px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all .3s, padding 0s;
+  display: inline-block;
+  color: var(--textColor);
+}
+
+// Sidebar Logo Styles
+.sidebar-logo {
+  position: relative;
+  height: 45px;
+  padding-left: 24px;
+  overflow: hidden;
+  line-height: 45px;
+  transition: all .3s;
+}
+
+.sidebar-logo img {
+  display: inline-block;
+  height: 32px;
+  width: 32px;
+  vertical-align: middle;
+}
+
+.sidebar-logo h1 {
+  display: inline-block;
+  margin: 0 0 0 20px;
+  font-weight: 600;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+// Header Styles
+nz-header {
+  padding: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  height: 55px;
+  padding: 0 20px;
+  background: var(--bgColor);
+  line-height: 45px;
+  box-shadow: var(--header-box-shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .header-right {
+    margin-left: auto;
+  }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px
+}
+
+.flag-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.avatar {
+  width: 20px;
+}
+
+.nz-menu {
+  background-color: var(--bgColor);
+
+  span {
+    margin: 5px 0;
+    color: var(--textColor);
+  }
+
+  :hover {
+    background-color: var(--menu-item-bgcolor-hover);
+  }
+}
+
+.nz-resizable-preview {
+  border-width: 0;
+  border-right-width: 1px;
+}
+
+
+// Content Styles
+
+nz-content {
+  margin: 15px;
+}
+
+.inner-content {
+  padding: 15px;
+  background: var(--bgColor);
+}
+
+// Layout Header Styles
+.ant-layout-header {
+  position: sticky;
+  top: 0;
+  background: var(--bgColor);
+  height: 55px;
+}
+
+.ant-layout {
+  background-color: var(--ant-layout-bgcolor);
+  overflow: auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+
+.chat-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px; 
+  width: 60px;
+  height: 60px;
+  background-color: #3880ff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 24px;
+  
+}
+
+.chat-icon-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

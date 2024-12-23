@@ -1,0 +1,7 @@
+<svg width="800px" height="800px" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="iconify iconify--twemoji" preserveAspectRatio="xMidYMid meet">
+  <rect width="36" height="36" fill="#00AFCA" />
+  <circle cx="18" cy="18" r="4.5" fill="#FFD700" />
+  <path fill="#FFD700" d="M18 10.5l.86 3.6h3.78l-3.06 2.23l1.16 3.6L18 16.5l-2.74 2.23l1.16-3.6l-3.06-2.23h3.78L18 10.5z" />
+  <path fill="#FFD700" d="M12 21l1.5 1l1-1h6l1 1l1.5-1l-1 1.5h-8l-1-1.5zm-1 2l2 1.5h10l2-1.5l-2.5 2h-9l-2.5-2z" />
+  <path fill="#FFD700" d="M1 36L2.5 0h2L3 36zM35 36l-1.5-36h-2L33 36z" />
+</svg>

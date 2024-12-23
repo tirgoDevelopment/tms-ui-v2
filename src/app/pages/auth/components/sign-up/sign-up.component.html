@@ -1,0 +1,63 @@
+<div class="container">
+  <div class="left-panel">
+    <img src="./assets/images/logo/auth-logo.svg" alt="" width="60%">
+  </div>
+  <div class="right-panel">
+    <div class="create-account">
+      <!-- VERIFY PHONE -->
+      <div *ngIf="!otpCode">
+        <h2 class="title">Зарегистрировать</h2>
+        <form [formGroup]="form" (ngSubmit)="onVerifyPhone()">
+          <div>
+            <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown"
+              style="width: 100%; margin-bottom: 20px;">
+              <input formControlName="phone" nz-input placeholder="Номер телефона" [mask]="currentMask"
+                style="padding: 10px;" required />
+            </nz-input-group>
+
+            <ng-template #countryDropdown>
+              <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="display: flex; align-items: center;">
+                <img src="{{ selectedCountry.flag }}" alt="Selected Country Flag" class="flag-icon" width="20">
+              </a>
+            </ng-template>
+
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu style="background-color: #fff !important;">
+                <li nz-menu-item *ngFor="let country of countries" (click)="selectCountry(country)">
+                  <img style="margin-right: 5px;" src="{{ country.flag }}" alt="Country Flag" width="20">
+                  {{ country.name }}
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+            
+            <button type="submit" nz-button nzType="primary" class="login-button" [disabled]="form.invalid"
+              [nzLoading]="form.disabled">Отправить</button>
+          </div>
+        </form>
+      </div>
+      <!-- VERIFY PHONE -->
+      <!-- OTP CODE -->
+      <div *ngIf="otpCode">
+        <h2 class="title">Подтверждение</h2>
+        <div>Введите 6 значный код отправлен на номер </div>
+        <b> +{{form.value.phone}}</b>
+        <code-input [disabled]="loading" [isCodeHidden]="false" [codeLength]="6" (codeChanged)="onCodeChanged($event)"
+          (codeCompleted)="sendVerifyedCode()"></code-input>
+
+          <div>{{timerOtp ? timerOtp : '01:59'}}</div>
+
+          <button type="submit" nz-button nzType="primary" class="login-button" [disabled]="form.invalid"
+              [nzLoading]="form.disabled">Отправить</button>
+      </div>
+      <!-- OTP CODE -->
+
+    </div>
+    <button *ngIf="otpCode" nz-button nzType="link" (click)="retrySms()">Отправить еще раз</button>
+    
+    <div style="display: flex; align-items: center;">
+      <span>У вас есть учетной запись ?</span>
+      <button nz-button nzType="link" style="color: blue;" routerLink="/auth/sign-in">Авторизоваться</button>
+    </div>
+
+  </div>
+</div>

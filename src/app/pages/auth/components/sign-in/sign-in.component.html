@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="left-panel">
+    <img src="./assets/images/logo/auth-logo.svg" alt="" width="60%">
+  </div>
+  <div class="right-panel">
+    <div class="create-account">
+      <h2 class="title">Авторизоваться</h2>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <nz-input-group class="input-group" [nzPrefix]="prefixTemplateUser">
+          <input formControlName="username" type="email" nz-input placeholder="Электронная почта" autocomplete="username" />
+        </nz-input-group>
+
+        <ng-template #prefixTemplateUser><span nz-icon nzType="mail"></span></ng-template>
+        <nz-input-group class="input-group" [nzSuffix]="suffixTemplateEye" [nzPrefix]="prefixTemplateLock">
+          <input formControlName="password" [type]="passwordVisible ? 'text' : 'password'" nz-input placeholder="Пароль"
+            autocomplete="current-password" />
+        </nz-input-group>
+        <ng-template #prefixTemplateLock><span nz-icon nzType="lock"></span></ng-template>
+        <ng-template #suffixTemplateEye>
+          <span nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" style="cursor: pointer;"
+            (click)="togglePasswordVisibility()"></span>
+        </ng-template>
+        <button type="submit" nz-button nzType="primary" class="login-button"
+          [nzLoading]="form.disabled">Войти</button>
+      </form>
+
+      <span>У вас нет учетной запись ?</span>
+      <button nz-button nzType="link" style="color: blue;" routerLink="/auth/sign-up">Зарегистрировать</button>
+
+    </div>
+  </div>
+</div>

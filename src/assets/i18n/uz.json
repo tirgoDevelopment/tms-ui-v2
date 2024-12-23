@@ -1,0 +1,63 @@
+{
+    "add": "Qo'shish",
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "filter": "Filtr",
+    "remove": "O'chirish",
+    "email": "Elektron pochta",
+    "userNotFound": "Foydalanuvchi topilmadi",
+    "tokenExpired": "Tokenning amal qilish muddati tugadi",
+    "accessDenied": "Ruxsat berilmagan",
+    "invalidPassword": "Noto'g'ri parol",
+    "successLogin": "Tizimga muvaffaqiyatli kirildi",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "total": "Summa",
+    "state_number_truck": "Mashina davlat raqami",
+    "drivers": "Haydovchilar",
+    "searchAs": "Qidiruv",
+    "sidebar": {
+        "orders": "Buyurtmalar",
+        "drivers": "Haydovchilar",
+        "support": "Texnik yordam",
+        "finance": "Moliya",
+        "settings": "Sozlamalar"
+    },
+    "auth": {
+        "sign_in": "Tizimga kirish",
+        "login": "Login",
+        "register": "Ro'yxatdan o'tish",
+        "password": "Parol",
+        "enter": "Kirish"
+    },
+    "support": {
+        "title": "Tez-tez so'raladigan savollar",
+        "tg_support": "Yordam bilan bog'lanish",
+        "office_support": "Ofis yordami"
+    },
+    "settings": {
+        "title": "Sozlamalar",
+        "newPassword": "Yangi parol",
+        "oldPassword":"Eski parol",
+        "confirmPassword": "Parolni tasdiqlash"
+    },
+    "services": {
+        "title": "Xizmatlar",
+        "serviceId": "Xizmat ID",
+        "serviceName": "Xizmat nomi",
+        "driverId": "Haydovchi ID",
+        "processingTime": "Boshlanish vaqti",
+        "withoutSubscription": "Obunasiz",
+        "isLegalEntity": "Yuridik shaxs",
+        "from": "Boshlang'ich summa",
+        "fixed": "Belginlangan",
+        "free": "Bepul",
+        "individual": "Individual"
+    },
+    "chat": {
+        "title": "Chats",
+        "enterSms": "Xabar kiriting",
+        "edited": "Tahrirlangan",
+        "replyTo": "Javob berish"
+    }
+}

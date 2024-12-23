@@ -1,0 +1,38 @@
+<form [formGroup]="form">
+
+    <nz-input-group class="input-group w-full">
+        <nz-form-label>{{ 'searchAs' | translate }}</nz-form-label>
+        <nz-select style="width: 100%;" nzPlaceHolder="{{ 'searchAs' | translate }}" formControlName="searchAs">
+            <nz-option nzValue="driverId" nzLabel="ID"></nz-option>
+            <nz-option nzValue="phoneNumber" nzLabel="Телефон"></nz-option>
+            <nz-option nzValue="transportNumber" nzLabel="Номер транспорта"></nz-option>
+        </nz-select>
+    </nz-input-group>
+
+    <nz-input-group class="input-group w-full">
+        <nz-form-label nzRequired>{{ 'drivers.id' | translate }}</nz-form-label>
+        <nz-select style="width: 100%;" nzShowSearch nzServerSearch nzPlaceHolder="{{ 'drivers.id' | translate }}"
+            [nzShowArrow]="false" formControlName="driverId" (nzOnSearch)="findDriver($event)">
+            <nz-option *ngFor="let o of (drivers$ | async)?.data?.content"
+                [nzLabel]="o | label: form.get('searchAs')?.value" [nzValue]="o.id">
+            </nz-option>
+        </nz-select>
+    </nz-input-group>
+
+    <nz-input-group class="input-group w-full">
+        <nz-form-label nzRequired>{{ 'services.title' | translate }}</nz-form-label>
+        <nz-select style="width: 100%;" nzPlaceHolder="{{ 'services.title' | translate }}" formControlName="servicesIds" nzMode="multiple">
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of services"></nz-option>
+        </nz-select>
+    </nz-input-group>
+
+    <div class="button-wrapper">
+        <button nz-button class="danger-button" (click)="onCancel()" [nzLoading]="loading">
+          {{ 'cancel' | translate }}
+        </button>
+        <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
+          [disabled]="form.invalid || loading">
+          {{ 'save' | translate }}
+        </button>
+      </div>
+</form>

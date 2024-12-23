@@ -1,0 +1,498 @@
+<div *ngIf="mode == 'add'">
+  <nz-tabset>
+    <nz-tab nzTitle="{{ 'new' | translate }}">
+      <form [formGroup]="form">
+
+        <nz-input-group class="input-group">
+          <nz-form-label nzRequired>{{ 'first_name' | translate }}</nz-form-label>
+          <input formControlName="firstName" type="text" nz-input placeholder="{{ 'first_name' | translate }}"
+            required />
+          <div *ngIf="form.get('firstName').touched && form.get('firstName').hasError('required')"
+            class="error-message">
+            {{ 'is_required' | translate }}
+          </div>
+        </nz-input-group>
+
+        <nz-input-group class="input-group">
+          <nz-form-label nzRequired>{{ 'last_name' | translate }}</nz-form-label>
+          <input formControlName="lastName" type="text" nz-input placeholder="{{ 'last_name' | translate }}" required />
+          <div *ngIf="form.get('lastName').touched && form.get('lastName').hasError('required')" class="error-message">
+            {{ 'is_required' | translate }}
+          </div>
+        </nz-input-group>
+
+        <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown" style="width: 100%;">
+          <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask"
+            required />
+          <div *ngIf="form.get('phoneNumbers').touched && form.get('phoneNumbers').hasError('required')"
+            class="error-message">
+            {{ 'is_required' | translate }}
+          </div>
+        </nz-input-group>
+
+        <ng-template #countryDropdown>
+          <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="display: flex; align-items: center;">
+            <img src="{{ selectedCountry.flag }}" alt="Selected Country Flag" class="flag-icon" width="20">
+          </a>
+        </ng-template>
+
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <li nz-menu-item *ngFor="let country of countries" (click)="selectCountry(country)">
+              <img style="margin-right: 5px;" src="{{ country.flag }}" alt="Country Flag" width="20">
+              {{ country.name }}
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+
+        <label nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
+        <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
+          translate}}</label>
+        <label nz-checkbox formControlName="isOwnBalance" class="m-0" style="margin: 0 !important;">{{'total_balance' |
+          translate}}</label>
+        <label nz-checkbox formControlName="isOwnService" class="m-0" style="margin: 0 !important;">{{'apply_service' |
+          translate}}</label>
+
+        <div class="button-wrapper">
+          <button nz-button class="danger-button" (click)="onCancel()">
+            {{ 'cancel' | translate }}
+          </button>
+          <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
+            [disabled]="form.invalid || loading">
+            {{ 'save' | translate }}
+          </button>
+        </div>
+      </form>
+    </nz-tab>
+    <nz-tab nzTitle="{{ 'existing' | translate }}">
+      <nz-input-group class="input-group w-full">
+        <nz-form-label nzRequired>{{ 'drivers.id' | translate }}</nz-form-label>
+        <nz-select [(ngModel)]="selectedDriver" style="width: 100%;" nzShowSearch nzServerSearch
+          nzPlaceHolder="{{ 'drivers.id' | translate }}" [nzShowArrow]="false" (nzOnSearch)="findDriver($event)">
+          <nz-option *ngFor="let o of (drivers$ | async)?.data.content" [nzLabel]="o.firstName + ' ' + o.lastName"
+            [nzValue]="o.id">
+          </nz-option>
+        </nz-select>
+      </nz-input-group>
+
+      <div class="button-wrapper">
+        <button [nzLoading]="loading" nz-button class="success-button" (click)="onSendRequest()"
+          [disabled]=" loading || !selectedDriver">
+          {{ 'send_request' | translate }}
+        </button>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+
+</div>
+
+<nz-tabset *ngIf="mode == 'edit' && data && !loadingPage">
+  <nz-tab nzTitle="{{ 'drivers.title' | translate }}">
+    <form [formGroup]="form">
+
+      <nz-input-group class="input-group">
+        <nz-form-label nzRequired>{{ 'first_name' | translate }}</nz-form-label>
+        <input formControlName="firstName" type="text" nz-input placeholder="{{ 'first_name' | translate }}" required />
+        <div *ngIf="form.get('firstName').touched && form.get('firstName').hasError('required')" class="error-message">
+          {{ 'is_required' | translate }}
+        </div>
+      </nz-input-group>
+
+      <nz-input-group class="input-group">
+        <nz-form-label nzRequired>{{ 'last_name' | translate }}</nz-form-label>
+        <input formControlName="lastName" type="text" nz-input placeholder="{{ 'last_name' | translate }}" required />
+        <div *ngIf="form.get('lastName').touched && form.get('lastName').hasError('required')" class="error-message">
+          {{ 'is_required' | translate }}
+        </div>
+      </nz-input-group>
+
+      <nz-input-group class="input-group" *ngIf="data?.isVerified">
+        <nz-form-label nzRequired>{{ 'email' | translate }}</nz-form-label>
+        <input formControlName="email" type="text" nz-input placeholder="{{ 'email' | translate }}" required />
+        <div *ngIf="form.get('email').touched && form.get('email').hasError('email')" class="error-message">
+          {{ 'is_email' | translate }}
+        </div>
+        <div *ngIf="form.get('email').touched && form.get('email').hasError('required')" class="error-message">
+          {{ 'is_required' | translate }}
+        </div>
+      </nz-input-group>
+
+     
+
+      <!-- <nz-input-group class="input-group" *ngIf="!edit" >
+        <nz-form-label nzRequired>{{ 'password' | translate }}</nz-form-label>
+        <input formControlName="password" type="text" nz-input placeholder="{{ 'password' | translate }}" required />
+
+        <div *ngIf="form.get('password').touched && form.get('password').hasError('required')" class="error-message">
+          {{ 'is_empty' | translate }}
+        </div>
+        <div *ngIf="form.get('password').touched && form.get('password').hasError('minlength')" class="error-message">
+          {{ 'min_length' | translate }}
+        </div>
+        <div *ngIf="form.get('password').touched && form.get('password').hasError('maxlength')" class="error-message">
+          {{ 'max_length' | translate }}
+        </div>
+        <div *ngIf="form.get('password').touched && form.get('password').hasError('pattern')" class="error-message">
+          {{ 'pattern' | translate }}
+        </div>
+      </nz-input-group> -->
+      <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown" style="width: 100%;">
+        <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask"
+          required />
+        <div *ngIf="form.get('phoneNumbers').touched && form.get('phoneNumbers').hasError('required')"
+          class="error-message">
+          {{ 'is_empty' | translate }}
+        </div>
+      </nz-input-group>
+
+      <ng-template #countryDropdown>
+        <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="display: flex; align-items: center;">
+          <img src="{{ selectedCountry.flag }}" alt="Selected Country Flag" class="flag-icon" width="20">
+        </a>
+      </ng-template>
+
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item *ngFor="let country of countries" (click)="selectCountry(country)">
+            <img style="margin-right: 5px;" src="{{ country.flag }}" alt="Country Flag" width="20">
+            {{ country.name }}
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+      <label nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
+      <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
+        translate}}</label>
+      <label nz-checkbox formControlName="isOwnBalance" class="m-0" style="margin: 0 !important;">{{'total_balance' |
+        translate}}</label>
+      <label nz-checkbox formControlName="isOwnService" class="m-0" style="margin: 0 !important;">{{'apply_service' |
+        translate}}</label>
+      <ul class="gallery" *ngIf="data && data?.isVerified">
+        <li *ngIf="previewUrlPassport">
+          <div class="photo">
+            <i class="delete_photo" nz-icon nzType="delete" (click)="removeFile('passport')"></i>
+            <img *ngIf="edit && !fileRemovedPassport" [src]="previewUrlPassport | fileFetch:'driver'| async"
+              alt="{{previewUrlPassport}}">
+            <img *ngIf="!edit || fileRemovedPassport" [src]="previewUrlPassport" alt="{{previewUrlPassport}}">
+          </div>
+        </li>
+
+        <li>
+          <div class="upload_photo" *ngIf="!previewUrlPassport">
+            <input type="file" id="uploadPhotos" accept="image/*" name="photo" formControlName="passport"
+              (change)="onFileSelected($event, 'passport')">
+            <span class="upload-icon" nz-icon nzType="upload"></span>
+            <span>{{'passport' | translate}}</span>
+            <span style="color: red;">{{ 'is_empty' | translate }}</span>
+          </div>
+        </li>
+
+      </ul>
+
+      <ul class="gallery" *ngIf="data && data?.isVerified">
+        <li *ngIf="previewUrlLicense">
+          <div class="photo">
+            <i class="delete_photo" nz-icon nzType="delete" (click)="removeFile('license')"></i>
+            <img *ngIf="edit && !fileRemovedLicense" [src]="previewUrlLicense | fileFetch:'driver'| async"
+              alt="{{previewUrlLicense}}">
+            <img *ngIf="!edit || fileRemovedLicense" [src]="previewUrlLicense" alt="{{previewUrlLicense}}">
+          </div>
+        </li>
+
+        <li>
+          <div class="upload_photo" *ngIf="!previewUrlLicense">
+            <input type="file" id="uploadPhotos" accept="image/*" name="photo" formControlName="driverLicense"
+              (change)="onFileSelected($event, 'license')">
+            <span class="upload-icon" nz-icon nzType="upload"></span>
+            <span>{{'driver_lisense' | translate}}</span>
+            <span style="color: red;">{{ 'is_empty' | translate }}</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="button-wrapper">
+        <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
+          [disabled]="form.invalid || loading">
+          {{ 'save' | translate }}
+        </button>
+      </div>
+
+    </form>
+  </nz-tab>
+  <nz-tab nzTitle="{{ 'transport' | translate }}">
+    <button nz-button nzBlock="true" style="margin: 5px 0;" *ngFor="let item of data.driverTransports"
+      (click)="editTransport(item)">{{item.brand}}</button>
+
+    <div style="margin: 10px 0;">
+      <button (click)="addTransport()" nz-button class="ant-btn success-button" nzBlock> <i nz-icon nzType="plus"
+          nzTheme="outline"></i> {{ 'add'
+        | translate }} </button>
+    </div>
+  </nz-tab>
+</nz-tabset>
+
+<div *ngIf="mode == 'view' && data && !loadingPage">
+  <div class="detail-header">
+    <div class="avatar-wrapper">
+      <img *ngIf="!data?.profileFile" class="avatar-img" src="./assets/images/user/user.avif" alt="">
+      <img *ngIf="data?.profileFile" class="avatar-img" [src]="data?.profileFile" alt="">
+    </div>
+    <div>
+      <div class="user-name">{{ data?.firstName }} {{ data?.lastName }}</div>
+      <div class="user-id">ID:{{ data?.id }}</div>
+    </div>
+    <div class="rating">
+      <i nz-icon nzType="star" nzTheme="fill"></i>
+      <span class="rating-value">5</span>
+    </div>
+  </div>
+
+  <!-- <div class="order-info" *ngIf="data">
+    <div class="flex justify-between">
+      <div class="order-title">{{ 'orders' | translate }}</div>
+      <div class="link" (click)="allOrders()">{{ 'more' | translate }}</div>
+    </div>
+    <div class="order-summary">
+      <div class="order-item">
+        <div class="order-count">0</div>
+        <div class="order-label">{{ 'total_order' | translate }}</div>
+      </div>
+      <div class="order-item">
+        <div class="order-count">0</div>
+        <div class="order-label">{{ 'active' | translate }}</div>
+      </div>
+      <div class="order-item">
+        <div class="order-count">0</div>
+        <div class="order-label">{{ 'cancelled' | translate }}</div>
+      </div>
+    </div>
+  </div> -->
+  <div class="order-title">{{'information' | translate }}</div>
+  <nz-tabset>
+    <nz-tab nzTitle="{{ 'drivers.title' | translate }}">
+      <div class="order-info">
+        <div class="info-row">
+          <div class="info-column">
+            <div class="info-label">{{ 'serviceBalance' | translate }}</div>
+            <div class="info-value">
+              {{data?.serviceBalance | priceFormat}} Tir
+              
+            </div>
+          </div>
+          <div class="info-column">
+            <div class="info-label">{{ 'tirBalance' | translate }}</div>
+            <div class="info-value">
+              {{data?.tirgoBalance | priceFormat}} Tir
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-column">
+            <div class="info-label">{{ 'status' | translate }}</div>
+            <div class="info-value">
+              <span *ngIf="!data?.blocked" class="edit-icon">{{ 'active' | translate }}</span>
+              <span *ngIf="data?.blocked" class="delete-icon">{{ 'inactive' | translate }}</span>
+            </div>
+          </div>
+          <div class="info-column">
+            <div class="info-label">{{ 'verified' | translate }}</div>
+            <div class="info-value">
+              <span *ngIf="data?.isVerified" class="edit-icon">{{ 'yes' | translate }}</span>
+              <span *ngIf="!data?.isVerified" class="delete-icon">{{ 'no' | translate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-column" *ngIf="data?.phoneNumbers">
+            <div class="info-label">{{ 'phone' | translate }}</div>
+            <p class="info-value">{{ data?.phoneNumbers[0].code + data?.phoneNumbers[0].number | phoneFormat }}</p>
+          </div>
+          <div class="info-column" *ngIf="data?.isVerified && data?.email">
+            <div class="info-label">{{ 'email' | translate }}</div>
+            <p class="info-value">{{ data?.email }}</p>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-column">
+            <div class="info-label">{{ 'register_date' | translate }}</div>
+            <p class="info-value">{{ data?.createdAt | date : 'dd.MM.yyyy' }}</p>
+          </div>
+          <div class="info-column">
+            <div class="info-label">{{ 'last_enter' | translate }}</div>
+            <div class="info-value">
+              {{ data?.user?.lastLogin ? (data?.user?.lastLogin | date : 'dd.MM.yyyy') : 'no_data' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-column">
+            <div class="info-label">{{ 'drivers.status_subscription' | translate }}</div>
+            <p class="info-value">{{ data?.subscription ? 'active' : 'inactive' | translate }}</p>
+          </div>
+          <div class="info-column">
+            <div class="info-label">{{ 'drivers.total_balance' | translate }}</div>
+            <div class="info-value">
+              {{ data?.isOwnBalance ? 'on' : 'off' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-column">
+            <div class="info-label">{{ 'paid_way' | translate }}</div>
+            <p class="info-value">{{ data?.isKzPaidWay ? 'on' : 'off' | translate }}</p>
+          </div>
+          <div class="info-column">
+            <div class="info-label">{{ 'drivers.take_orders' | translate }}</div>
+            <div class="info-value">
+              {{ data?.isOwnOrder ? 'on' : 'off' | translate }}
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="data?.isVerified">
+          <p style="font-weight: 700; font-size: 15px; ">{{ 'passport' | translate }}</p>
+          <nz-space [nzSize]="12" class="photo">
+            <img *nzSpaceItem nz-image [nzSrc]="previewUrlPassport | fileFetch:'driver'| async" />
+          </nz-space>
+
+          <p style="font-weight: 700; font-size: 15px; ">{{ 'driver_license' | translate }}</p>
+          <nz-space [nzSize]="12" class="photo">
+            <img *nzSpaceItem nz-image [nzSrc]="previewUrlLicense | fileFetch:'driver'| async" />
+          </nz-space>
+        </div>
+
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="{{ 'transport' | translate }}" *ngIf="data?.driverTransports">
+      <div>
+        <nz-collapse>
+          <nz-collapse-panel *ngFor="let transport of data?.driverTransports" [nzHeader]="transport.brand">
+            <div class="order-info" style="margin: 0; padding: 0;border: none;">
+              <div class="info-row">
+                <div class="info-column" style="width: 100%;">
+                  <div class="info-label">{{ 'verified' | translate }}</div>
+                  <div class="info-value" [ngClass]="transport.verified ? 'edit-icon' : 'delete-icon'">
+                    {{(transport.verified ? 'yes' : 'no') | translate}} </div>
+                </div>
+
+              </div>
+
+              <div class="info-row">
+                <div class="info-column">
+                  <div class="info-label">{{ 'type_transport' | translate }}</div>
+                  <div class="info-value">
+                    <p>{{ transport.transportType.name }}</p>
+                  </div>
+                </div>
+
+                <div class="info-column">
+                  <div class="info-label">{{ 'transport_kind' | translate }}</div>
+                  <div class="info-value">
+                    <p>{{ transport.transportKind.name }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-column">
+                  <div class="info-label">{{ 'load_side' | translate }}</div>
+                  <div class="info-value" *ngFor="let item of transport.cargoLoadMethods">
+                    <p>{{ item.name }}</p>
+                  </div>
+                </div>
+
+                <!-- <div class="info-column">
+                  <div class="info-label">{{ 'transport_kind' | translate }}</div>
+                  <div class="info-value">
+                    <p>{{ transport.transportKind.name }}</p>
+                  </div>
+                </div> -->
+              </div>
+              <div class="info-row">
+                <div class="info-column">
+                  <div class="info-label">{{ 'state_number_truck' | translate }}</div>
+                  <div class="info-value">{{transport.transportNumber}}</div>
+                </div>
+
+                <div class="info-column">
+                  <div class="info-label">{{ 'state_number_trailer' | translate }}</div>
+                  <div class="info-value">{{transport.stateNumberTrailer ? transport.stateNumberTrailer : 'no_data' |
+                    translate}}</div>
+                </div>
+              </div>
+              <div class="info-row" *ngIf="transport.cisternVolume">
+                <div class="info-column">
+                  <div class="info-label">{{ 'volume_l' | translate }}</div>
+                  <div class="info-value">{{transport.cisternVolume}}</div>
+                </div>
+
+                <div class="info-column" *ngIf="transport.cubicCapacity">
+                  <div class="info-label">{{ 'volume_m' | translate }}</div>
+                  <div class="info-value">{{transport.cubicCapacity}}</div>
+                </div>
+              </div>
+              <div class="info-row" *ngIf="transport.containerVolume">
+                <div class="info-column">
+                  <div class="info-label">{{ 'volume_f' | translate }}</div>
+                  <div class="info-value">{{transport.containerVolume}}</div>
+                </div>
+
+                <div class="info-column" *ngIf="transport.refrigeratorCount">
+                  <div class="info-label">{{ 'refrigerator_info' | translate }}</div>
+                  <div class="info-value">{{transport.refrigeratorCount}} {{transport.refrigeratorFrom}} -
+                    {{transport.refrigeratorTo}}</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-column">
+                  <div class="info-label">{{ 'isAdr' | translate }}</div>
+                  <div class="info-value"> {{(transport.containerVolume ? 'yes' : 'no') | translate}}</div>
+                </div>
+
+                <div class="info-column">
+                  <div class="info-label">{{ 'hook' | translate }}</div>
+                  <div class="info-value">{{(transport.isHook ? 'yes' : 'no') | translate}}</div>
+                </div>
+
+              </div>
+              <div class="info-row">
+                <div class="info-column">
+                  <div class="info-label">{{ 'high_cube' | translate }}</div>
+                  <div class="info-value">{{(transport.isHighCube ? 'yes' : 'no') | translate}}</div>
+
+                </div>
+              </div>
+              <p *ngIf="transport.techPassportFrontFilePath"
+                style="font-weight: 700; font-size: 15px;margin-top: 10px; ">{{ 'tech_passport_front' | translate }}</p>
+              <nz-space [nzSize]="12" class="photo" *ngIf="transport.techPassportFrontFilePath">
+                <img *nzSpaceItem nz-image [nzSrc]="transport.techPassportFrontFilePath | fileFetch:'driver'| async" />
+              </nz-space>
+
+              <p *ngIf="transport.techPassportBackFilePath" style="font-weight: 700; font-size: 15px; ">{{
+                'tech_passport_back' | translate }}</p>
+              <nz-space [nzSize]="12" class="photo" *ngIf="transport.techPassportBackFilePath">
+                <img *nzSpaceItem nz-image [nzSrc]="transport.techPassportBackFilePath | fileFetch:'driver'| async" />
+              </nz-space>
+
+              <p *ngIf="transport.goodsTransportationLicenseCardFilePath" style="font-weight: 700; font-size: 15px; ">{{
+                'good_transportation_lisense' | translate }}</p>
+              <nz-space [nzSize]="12" class="photo" *ngIf="transport.goodsTransportationLicenseCardFilePath">
+                <img *nzSpaceItem nz-image
+                  [nzSrc]="transport.goodsTransportationLicenseCardFilePath | fileFetch:'driver'| async" />
+              </nz-space>
+            </div>
+
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+
+</div>
+
+<div *ngIf="loadingPage" class="loader-container">
+  <span nz-icon nzType="loading" nzTheme="outline" style="font-size: 25px;"></span>
+</div>

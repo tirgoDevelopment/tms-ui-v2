@@ -1,0 +1,21 @@
+<h2>{{'settings.title' | translate}}</h2>
+
+
+<form [formGroup]="form" style="width: 50%;">
+    <nz-input-group class="input-group">
+        <nz-form-label nzRequired>{{ 'settings.oldPassword' | translate }}</nz-form-label>
+        <input formControlName="password" type="text" nz-input placeholder="{{ 'settings.oldPassword' | translate }}" required />
+      </nz-input-group>
+      <nz-input-group class="input-group">
+        <nz-form-label nzRequired>{{ 'settings.newPassword' | translate }}</nz-form-label>
+        <input formControlName="newPassword" type="text" nz-input placeholder="{{ 'settings.newPassword' | translate }}" required />
+      </nz-input-group>
+      <nz-input-group class="input-group">
+        <nz-form-label nzRequired>{{ 'settings.confirmPassword' | translate }}</nz-form-label>
+        <input formControlName="confirmPassword" type="text" nz-input placeholder="{{ 'settings.confirmPassword' | translate }}" required />
+      </nz-input-group>
+      <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
+        [disabled]="form.invalid || loading">
+        {{ 'save' | translate }}
+      </button>
+</form>

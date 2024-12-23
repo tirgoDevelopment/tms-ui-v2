@@ -1,0 +1,139 @@
+<div class="container-page">
+  <div class="header-page">
+    <h2>{{ 'drivers.title' | translate }}</h2>
+    <div class="button-group">
+      <button nz-button class="secondary-button" (click)="toggleFilter()">
+        <span nz-icon nzType="filter" nzTheme="fill"></span>
+        {{ 'filter' | translate }}
+      </button>
+      <button nz-button class="success-button" (click)="topupBalance()">
+        {{ 'top_up_balance' | translate }}
+      </button>
+      <button nz-button class="success-button" (click)="handleDrawer('add')">
+        <span nz-icon nzType="plus" nzTheme="outline"></span>
+        {{ 'add' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="filter" [@showHideFilter]="isFilterVisible ? 'show' : 'hide'">
+  <div>
+    <nz-input-group class="input-group">
+      <input [(ngModel)]="filter['driverId'] " type="text" nz-input placeholder="ID" />
+    </nz-input-group>
+  </div>
+  <div>
+    <nz-input-group class="input-group">
+      <input [(ngModel)]="filter['transportNumber'] " type="text" nz-input placeholder="{{'transport_number' | translate}}" />
+    </nz-input-group>
+  </div>
+
+  <div>
+    <nz-input-group class="input-group w-full">
+      <nz-select [(ngModel)]="filter['subscriptionStatus']" style="width: 100%;" nzAllowClear="true" nzPlaceHolder="{{ 'drivers.status_subscription' | translate }}"
+          [nzShowArrow]="false">
+          <nz-option nzValue="active" nzLabel="{{'active' | translate}}"></nz-option>
+          <nz-option nzValue="inactive" nzLabel="{{'inactive' | translate}}"></nz-option>
+      </nz-select>
+  </nz-input-group>
+  </div>
+  <div>
+    <nz-input-group class="input-group w-full">
+      <nz-select [(ngModel)]="filter['isOwnOrder']" style="width: 100%;" nzAllowClear="true" nzPlaceHolder="{{ 'drivers.take_orders' | translate }}"
+          [nzShowArrow]="false">
+          <nz-option [nzValue]="1" nzLabel="{{'on' | translate}}"></nz-option>
+          <nz-option [nzValue]="0" nzLabel="{{'off' | translate}}"></nz-option>
+      </nz-select>
+  </nz-input-group>
+  </div>
+  <div>
+    <nz-input-group class="input-group w-full">
+      <nz-select [(ngModel)]="filter['isOwnBalance']" style="width: 100%;" nzAllowClear="true" nzPlaceHolder="{{ 'drivers.total_balance' | translate }}"
+          [nzShowArrow]="false">
+          <nz-option [nzValue]="1" nzLabel="{{'on' | translate}}"></nz-option>
+          <nz-option [nzValue]="0" nzLabel="{{'off' | translate}}"></nz-option>
+      </nz-select>
+  </nz-input-group>
+  </div>
+  <button nz-button nzType="primary" class="search-button" (click)="getAll()">
+    <span nz-icon nzType="search" nzTheme="outline"></span>
+  </button>
+  <button nz-button class="reset-button" (click)="resetFilter()">
+    <span nz-icon nzType="reload" nzTheme="outline"></span>
+  </button>
+</div>
+
+
+<nz-table #sortTable [nzShowSizeChanger]="true" [nzShowPagination]="false" [nzData]="data" [nzFrontPagination]="false"
+[nzPageSize]="pageParams.pageSize" [nzTotal]="pageParams.totalPagesCount" [nzShowSizeChanger]="true" [nzShowPagination]="true"
+  [nzLoading]="loader" [nzNoResult]="empty" (nzQueryParams)="onQueryParamsChange($event)">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th nzColumnKey="id" [nzSortFn]="true">{{'drivers.id' | translate}}</th>
+      <th>{{ 'full_name' | translate }}</th>
+      <th>{{ 'transport_number' | translate }}</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let item of data; let i = index" (click)="handleDrawer('view',item.id)">
+      <td> {{ i+1 }} </td>
+      <td> {{ item.id }} </td>
+      <td> {{ item.firstName }} {{ item.lastName }} </td>
+      <td>
+        <div *ngFor="let transport of item.driverTransports">{{transport.transportNumber}}</div>
+      </td>
+      <td class="action-col" (click)="$event.stopPropagation()">
+        <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+          <i nz-icon nzType="ellipsis" nzTheme="outline" style="cursor: pointer;"></i>
+        </a>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item (click)="handleDrawer('view',item.id)">
+              <div class="dropdown-menu">
+                <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+                <span>{{ 'detail' | translate }}</span>
+              </div>
+            </li>
+
+            <li nz-menu-item (click)="handleDrawer('edit', item.id)">
+              <div class="dropdown-menu">
+                <span nz-icon nzType="edit" nzTheme="outline" class="edit-icon"></span>
+                <span>{{ 'edit' | translate }}</span>
+              </div>
+            </li>
+
+            <li nz-menu-item (click)="remove(item.id)">
+              <div class="dropdown-menu">
+                <span nz-icon nzType="delete" nzTheme="outline" class="delete-icon"></span>
+                <span>{{ 'remove' | translate }}</span>
+              </div>
+            </li>
+
+            <li nz-menu-item (click)="addTransport(item)">
+              <div class="dropdown-menu">
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
+                <span>{{ 'add_transport' | translate }}</span>
+              </div>
+            </li>
+
+          </ul>
+        </nz-dropdown-menu>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<ng-template #empty>
+  <nz-empty #empty nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+    [nzNotFoundContent]="contentTpl">
+    <ng-template #contentTpl>
+      <span>
+        {{ 'no_data' | translate }}
+      </span>
+    </ng-template>
+  </nz-empty>
+</ng-template>
