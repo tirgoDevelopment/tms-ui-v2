@@ -24,9 +24,20 @@ export class ServiceLogComponent implements OnInit{
     this.serviceId = this.route.snapshot.params['id'];
   }
   ngOnInit(): void {
+    
     this.getService();
   }
-
+  cancelService() {
+    this.loading = true;
+    this.serviceService.patchServiceStatus({id:this.serviceId,status:'cancel'}).subscribe((res:any) => {
+      if(res && res.success) {
+        this.getService();
+        this.loading = false;
+      }
+    },err => {
+      this.loading = false;
+    });
+  }
   getService() {
     this.loading = true;
     this.serviceService.getServiceRequestById(this.serviceId).subscribe((res:any) => {

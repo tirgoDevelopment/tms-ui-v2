@@ -132,7 +132,6 @@ export class ServicesComponent implements OnInit, OnDestroy {
       default:
         return;
     }
-    console.log('status', status);
     if (status) {
       service.status = status;
       this.cdr.detectChanges();
