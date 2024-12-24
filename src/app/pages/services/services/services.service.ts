@@ -66,6 +66,9 @@ export class ServicesService {
   deleteServiceStatus(id: any) {
     return this.http.delete(`${this.baseStatusUrl}?id=${id}`);
   }
+  getServiceRequestById(id: number | string) {
+    return this.http.get(`${this.baseUrl}/${id}`);
+  }
 
   // SERVICE CHAT
   getChatMessages(id: any, params) {

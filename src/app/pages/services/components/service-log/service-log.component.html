@@ -1,0 +1,40 @@
+<div class="header-page">
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/services">{{ 'services.title' | translate }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>{{ 'services.log' | translate }}</nz-breadcrumb-item>
+    </nz-breadcrumb>
+</div>
+
+<nz-table #sortTable [nzData]="data?.statusesHistory" [nzLoading]="loading" [nzShowPagination]="false">
+    <thead>
+        <tr>
+            <th>{{ "date" | translate }}</th>
+            <th>{{ "status" | translate }}</th>
+            <th>{{'services.operator' | translate}}</th>
+            <th>{{ "driver" | translate }}</th>
+            <th>{{ "merchant_driver" | translate }}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <ng-container *ngIf="data">
+            <tr *ngFor="let item of data?.statusesHistory; let i = index">
+                <td>{{ item.createdAt | date : "dd.MM.yyyy HH:mm" }}</td>
+                <td>
+                    <span class="status" [ngStyle]="{
+                        color: item.status.color,
+                        borderColor: item.status.color
+                      }">
+                        {{ item.status.name.toLowerCase() | translate }}
+                    </span>
+                </td>
+                <td>{{item.createdBy.staff.fullName}} </td>
+                <td>{{ data.driver.id }} {{data.driver.firstName}} {{data.driver.lastName.slice(0,1)}}.</td>
+                <td>{{data.driver?.driverMerchant ? data.driver?.driverMerchant?.companyName : ('no_data' | translate)}}</td>
+            </tr>
+        </ng-container>
+
+    </tbody>
+</nz-table>

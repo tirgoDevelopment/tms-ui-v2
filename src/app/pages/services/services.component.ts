@@ -22,6 +22,7 @@ import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
 import { SocketService } from 'src/app/shared/services/socket.service';
 import { NzPopconfirmDirective } from 'ng-zorro-antd/popconfirm';
 import { jwtDecode } from 'jwt-decode';
+import { Router } from '@angular/router';
 export enum ServicesRequestsStatusesCodes {
   Waiting = 0,
   Priced = 1,
@@ -92,8 +93,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private toastr: NotificationService,
     private socketService: SocketService,
-    private cdr: ChangeDetectorRef
-
+    private cdr: ChangeDetectorRef,
+    private router: Router,
   ) { }
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
@@ -105,11 +106,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
     this.getBalance();
   }
   handleSocketEvent(event: any): void {
-    console.log('event', event);
-
     const service = this.data.find(i => i.id == event.data.requestId);
-    console.log('service', service);
-
     if (!service) return;
 
     let status;
@@ -140,6 +137,9 @@ export class ServicesComponent implements OnInit, OnDestroy {
       service.status = status;
       this.cdr.detectChanges();
     }
+  }
+  showLog(id: string | number) {
+    this.router.navigate(['/services', id, 'log']);
   }
   getBalance() {
     this.servicesService.tmsBalance(this.currentUser.merchantId).subscribe((res: any) => {
@@ -260,8 +260,6 @@ export class ServicesComponent implements OnInit, OnDestroy {
       0
     );
   }
-
-
   getServicePriceMessage(serviceName: string, totalPrice: number): string {
     return this.translate.instant('services.servicePriceMessage', {
       serviceName,

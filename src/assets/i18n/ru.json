@@ -203,6 +203,8 @@
     "amount": "Сумма",
     "tirBalance": "Tirgo баланс",
     "serviceBalance": "Сервис баланс",
+    "merchant_driver": "Транспортный компания",
+    "date": "Дата",
     "sidebar": {
         "orders": "Заказы",
         "drivers": "Перевозчики",
@@ -241,7 +243,9 @@
         "free": "Бесплатно",
         "individual": "Индивидуальная",
         "servicePriceMessage": "Общая стоимость {{serviceName}}: {{totalPrice}}",
-        "cancelService": "Отменить услугу"
+        "cancelService": "Отменить услугу",
+        "log": "Журнал услуга",
+        "operator": "Оператор"
     },
     "chat": {
         "title": "Чаты",
