@@ -7,6 +7,17 @@
     </nz-breadcrumb>
 </div>
 
+<div class="header-page mt-2">
+    <h2>{{ "services.log" | translate }}</h2>
+    <div class="button-group" *ngIf="data?.status.name.toLowerCase() == 'waiting'" nz-popconfirm
+        nzPopconfirmTitle="{{'are_you_sure' | translate}}" (nzOnConfirm)="cancelService()">
+        <button nz-button class="danger-button">
+            <span nz-icon nzType="rollback"></span>
+            {{ "services.cancelService" | translate }}
+        </button>
+    </div>
+</div>
+
 <nz-table #sortTable [nzData]="data?.statusesHistory" [nzLoading]="loading" [nzShowPagination]="false">
     <thead>
         <tr>
@@ -30,9 +41,12 @@
                         {{ item.status.name.toLowerCase() | translate }}
                     </span>
                 </td>
-                <td>{{item.createdBy.staff.fullName}} </td>
-                <td>{{ data.driver.id }} {{data.driver.firstName}} {{data.driver.lastName.slice(0,1)}}.</td>
-                <td>{{data.driver?.driverMerchant ? data.driver?.driverMerchant?.companyName : ('no_data' | translate)}}</td>
+                <td> 
+                   <div *ngIf="item?.createdBy?.staff"> {{item?.createdBy?.staff?.fullName}}</div>
+                 </td>
+                <td>{{ data?.driver?.id }} {{data?.driver?.firstName}} {{data?.driver?.lastName?.slice(0,1)}}.</td>
+                <td>{{data?.driver?.driverMerchant ? data?.driver?.driverMerchant?.companyName : ('no_data' | translate)}}
+                </td>
             </tr>
         </ng-container>
 
