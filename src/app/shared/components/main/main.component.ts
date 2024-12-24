@@ -81,7 +81,9 @@ export class MainComponent {
   getChats() {
     this.serviceApi.getDriverServices().subscribe({
       next: (res: any) => {
-        this.newMessageCount = res.data.content.reduce((total, item) => total + (item.unreadMessagesCount || 0), 0);
+        if (res && res.data) {
+          this.newMessageCount = res.data.content.reduce((total, item) => total + (item.unreadMessagesCount || 0), 0);
+        }
       },
       error: (error) => {
       },

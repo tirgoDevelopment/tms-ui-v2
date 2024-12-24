@@ -101,7 +101,7 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of data; let i = index">
+            <tr *ngFor="let item of data; let i = index" (click)="showLog(item.id)">
                 <td>{{ i + 1 }}</td>
                 <td>{{ item.id }}</td>
                 <td class="ellipsis">

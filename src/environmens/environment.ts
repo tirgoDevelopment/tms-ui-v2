@@ -1,10 +1,10 @@
 export const env = {
   production: false,
-  apiUrl: 'https://admin.tirgo.io/test-api/v2',
-  adminUrl: 'https://admin.tirgo.io/test-api/v2',
-  references: 'https://admin.tirgo.io/test-api/v2',
-  merchantUrl: 'https://admin.tirgo.io/test-api/v2',
-  orderApiUrl: 'https://admin.tirgo.io/test-api/v2',
+  apiUrl: 'https://test-api.tirgo.io/api/v2',
+  adminUrl: 'https://test-api.tirgo.io/api/v2',
+  references: 'https://test-api.tirgo.io/api/v2',
+  merchantUrl: 'https://test-api.tirgo.io/api/v2',
+  orderApiUrl: 'https://test-api.tirgo.io/api/v2',
 };
 // export const env = {
 //   production: false,

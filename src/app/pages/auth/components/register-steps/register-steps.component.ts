@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NzModules } from 'src/app/shared/modules/nz-modules.module';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxMaskDirective } from 'ngx-mask';
 import { NotificationService } from 'src/app/shared/services/notification.service';
@@ -43,7 +43,8 @@ export class RegisterStepsComponent implements OnInit {
     private authService: AuthService,
     private formBuilder: FormBuilder,
     private toastr: NotificationService,
-    private currenciesApi: CurrenciesService
+    private currenciesApi: CurrenciesService,
+    private router: Router
   ) {
     this.route.queryParams.subscribe((params: any) => {
       this.phone = params.phone;
@@ -335,5 +336,7 @@ export class RegisterStepsComponent implements OnInit {
   }
   redirectToAuth() {
     this.authService.logout()
+    this.router.navigate(['/auth/sign-in']);
   }
 }
+
