@@ -23,6 +23,7 @@ import { SocketService } from '../../services/socket.service';
 import { PipeModule } from '../../pipes/pipes.module';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NotificationService } from '../../services/notification.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-chat',
@@ -48,6 +49,7 @@ export class ChatComponent implements OnInit {
   @ViewChild('messageInput') private messageInput!: ElementRef;
   @Output() closeChatEvent = new EventEmitter<void>();
   @Output() newMessageCountChange = new EventEmitter<number>();
+  @Input() outputServiceId: string;
 
   chatIconPosition = {
     x: window.innerWidth - 400,
@@ -57,6 +59,7 @@ export class ChatComponent implements OnInit {
   private dragOffset = { x: 0, y: 0 };
   private dragSpeedFactor = 1;
   messages: any[] = [];
+  currentUser;
   groupedMessages: { [key: string]: any[] } = {};
   chats: any[] = [];
   filteredChats: any[] = [];
@@ -78,6 +81,7 @@ export class ChatComponent implements OnInit {
   serviceId: string = '';
   loadingFile: boolean = false;
   totalPagesCount
+  amountServiceTir = 0;
   private pageParams = {
     pageIndex: 1,
     pageSize: 10,
@@ -102,6 +106,15 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms'));
+    console.log(this.currentUser);
+    
+    if (this.outputServiceId) {
+      this.loading = true;
+      this.serviceApi.getServiceRequestById(this.outputServiceId).subscribe((res: any) => {
+        this.selectChat(res.data.data)
+      })
+    }
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((searchTerm) => {
@@ -112,14 +125,13 @@ export class ChatComponent implements OnInit {
     this.sseSubscription = this.socketService.getSSEEvents().subscribe((event) => {
       if (event.event === 'newMessage') {
         let chat = this.chats.find(i => i.id == event.data.requestId);
-        chat.unreadMessagesCount =  chat.unreadMessagesCount + 1;
-        if (this.selectedChat &&  (event.data.requestId == this.selectedChat.id)) {
+        chat.unreadMessagesCount = chat.unreadMessagesCount + 1;
+        if (this.selectedChat && (event.data.requestId == this.selectedChat.id) && (this.currentUser.userId != event.data.userId)) {
           this.messages.push(event.data.message);
         }
       }
-    
     });
-    
+
   }
   ngOnDestroy() {
     if (this.sseSubscription) {
@@ -149,7 +161,7 @@ export class ChatComponent implements OnInit {
     this.serviceApi.getChatMessages(this.selectedChat.id, generateQueryFilter(this.messagesParams)).subscribe({
       next: (res: any) => {
         if (res?.data?.content) {
-          this.messages = res.data.content.sort((a, b) =>a.id - b.id);
+          this.messages = res.data.content.sort((a, b) => a.id - b.id);
           this.totalPagesCount = res.data.totalPagesCount
           this.groupMessagesByDate();
 
@@ -158,7 +170,6 @@ export class ChatComponent implements OnInit {
         } else {
           this.messages = [];
           this.showChatList = false;
-          // this.selectedChat = null;
         }
       },
       error: (error) => {
@@ -172,17 +183,20 @@ export class ChatComponent implements OnInit {
   }
   selectChat(chat: any) {
     this.selectedChat = chat;
-    if (this.selectedChat) {
+    if (this.selectedChat && this.selectedChat.amountDetails) {
+      this.amountServiceTir = this.selectedChat.amountDetails.reduce((sum, detail) => {
+        return sum + Number(detail.amount);
+      }, 0);
       this.patchUnreadCount();
       this.getChatMessages();
     }
   }
   patchUnreadCount() {
-    this.serviceApi.patchServiceCount(this.selectedChat.id).subscribe((res:any) =>{
-        if(res) {
-          this.newMessageCountChange.emit(-this.selectedChat.unreadMessagesCount);
-          this.selectedChat.unreadMessagesCount = 0;
-        }
+    this.serviceApi.patchServiceCount(this.selectedChat.id).subscribe((res: any) => {
+      if (res) {
+        this.newMessageCountChange.emit(-this.selectedChat.unreadMessagesCount);
+        this.selectedChat.unreadMessagesCount = 0;
+      }
     })
   }
   backToList() {
@@ -207,7 +221,8 @@ export class ChatComponent implements OnInit {
       }
       this.serviceApi.postChatMessages(this.selectedChat.id, message).subscribe({
         next: (res: any) => {
-          // this.messages.push(message);
+          this.messages.push(message);
+          this.scrollToBottom();
           // this.getChatMessages();
         },
         error: (error) => {
@@ -352,7 +367,7 @@ export class ChatComponent implements OnInit {
     };
     reader.readAsDataURL(file);
   }
- 
+
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
@@ -497,7 +512,7 @@ export class ChatComponent implements OnInit {
     this.serviceApi.getDriverServices(query).subscribe({
       next: (res: any) => {
         if (res?.data?.content?.length) {
-          this.chats = [ ...res.data.content.sort((a, b) => a.id - b.id),...this.chats];
+          this.chats = [...res.data.content.sort((a, b) => a.id - b.id), ...this.chats];
           this.pageParams.totalPagesCount = parseInt(res.data.totalPagesCount) || 1;
         }
       },
@@ -569,21 +584,21 @@ export class ChatComponent implements OnInit {
       nzTitle: this.translate.instant('are_you_sure'),
       nzOkText: this.translate.instant('confirm'),
       nzCancelText: this.translate.instant('cancel'),
-      nzOnOk: () => { 
-        this.serviceApi.patchServiceStatus({id:this.selectedChat.id, status:'cancel'}).subscribe((res: any) => {
+      nzOnOk: () => {
+        this.serviceApi.patchServiceStatus({ id: this.selectedChat.id, status: 'cancel' }).subscribe((res: any) => {
           if (res && res.success) {
             this.selectedChat.status.code = 6;
-            this.toastr.success(this.translate.instant('successfullyCanceled'),'');
+            this.toastr.success(this.translate.instant('successfullyCanceled'), '');
           }
         });
       }
     });
   }
   onConfirmService() {
-    this.serviceApi.patchServiceStatus({id:this.selectedChat.id, status:'confirm-price'}).subscribe((res: any) => {
+    this.serviceApi.patchServiceStatus({ id: this.selectedChat.id, status: 'confirm-price' }).subscribe((res: any) => {
       if (res && res.success) {
         this.selectedChat.status.code = 2;
-        this.toastr.success(this.translate.instant('successfullUpdated'),'');
+        this.toastr.success(this.translate.instant('successfullUpdated'), '');
       }
     });
   }

@@ -3,18 +3,12 @@
         <nz-breadcrumb-item>
             <a routerLink="/services">{{ 'services.title' | translate }}</a>
         </nz-breadcrumb-item>
-        <nz-breadcrumb-item>{{ 'services.log' | translate }}</nz-breadcrumb-item>
+        <nz-breadcrumb-item>{{ 'services.log' | translate }} </nz-breadcrumb-item>
     </nz-breadcrumb>
-</div>
 
-<div class="header-page mt-2">
-    <h2>{{ "services.log" | translate }}</h2>
-    <div class="button-group" *ngIf="data?.status.name.toLowerCase() == 'waiting'" nz-popconfirm
-        nzPopconfirmTitle="{{'are_you_sure' | translate}}" (nzOnConfirm)="cancelService()">
-        <button nz-button class="danger-button">
-            <span nz-icon nzType="rollback"></span>
-            {{ "services.cancelService" | translate }}
-        </button>
+    <div class="info">
+        <div> <b> {{ "services.serviceId" | translate }}:</b>  {{serviceId}}</div>
+        <div> <b>{{ "driver" | translate }}:</b>  {{data?.driver.firstName}} {{data?.driver.lastName.slice(0,1)}}. ({{ data?.driver.id }}) </div>
     </div>
 </div>
 
@@ -24,8 +18,6 @@
             <th>{{ "date" | translate }}</th>
             <th>{{ "status" | translate }}</th>
             <th>{{'services.operator' | translate}}</th>
-            <th>{{ "driver" | translate }}</th>
-            <th>{{ "merchant_driver" | translate }}</th>
         </tr>
     </thead>
 
@@ -41,12 +33,10 @@
                         {{ item.status.name.toLowerCase() | translate }}
                     </span>
                 </td>
-                <td> 
-                   <div *ngIf="item?.createdBy?.staff"> {{item?.createdBy?.staff?.fullName}}</div>
-                 </td>
-                <td>{{ data?.driver?.id }} {{data?.driver?.firstName}} {{data?.driver?.lastName?.slice(0,1)}}.</td>
-                <td>{{data?.driver?.driverMerchant ? data?.driver?.driverMerchant?.companyName : ('no_data' | translate)}}
-                </td>
+                <td>
+                    <div *ngIf="item.createdBy.staff">{{item?.createdBy?.staff?.fullName}}</div>
+                    <div *ngIf="!item.createdBy.staff">{{ item.createdBy.userType == 'driver' ? ('driver' | translate) : ('driver_merchant' | translate)}}</div>
+                     </td>
             </tr>
         </ng-container>
 

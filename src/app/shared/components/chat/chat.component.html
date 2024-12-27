@@ -81,8 +81,8 @@
             <!-- Individual Message -->
             <div [id]="message.id" [ngClass]="{
                   'message': true,
-                  'sent': message.senderUserType === 'staff',
-                  'received': message.senderUserType === 'driver' || message.senderUserType === 'driver_merchant_user',
+                  'sent': message.senderUserType === 'driver' || message.senderUserType === 'driver_merchant_user',
+                  'received': message.senderUserType === 'staff',
                   'selected': selectedMessages.has(message.id),
                   'highlighted': highlightedMessageId === message.id
                 }">
@@ -156,7 +156,7 @@
       </div>
       <!--Service Request Approve or Cancel Button -->
       <div style="text-align: center; margin: 15px 0;"  *ngIf="selectedChat && selectedChat.status.code == 1">
-        Ваша заявка была оценена на сумму  <b>44 TIR</b>
+        Ваша заявка была оценена на сумму  <b>{{amountServiceTir}} TIR</b>
       </div>
       <div class="approve-cancel-buttons" *ngIf="selectedChat && selectedChat.status.code == 1">
         <button nz-button class="danger-button" nzSize="small" (click)="onCancelService()">{{ 'services.cancelService' | translate }}</button>

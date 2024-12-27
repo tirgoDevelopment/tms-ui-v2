@@ -67,7 +67,7 @@
             <div class="card-title">{{ 'tirBalance' | translate }}</div>
             <div class="card-content">
               <span class="amount">{{tirBalance | priceFormat}}</span>
-              <span class="currency">Tir</span> 
+              <span class="currency">TIR</span> 
             </div>
           </div>
         </nz-card>
@@ -76,7 +76,7 @@
             <div class="card-title">{{ 'serviceBalance' | translate }}</div>
             <div class="card-content">
               <span class="amount">{{serviceBalance | priceFormat}}</span>
-              <span class="currency">Tir</span>
+              <span class="currency">TIR</span>
             </div>
           </div>
         </nz-card>
@@ -101,7 +101,7 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of data; let i = index" (click)="showLog(item.id)">
+            <tr *ngFor="let item of data; let i = index" (click)="showChatForService(item.id)">
                 <td>{{ i + 1 }}</td>
                 <td>{{ item.id }}</td>
                 <td class="ellipsis">
@@ -182,3 +182,10 @@
 <ng-template #empty>
     <nz-empty></nz-empty>
 </ng-template>
+
+
+<app-chat 
+  *ngIf="showChat" 
+  [outputServiceId]="selectedServiceId"
+  (closeChatEvent)="onChatClose()">
+</app-chat>
