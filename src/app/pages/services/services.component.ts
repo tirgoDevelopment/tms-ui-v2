@@ -23,6 +23,7 @@ import { SocketService } from 'src/app/shared/services/socket.service';
 import { NzPopconfirmDirective } from 'ng-zorro-antd/popconfirm';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { ChatComponent } from 'src/app/shared/components/chat/chat.component';
 export enum ServicesRequestsStatusesCodes {
   Waiting = 0,
   Priced = 1,
@@ -57,6 +58,7 @@ export enum SseEventNames {
     TranslateModule,
     IconsProviderModule,
     PipeModule,
+    ChatComponent
   ],
   providers: [NzModalService],
   animations: [
@@ -68,6 +70,11 @@ export enum SseEventNames {
   ],
 })
 export class ServicesComponent implements OnInit, OnDestroy {
+
+  showChat: boolean = false;
+  selectedServiceId: string | null = null;
+
+
   currentUser:any;
   tirBalance:number = 0;
   serviceBalance:number = 0;
@@ -196,6 +203,15 @@ export class ServicesComponent implements OnInit, OnDestroy {
     //   nzPlacement: 'right',
     //   nzContentParams: { item },
     // });
+  }
+  showChatForService(id) {
+    this.selectedServiceId = id;
+    this.showChat = true;
+    
+  }
+  onChatClose() {
+    this.showChat = false;
+    this.selectedServiceId = null;
   }
   addService() {
     const drawerRef: any = this.drawer.create({

@@ -46,7 +46,7 @@
         </nz-dropdown-menu>
 
         <label nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
-        <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
+        <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'1' |
           translate}}</label>
         <label nz-checkbox formControlName="isOwnBalance" class="m-0" style="margin: 0 !important;">{{'total_balance' |
           translate}}</label>
@@ -274,14 +274,14 @@
           <div class="info-column">
             <div class="info-label">{{ 'serviceBalance' | translate }}</div>
             <div class="info-value">
-              {{data?.serviceBalance | priceFormat}} Tir
+              {{data?.serviceBalance | priceFormat}} TIR
               
             </div>
           </div>
           <div class="info-column">
             <div class="info-label">{{ 'tirBalance' | translate }}</div>
             <div class="info-value">
-              {{data?.tirgoBalance | priceFormat}} Tir
+              {{data?.tirgoBalance | priceFormat}} TIR
             </div>
           </div>
         </div>

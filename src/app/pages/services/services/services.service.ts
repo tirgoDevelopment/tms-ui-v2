@@ -51,8 +51,9 @@ export class ServicesService {
   patchServiceStatus(data) {
     return this.http.patch(`${this.baseUrl}/${data.id}/${data.status}`, data)
   }
-
-
+  getServiceRequestById(id: number | string) {
+    return this.http.get(`${this.baseUrl}/${id}`);
+  }
   // Service Status
   getServiceStatus() {
     return this.http.get(`${this.baseStatusUrl}`);
@@ -66,9 +67,7 @@ export class ServicesService {
   deleteServiceStatus(id: any) {
     return this.http.delete(`${this.baseStatusUrl}?id=${id}`);
   }
-  getServiceRequestById(id: number | string) {
-    return this.http.get(`${this.baseUrl}/${id}`);
-  }
+ 
 
   // SERVICE CHAT
   getChatMessages(id: any, params) {

@@ -132,10 +132,6 @@
             </div>
           </nz-badge>
         </div>
-            <!-- <div (click)="toggleChat()" class="chat-icon">
-              <i nz-icon nzType="wechat" nzTheme="outline" style="color: #fff;"></i>
-            </div> -->
-
         <app-chat *ngIf="isChatVisible" (newMessageCountChange)="updateNewMessageCount($event)" (closeChatEvent)="closeChat()"></app-chat>
       </div>
     </nz-content>
