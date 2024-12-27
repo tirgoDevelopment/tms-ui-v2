@@ -1,0 +1,84 @@
+<div class="detail" *ngIf="item && !loadingPage">
+  <div class="detail-row">
+    <div class="detail-item">
+      <div class="detail-label">{{ "ID" | translate }}</div>
+      <div class="detail-value"> {{ item.id}} / {{ item.services[0].code}}
+      </div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">{{ "status" | translate }}</div>
+      <div class="detail-value">
+        <span class="status" [ngStyle]="{
+        color: item.status.color,
+        borderColor: item.status.color
+      }">{{item.status.name.toLowerCase() | translate }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="detail-row" *ngIf="item.amountDetails && item.amountDetails.length == 0">
+    <div class="detail-item">
+      <div class="detail-label">{{ "named" | translate }}</div>
+      <div class="detail-value">
+        <div *ngFor="let service of item.services">{{ service.name }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="detail-row">
+    <div class="detail-item">
+      <div class="detail-label">{{ "driver" | translate }}</div>
+      <div class="detail-value">#{{ item.driver.id }} {{ item.driver.firstName }} {{ item.driver.lastName }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">{{ "state_number_truck" | translate }}</div>
+      <div class="detail-value">
+        <ng-container *ngIf="item.driver.driverTransports?.length; else noTransports">
+          <div *ngFor="let truck of item.driver.driverTransports">
+            {{ truck.transportNumber }}
+          </div>
+        </ng-container>
+        <ng-template #noTransports>
+          {{ "no_data" | translate }}
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <div class="detail-row" *ngIf="item.amountDetails && item.amountDetails.length !== 0">
+    <div class="detail-item">
+      <div class="detail-label">{{ "named" | translate }}</div>
+      <div class="detail-value">
+        <div *ngFor="let service of item.amountDetails; let i = index">{{i+1 +')'}}{{ service.driverService.name }}</div>
+      </div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">{{ "price" | translate }}</div>
+      <div class="detail-value" *ngFor="let service of item.amountDetails; let i = index">{{i+1 +')'}} {{ service.amount }} TIR</div>
+    </div>
+  </div>
+  <div class="detail-row">
+    <div class="detail-item">
+      <div class="detail-label">{{ "date_creation" | translate }}</div>
+      <div class="detail-value">{{item.createdAt | date : "dd.MM.yyyy"}}</div>
+    </div>
+  </div>
+  <div class="detail-row" *ngIf="item.statusesHistory && item.statusesHistory.length !== 0">
+    <div class="detail-item">
+      <div class="detail-label">{{ "services.processingTime" | translate }}</div>
+      <div class="detail-value">{{ item.statusesHistory | createdAt : 3 | date : "dd.MM.yyyy HH:mm" }}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">{{ "services.processingTimeEnd" | translate }}</div>
+      <div class="detail-value">{{item.statusesHistory | createdAt : 5 | date : "dd.MM.yyyy HH:mm"}}</div>
+    </div>
+  </div>
+
+  <div class="button-wrapper" *ngIf="item.status.code == 0">
+    <button [nzLoading]="loading" nz-button class="danger-button" [disabled]="loading">
+      {{ 'services.cancelService' | translate }}
+    </button>
+  </div>
+</div>
+
+
+<div *ngIf="loadingPage" class="loader-container" >
+  <span nz-icon nzType="loading" nzTheme="outline" style="font-size: 25px"></span>
+</div>

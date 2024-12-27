@@ -7,12 +7,13 @@ import { PriceFormatPipe } from './priceFormat.pipe';
 import { LabelPipe } from './label.pipe';
 import { UppercaseValidationDirective } from './uppercase.directive';
 import { FileFormatPipe } from './fileType.pipe';
+import { CreatedAtPipe } from './createdAt.pipe';
 
 @NgModule({
-  declarations: [PhoneFormatPipe,FileFetchPipe, DateFormatPipe, PriceFormatPipe, LabelPipe,UppercaseValidationDirective,FileFormatPipe],
+  declarations: [PhoneFormatPipe,FileFetchPipe, DateFormatPipe, PriceFormatPipe, LabelPipe,UppercaseValidationDirective,FileFormatPipe,CreatedAtPipe],
   imports: [
     CommonModule
   ],
-  exports: [PhoneFormatPipe,FileFetchPipe,DateFormatPipe, PriceFormatPipe, LabelPipe, UppercaseValidationDirective,FileFormatPipe],
+  exports: [PhoneFormatPipe,FileFetchPipe,DateFormatPipe, PriceFormatPipe, LabelPipe, UppercaseValidationDirective,FileFormatPipe,CreatedAtPipe],
 })
 export class PipeModule { }
