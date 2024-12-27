@@ -34,6 +34,7 @@
     "transportKindNotfound": "Транспортный вид не найден",
     "cargoLoadingMethodNotFound": "Метод погрузки груза не найден",
     "cargoPackageNotFound": "Грузовой пакет не найден",
+    "duplicateError": "Этот номер телефона уже существует",
     "driverNotFound": "Драйвер не найден",
     "userTypeRequired": "Требуется тип пользователя",
     "invalidUserType": "Неверный тип пользователя",
@@ -206,6 +207,7 @@
     "merchant_driver": "Транспортный компания",
     "date": "Дата",
     "errorOccurred": "Произошла ошибка",
+    "price": "Цена",
     "sidebar": {
         "orders": "Заказы",
         "drivers": "Перевозчики",
@@ -246,7 +248,8 @@
         "servicePriceMessage": "Общая стоимость {{serviceName}}: {{totalPrice}}",
         "cancelService": "Отменить услугу",
         "log": "Журнал услуга",
-        "operator": "Оператор"
+        "operator": "Оператор",
+        "processingTimeEnd": "Время завершения обработки"
     },
     "chat": {
         "title": "Чаты",

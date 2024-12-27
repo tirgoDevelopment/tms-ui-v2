@@ -1,0 +1,24 @@
+.detail {
+    .detail-row {
+        display: flex;
+        margin-bottom: 10px;
+        .detail-item {
+            flex: 1;
+            border-radius: 8px;
+
+            .detail-label {
+                font-weight: 700;
+                font-size: 15px;
+                font-weight: 400;
+                margin-bottom: 3px;
+                color: #797979;
+            }
+            
+            .detail-value {
+                font-weight: 600;
+                font-size: 14px;
+                color: #000;
+            }
+        }
+    }
+}

@@ -24,6 +24,7 @@ import { NzPopconfirmDirective } from 'ng-zorro-antd/popconfirm';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
 import { ChatComponent } from 'src/app/shared/components/chat/chat.component';
+import { DetailComponent } from './components/detail/detail.component';
 export enum ServicesRequestsStatusesCodes {
   Waiting = 0,
   Priced = 1,
@@ -197,12 +198,12 @@ export class ServicesComponent implements OnInit, OnDestroy {
     return throwError(new Error('Error fetching orders'));
   }
   showDetails(item: any) {
-    // const drawerRef: any = this.drawer.create({
-    //   nzTitle: this.translate.instant('information'),
-    //   nzContent: DetailComponent,
-    //   nzPlacement: 'right',
-    //   nzContentParams: { item },
-    // });
+    const drawerRef: any = this.drawer.create({
+      nzTitle: this.translate.instant('information'),
+      nzContent: DetailComponent,
+      nzPlacement: 'right',
+      nzContentParams: { item },
+    });
   }
   showChatForService(id) {
     this.selectedServiceId = id;
