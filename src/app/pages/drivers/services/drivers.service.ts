@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { env } from 'src/environmens/environment';
 import { Response } from 'src/app/shared/models/reponse';
 import { DriverModel } from '../models/driver.model';
+import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
 
 @Injectable({
   providedIn: 'root'
@@ -56,5 +57,11 @@ export class DriversService {
   }
   topupDriverBalance(data: any) {
     return this.http.post<Response<DriverModel>>(env.apiUrl + `/users/drivers/${data.driverId}/balances`, data)
+  }
+  findDrivers(merchantId,searchTerm: string, searchAs: string) {
+    const filter = generateQueryFilter({ [searchAs]: searchTerm });
+    return this.getAll(merchantId,{}, filter).pipe(
+      catchError(() => of({ data: { content: [] } }))
+    );
   }
 }

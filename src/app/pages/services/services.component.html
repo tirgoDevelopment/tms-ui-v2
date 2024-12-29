@@ -63,25 +63,25 @@
 
     <div class="cards flex gap">
         <nz-card class="balance-card">
-          <div class="card-inner">
-            <div class="card-title">{{ 'tirBalance' | translate }}</div>
-            <div class="card-content">
-              <span class="amount">{{tirBalance | priceFormat}}</span>
-              <span class="currency">TIR</span> 
+            <div class="card-inner">
+                <div class="card-title">{{ 'tirBalance' | translate }}</div>
+                <div class="card-content">
+                    <span class="amount">{{tirBalance | priceFormat}}</span>
+                    <span class="currency">TIR</span>
+                </div>
             </div>
-          </div>
         </nz-card>
         <nz-card class="balance-card">
-          <div class="card-inner">
-            <div class="card-title">{{ 'serviceBalance' | translate }}</div>
-            <div class="card-content">
-              <span class="amount">{{serviceBalance | priceFormat}}</span>
-              <span class="currency">TIR</span>
+            <div class="card-inner">
+                <div class="card-title">{{ 'serviceBalance' | translate }}</div>
+                <div class="card-content">
+                    <span class="amount">{{serviceBalance | priceFormat}}</span>
+                    <span class="currency">TIR</span>
+                </div>
             </div>
-          </div>
         </nz-card>
-      </div>
-      
+    </div>
+
     <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzScroll]="{ x: 'max-content' }"
         [nzFrontPagination]="false" [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount"
         [nzShowSizeChanger]="true" [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
@@ -104,7 +104,7 @@
         <tbody>
             <tr *ngFor="let item of data; let i = index" (click)="showChatForService(item.id)">
                 <td>{{ i + 1 }}</td>
-                <td>{{ item.id}} / {{  item.services[0].code}}</td>
+                <td>{{ item.id}} / {{ item.services[0].code}}</td>
                 <td class="ellipsis">
                     <div *ngFor="let service of item.services">{{ service.name }}</div>
                 </td>
@@ -122,7 +122,7 @@
                 <td>{{ item.createdAt | date : "dd.MM.yyyy" }}</td>
                 <td>{{ item.statusesHistory | createdAt : 3 | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>{{ item.statusesHistory | createdAt : 5 | date : "dd.MM.yyyy HH:mm" }}</td>
-                        <td>
+                <td>
                     <div *ngIf="item.amountDetails && item.amountDetails.length > 0">
                         {{ calculateSum(item.amountDetails) | priceFormat }}
                     </div>
@@ -145,36 +145,27 @@
                     </span>
                 </td>
                 <td class="action-col" nzRight (click)="$event.stopPropagation()">
-            <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
-              <i
-                nz-icon
-                nzType="ellipsis"
-                nzTheme="outline"
-                style="cursor: pointer"
-              ></i>
-            </a>
-            <nz-dropdown-menu #menu="nzDropdownMenu">
-              <ul nz-menu nzSelectable>
-                <li nz-menu-item (click)="showDetails(item)">
-                  <div class="dropdown-menu">
-                    <span nz-icon nzType="info-circle" nzTheme="outline"></span>
-                    <span>{{ "detail" | translate }}</span>
-                  </div>
-                </li>
-  
-                <li nz-menu-item (click)="showLog(item.id)">
-                  <div class="dropdown-menu">
-                    <span
-                      nz-icon
-                      nzType="history"
-                      nzTheme="outline"
-                    ></span>
-                    <span>{{ "services.log" | translate }}</span>
-                  </div>
-                </li>
-              </ul>
-            </nz-dropdown-menu>
-          </td>
+                    <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+                        <i nz-icon nzType="ellipsis" nzTheme="outline" style="cursor: pointer"></i>
+                    </a>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <ul nz-menu nzSelectable>
+                            <li nz-menu-item (click)="showDetails(item)">
+                                <div class="dropdown-menu">
+                                    <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+                                    <span>{{ "detail" | translate }}</span>
+                                </div>
+                            </li>
+
+                            <li nz-menu-item (click)="showLog(item.id)">
+                                <div class="dropdown-menu">
+                                    <span nz-icon nzType="history" nzTheme="outline"></span>
+                                    <span>{{ "services.log" | translate }}</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </nz-dropdown-menu>
+                </td>
             </tr>
         </tbody>
     </nz-table>
@@ -185,8 +176,5 @@
 </ng-template>
 
 
-<app-chat 
-  *ngIf="showChat" 
-  [outputServiceId]="selectedServiceId"
-  (closeChatEvent)="onChatClose()">
+<app-chat *ngIf="showChat" [outputServiceId]="selectedServiceId" (closeChatEvent)="onChatClose()">
 </app-chat>

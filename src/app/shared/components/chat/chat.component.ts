@@ -107,9 +107,9 @@ export class ChatComponent implements OnInit {
 
   ngOnInit() {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms'));
-    console.log(this.currentUser);
     
     if (this.outputServiceId) {
+      this.showChatList = false;
       this.loading = true;
       this.serviceApi.getServiceRequestById(this.outputServiceId).subscribe((res: any) => {
         this.selectChat(res.data.data)
@@ -599,6 +599,9 @@ export class ChatComponent implements OnInit {
       if (res && res.success) {
         this.selectedChat.status.code = 2;
         this.toastr.success(this.translate.instant('successfullUpdated'), '');
+      }
+      else if(res.messages[0] == 'notEnoughBalance') {
+        this.toastr.error(this.translate.instant('notEnoughBalance'), '');
       }
     });
   }
