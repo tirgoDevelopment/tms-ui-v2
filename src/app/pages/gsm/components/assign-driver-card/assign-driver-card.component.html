@@ -1,0 +1,33 @@
+<form [formGroup]="form">
+
+    <nz-input-group class="input-group w-full">
+        <nz-form-label>{{ 'searchAs' | translate }}</nz-form-label>
+        <nz-select style="width: 100%;" nzPlaceHolder="{{ 'searchAs' | translate }}" formControlName="searchAs">
+            <nz-option nzValue="driverId" nzLabel="ID"></nz-option>
+            <nz-option nzValue="phoneNumber" nzLabel="Телефон"></nz-option>
+            <nz-option nzValue="transportNumber" nzLabel="Номер транспорта"></nz-option>
+        </nz-select>
+    </nz-input-group>
+
+    <nz-input-group class="input-group w-full">
+        <nz-form-label nzRequired>{{ 'drivers' | translate }}</nz-form-label>
+        <nz-select style="width: 100%;" nzShowSearch nzServerSearch nzPlaceHolder="{{ 'drivers' | translate }}"
+            [nzShowArrow]="false" formControlName="id" (nzOnSearch)="findDriver($event)">
+            <nz-option *ngFor="let o of (drivers$ | async)" [nzLabel]="o | label: form.get('searchAs')?.value"
+                [nzValue]="o.id">
+            </nz-option>
+        </nz-select>
+    </nz-input-group>
+
+    <nz-input-group class="input-group w-full">
+        <nz-form-label nzRequired>{{ 'gsm.cardNumber' | translate }}</nz-form-label>
+        <input nz-input type="text" formControlName="gsmCardNumber">
+    </nz-input-group>
+
+    <div class="button-wrapper">
+        <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
+          [disabled]="form.invalid || loading">
+          {{ 'save' | translate }}
+        </button>
+      </div>
+</form>

@@ -208,6 +208,13 @@
     "date": "Дата",
     "errorOccurred": "Произошла ошибка",
     "price": "Цена",
+    "approve": "Одобрить",
+    "reject": "Отклонить",
+    "requests": "Запросы",
+    "rejected": "Отклоненный",
+    "request": "Запрос",
+    "type": "Тип",	
+    "topUp": "Пополнение",
     "sidebar": {
         "orders": "Заказы",
         "drivers": "Перевозчики",
@@ -273,5 +280,11 @@
         "status_subscription": "Статус подписки",
         "take_orders": "Брать заказы",
         "total_balance": "Общая баланс"
+    },
+    "gsm": {
+        "title": "ГСМ",
+        "assignCard": "Привязывать карты",
+        "cardNumber": "Номер карта",
+        "balance": "ГСМ баланс"
     }
 }

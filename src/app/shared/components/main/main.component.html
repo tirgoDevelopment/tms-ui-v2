@@ -41,7 +41,11 @@
         <span nz-icon nzType="file-text"></span>
         <span>{{'services.title' | translate}}</span>
       </li>
-
+      <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
+        [nzTooltipTitle]="isCollapsed ? ('gsm.title' | translate) : ''" routerLink="/gsm">
+        <span nz-icon nzType="fire"></span>
+        <span>{{ "gsm.title" | translate }}</span>
+      </li>
       <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
         [nzTooltipTitle]="isCollapsed ? ('sidebar.settings' | translate) : ''" routerLink="/settings">
         <span nz-icon nzType="setting"></span>
@@ -127,12 +131,13 @@
 
         <div style="position: relative;" (click)="toggleChat()">
           <nz-badge [nzCount]="newMessageCount" class="chat-icon">
-            <div  class="chat-icon-content">
+            <div class="chat-icon-content">
               <i nz-icon nzType="wechat" nzTheme="outline" style="color: #fff;"></i>
             </div>
           </nz-badge>
         </div>
-        <app-chat *ngIf="isChatVisible" (newMessageCountChange)="updateNewMessageCount($event)" (closeChatEvent)="closeChat()"></app-chat>
+        <app-chat *ngIf="isChatVisible" (newMessageCountChange)="updateNewMessageCount($event)"
+          (closeChatEvent)="closeChat()"></app-chat>
       </div>
     </nz-content>
 

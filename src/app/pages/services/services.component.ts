@@ -208,7 +208,6 @@ export class ServicesComponent implements OnInit, OnDestroy {
   showChatForService(id) {
     this.selectedServiceId = id;
     this.showChat = true;
-    
   }
   onChatClose() {
     this.showChat = false;

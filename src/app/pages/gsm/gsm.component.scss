@@ -1,0 +1,47 @@
+.cards {
+    margin-bottom: 24px;
+    margin-top: 20px;
+    .balance-card {
+      flex: 1;
+      background-color: #3880ff;
+    //   background: linear-gradient(135deg, #3880ff  0%, #3b92ee 100%);
+      border: none;
+      max-width: 300px;
+      
+      ::ng-deep .ant-card-body {
+        padding: 16px;
+      }
+      
+      .card-inner {
+        color: white;
+      }
+  
+      .card-title {
+        font-size: 13px;
+        opacity: 0.85;
+        margin-bottom: 6px;
+      }
+  
+      .card-content {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+  
+        .amount {
+          font-size: 20px;
+          font-weight: 600;
+        }
+  
+        .currency {
+          font-size: 13px;
+          opacity: 0.85;
+        }
+      }
+      
+      &:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
