@@ -110,23 +110,27 @@ export class RegisterStepsComponent implements OnInit {
     })
   }
   onSubmit() {
-    this.form.enable();
-    this.authService.merchantCreate(this.form.value).subscribe((res: any) => {
-      if (res.success) {
-        this.form.enable();
-        this.authService.signIn({ username: this.form.value.email, password: this.form.value.password, userType: 'driver_merchant_user' }).subscribe((res: any) => {
-          this.authService.accessToken = res.data.token;
-          let user: any = jwtDecode(res.data.token);
-          this.getMerchant(user.merchantId);
-        })
-        this.toastr.success("Мерчант успешно добавлен");
-      }
-    }, error => {
-      if (error.error.message == "email must be an email") {
-        this.form.enable();
-        this.toastr.error('Неверный формат электронной почты');
-      }
-    })
+    if(this.form.value.confirmPassword !=  this.form.value.password) {
+      this.toastr.error('Пароли не совпадают');
+    }else {
+      this.form.enable();
+      this.authService.merchantCreate(this.form.value).subscribe((res: any) => {
+        if (res.success) {
+          this.form.enable();
+          this.authService.signIn({ username: this.form.value.email, password: this.form.value.password, userType: 'driver_merchant_user' }).subscribe((res: any) => {
+            this.authService.accessToken = res.data.token;
+            let user: any = jwtDecode(res.data.token);
+            this.getMerchant(user.merchantId);
+          })
+          this.toastr.success("Мерчант успешно добавлен");
+        }
+      }, error => {
+        if (error.error.message == "email must be an email") {
+          this.form.enable();
+          this.toastr.error('Неверный формат электронной почты');
+        }
+      })
+    }
   }
   onSubmit2() {
     this.formStep2.disable();
