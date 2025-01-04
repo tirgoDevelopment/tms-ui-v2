@@ -16,6 +16,7 @@
     "NotFound": "Данные не найдены",
     "orderNotFound": "Заказ не найден",
     "merchantNotFound": "Клиентский торговец не найден",
+    "alreadyRequested": "Уже запрошенный",
     "agentNotFound": "Агент не найден",
     "staffNotFound": "Персонал не найден",
     "roleNotFound": "Роль не найдена",
@@ -59,6 +60,7 @@
     "blockDataFailed": "Блокировка не удалась",
     "awsStoreFileFailed": "Ошибка хранилища файлов",
     "duplateError": "Дубликат ошибки",
+    "fileSize": "Размер файла не должен превышать 500KB",
     "phoneNumberDuplateError": "ошибка дублирования номера телефона",
     "phoneNumbeersMustBeArray": "номера телефонов должны быть массивом",
     "alreadyDeleted": "Уже удалено",
@@ -284,7 +286,7 @@
     "gsm": {
         "title": "ГСМ",
         "assignCard": "Привязывать карты",
-        "cardNumber": "Номер карта",
+        "cardNumber": "Номер карта ГСМ",
         "balance": "ГСМ баланс"
     }
 }
