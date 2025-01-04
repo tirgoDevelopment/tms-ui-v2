@@ -4,7 +4,7 @@ import { NzModules } from 'src/app/shared/modules/nz-modules.module';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxMaskDirective } from 'ngx-mask';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { jwtDecode } from 'jwt-decode';
@@ -44,7 +44,8 @@ export class RegisterStepsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private toastr: NotificationService,
     private currenciesApi: CurrenciesService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.route.queryParams.subscribe((params: any) => {
       this.phone = params.phone;
@@ -326,6 +327,12 @@ export class RegisterStepsComponent implements OnInit {
     if (input && input.files) {
       const file: File = input.files[0];
       if (file) {
+        const maxSizeInMB = 2;
+        const maxSizeInBytes = maxSizeInMB * 1024;
+        if (file.size > maxSizeInBytes) {
+          this.toastr.error(this.translate.instant('fileSize'))
+          return;
+        }
         this.formData.append(name, file, new Date().getTime().toString() + '.jpg');
         const reader = new FileReader();
         reader.onload = () => {
@@ -335,6 +342,7 @@ export class RegisterStepsComponent implements OnInit {
       }
     }
   }
+    
   toggleShowBankAccount2() {
     this.showBankAccount2 = !this.showBankAccount2;
   }
