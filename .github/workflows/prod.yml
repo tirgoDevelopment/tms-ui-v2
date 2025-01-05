@@ -1,0 +1,46 @@
+name: Angular CI/CD with Docker (Prod)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:       
+      - name: Checkout source
+        uses: actions/checkout@v3
+     
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 
+     
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/test-tms-ui .
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      
+      - name: Publish image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/test-tms-ui:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: SSH into the instance and deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ PROD_SSH_HOST }} << 'EOF'
+           sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/test-tms-ui:latest
+           sudo docker stop test-tms-ui-container || true
+           sudo docker rm -f test-tms-ui-container || true
+           sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/test-tms-ui || true
+           sudo docker run -d -p 4300:4300 --name test-tms-ui-container ${{ secrets.DOCKER_USERNAME }}/test-tms-ui:latest
+          EOF
