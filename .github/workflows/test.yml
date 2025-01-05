@@ -36,7 +36,7 @@ jobs:
 
       - name: SSH into the instance and deploy
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ TEST_SSH_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.TEST_SSH_HOST }} << 'EOF'
            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/test-tms-ui:latest
            sudo docker stop test-tms-ui-container || true
