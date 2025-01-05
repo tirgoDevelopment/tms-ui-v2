@@ -2,7 +2,7 @@ name: Angular CI/CD with Docker (Test)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ test ]
 
 jobs:
   build:
