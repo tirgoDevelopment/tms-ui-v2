@@ -327,8 +327,8 @@ export class RegisterStepsComponent implements OnInit {
     if (input && input.files) {
       const file: File = input.files[0];
       if (file) {
-        const maxSizeInMB = 2;
-        const maxSizeInBytes = maxSizeInMB * 1024;
+        const maxSizeInMB = 5;
+        const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
         if (file.size > maxSizeInBytes) {
           this.toastr.error(this.translate.instant('fileSize'))
           return;

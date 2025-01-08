@@ -140,8 +140,11 @@
   font-weight: 700;
   text-decoration: underline;
 }
-
+.file-container {
+  width: min-content
+}
 .label {
+  width: 100%;
   font-weight: bold;
   display: block;
   margin-bottom: 0.5rem;

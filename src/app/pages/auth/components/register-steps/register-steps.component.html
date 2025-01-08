@@ -1,7 +1,4 @@
-<div
-  class="container"
-  *ngIf="step == 1 && !registerCompleted && !registerRejected"
->
+<div class="container" *ngIf="step == 1 && !registerCompleted && !registerRejected">
   <div class="left-panel">
     <img src="./assets/images/logo/auth-logo.svg" alt="" width="60%" />
   </div>
@@ -10,10 +7,7 @@
       <h2 class="title text-center">Зарегистрировать</h2>
       <form [formGroup]="form">
         <div class="flex input-select" style="gap: 0 !important">
-          <nz-select
-            formControlName="companyType"
-            style="background-color: #fff !important"
-          >
+          <nz-select formControlName="companyType" style="background-color: #fff !important">
             <nz-option nzLabel="ООО" nzValue="ООО"></nz-option>
             <nz-option nzLabel="ИП" nzValue="ИП"></nz-option>
             <nz-option nzLabel="АО" nzValue="АО"></nz-option>
@@ -29,89 +23,46 @@
             <nz-option nzLabel="ГУП" nzValue="ГУП"></nz-option>
             <nz-option nzLabel="Другой" nzValue=""></nz-option>
           </nz-select>
-          <input
-            formControlName="companyName"
-            type="text"
-            nz-input
-            placeholder="Наименование фирмы"
-          />
+          <input formControlName="companyName" type="text" nz-input placeholder="Наименование фирмы" />
         </div>
         <div style="margin-top: 10px !important">
           <nz-input-group class="input-group" style="padding: 0 !important">
-            <input
-              formControlName="email"
-              type="email"
-              nz-input
-              placeholder="Электронная почта"
-              style="height: 40px"
-              autocomplete="username"
-            />
+            <input formControlName="email" type="email" nz-input placeholder="Электронная почта" style="height: 40px"
+              autocomplete="username" />
           </nz-input-group>
         </div>
         <div>
           <nz-input-group class="input-group" [nzSuffix]="suffixTemplateEye">
-            <input
-              formControlName="password"
-              [type]="passwordVisible ? 'text' : 'password'"
-              nz-input
-              placeholder="Пароль"
-              autocomplete="new-password"
-            />
+            <input formControlName="password" [type]="passwordVisible ? 'text' : 'password'" nz-input
+              placeholder="Пароль" autocomplete="new-password" />
           </nz-input-group>
           <ng-template #suffixTemplateEye>
-            <span
-              nz-icon
-              [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-              style="cursor: pointer"
-              (click)="togglePasswordVisibility()"
-            ></span>
+            <span nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" style="cursor: pointer"
+              (click)="togglePasswordVisibility()"></span>
           </ng-template>
         </div>
         <div>
           <nz-input-group class="input-group" [nzSuffix]="suffixTemplateEye">
-            <input
-              formControlName="confirmPassword"
-              [type]="passwordVisible ? 'text' : 'password'"
-              nz-input
-              placeholder="Подтвердите пароль"
-              autocomplete="new-password"
-            />
+            <input formControlName="confirmPassword" [type]="passwordVisible ? 'text' : 'password'" nz-input
+              placeholder="Подтвердите пароль" autocomplete="new-password" />
           </nz-input-group>
           <ng-template #suffixTemplateEye>
-            <span
-              nz-icon
-              [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-              style="cursor: pointer"
-              (click)="togglePasswordVisibility()"
-            ></span>
+            <span nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" style="cursor: pointer"
+              (click)="togglePasswordVisibility()"></span>
           </ng-template>
         </div>
         <div class="my-4">
           <label nz-checkbox formControlName="agreement">Я принимаю</label>
-          <a class="underline font-bold"
-            >пользовательское соглашение</a
-          >
+          <a class="underline font-bold">пользовательское соглашение</a>
         </div>
-        <button
-          type="submit"
-          nz-button
-          nzType="primary"
-          class="login-button"
-          [disabled]="form.invalid || !form.value.agreement"
-          [nzLoading]="form.disabled"
-          (click)="onSubmit()"
-        >
+        <button type="submit" nz-button nzType="primary" class="login-button"
+          [disabled]="form.invalid || !form.value.agreement" [nzLoading]="form.disabled" (click)="onSubmit()">
           Сохранить
         </button>
       </form>
       <div class="text-center">
         <span>У вас нет учетной запись ?</span>
-        <button
-          nz-button
-          nzType="link"
-          style="color: blue"
-          routerLink="/auth/sign-up"
-        >
+        <button nz-button nzType="link" style="color: blue" routerLink="/auth/sign-up">
           Зарегистрировать
         </button>
       </div>
@@ -119,10 +70,7 @@
   </div>
 </div>
 
-<div
-  class="full-container"
-  *ngIf="(step == 2 || step == 3) && !registerCompleted && !registerRejected"
->
+<div class="full-container" *ngIf="(step == 2 || step == 3) && !registerCompleted && !registerRejected">
   <div class="left-panel">
     <img src="./assets/images/logo/auth-logo.svg" alt="" width="60%" />
   </div>
@@ -134,147 +82,73 @@
         <div class="flex">
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Имя руководителя</nz-form-label>
-            <input
-              formControlName="supervisorFirstName"
-              type="text"
-              nz-input
-              placeholder="Имя руководителя"
-              style="height: 40px"
-            />
+            <input formControlName="supervisorFirstName" type="text" nz-input placeholder="Имя руководителя"
+              style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Фамилия руководителя</nz-form-label>
-            <input
-              formControlName="supervisorLastName"
-              type="text"
-              nz-input
-              placeholder="Фамилия руководителя"
-              style="height: 40px"
-            />
+            <input formControlName="supervisorLastName" type="text" nz-input placeholder="Фамилия руководителя"
+              style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Телефон</nz-form-label>
-            <input
-              formControlName="phoneNumber"
-              type="text"
-              mask="+000 00 000 00 00"
-              nz-input
-              placeholder="Телефон"
-              style="height: 40px"
-              readonly
-            />
+            <input formControlName="phoneNumber" type="text" mask="+000 00 000 00 00" nz-input placeholder="Телефон"
+              style="height: 40px" readonly />
           </nz-input-group>
         </div>
         <div class="flex">
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Имя ответственного лица</nz-form-label>
-            <input
-              formControlName="responsiblePersonFistName"
-              type="text"
-              nz-input
-              placeholder="Имя ответственного лица"
-              style="height: 40px"
-            />
+            <input formControlName="responsiblePersonFistName" type="text" nz-input
+              placeholder="Имя ответственного лица" style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
-            <nz-form-label nzRequired
-              >Фамилия ответственного лица</nz-form-label
-            >
-            <input
-              formControlName="responsiblePersonLastName"
-              type="text"
-              nz-input
-              placeholder="Фамилия ответственного лица"
-              style="height: 40px"
-            />
+            <nz-form-label nzRequired>Фамилия ответственного лица</nz-form-label>
+            <input formControlName="responsiblePersonLastName" type="text" nz-input
+              placeholder="Фамилия ответственного лица" style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
-            <nz-form-label nzRequired
-              >Телефон ответственного лица</nz-form-label
-            >
-            <input
-              formControlName="responsbilePersonPhoneNumber"
-              type="text"
-              mask="+000 00 000 00 00"
-              nz-input
-              placeholder="Телефон ответственного лица"
-              style="height: 40px"
-            />
+            <nz-form-label nzRequired>Телефон ответственного лица</nz-form-label>
+            <input formControlName="responsbilePersonPhoneNumber" type="text" mask="+000 00 000 00 00" nz-input
+              placeholder="Телефон ответственного лица" style="height: 40px" />
           </nz-input-group>
         </div>
         <div class="flex">
           <nz-input-group class="input-group">
             <nz-form-label>Адрес гаража</nz-form-label>
-            <input
-              formControlName="garageAddress"
-              type="text"
-              nz-input
-              placeholder="Адрес гаража"
-              style="height: 40px"
-            />
+            <input formControlName="garageAddress" type="text" nz-input placeholder="Адрес гаража"
+              style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
             <nz-form-label>Почтоый индекс</nz-form-label>
-            <input
-              formControlName="postalCode"
-              type="text"
-              nz-input
-              placeholder="Почтоый индекс"
-              style="height: 40px"
-            />
+            <input formControlName="postalCode" type="text" nz-input placeholder="Почтоый индекс"
+              style="height: 40px" />
           </nz-input-group>
         </div>
         <div class="flex">
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Юридический адрес</nz-form-label>
-            <input
-              formControlName="legalAddress"
-              type="text"
-              nz-input
-              placeholder="Юридический адрес"
-              style="height: 40px"
-            />
+            <input formControlName="legalAddress" type="text" nz-input placeholder="Юридический адрес"
+              style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
             <nz-form-label>Фактический адрес</nz-form-label>
-            <input
-              formControlName="factAddress"
-              type="text"
-              nz-input
-              placeholder="Фактический адрес"
-              style="height: 40px"
-            />
+            <input formControlName="factAddress" type="text" nz-input placeholder="Фактический адрес"
+              style="height: 40px" />
           </nz-input-group>
         </div>
 
-        <div class="flex" style="align-items: end">
+        <div class="flex gap-2 mt-3" style="align-items: end;">
           <div class="file-container">
             <label class="label">Паспорт руководителя</label>
             <div class="file-wrapper">
               <div class="overlay"></div>
               <div class="icon-container">
                 <div>
-                  <input
-                    formControlName="passport"
-                    id="avatar-file-input1"
-                    class="file-input"
-                    type="file"
-                    [multiple]="false"
-                    [accept]="'image/jpeg, image/png'"
-                    (change)="selectFile($event, 'passport')"
-                  />
-                  <label
-                    class="camera-button"
-                    for="avatar-file-input1"
-                    nz-button
-                    nzType="default"
-                  >
-                    <i
-                      nz-icon
-                      nzType="camera"
-                      nzTheme="outline"
-                      class="camera-icon"
-                    ></i>
+                  <input formControlName="passport" id="avatar-file-input1" class="file-input" type="file"
+                    [multiple]="false" [accept]="'image/jpeg, image/png'" (change)="selectFile($event, 'passport')" />
+                  <label class="camera-button" for="avatar-file-input1" nz-button nzType="default">
+                    <i nz-icon nzType="camera" nzTheme="outline" class="camera-icon"></i>
                   </label>
                 </div>
               </div>
@@ -287,35 +161,15 @@
               <div class="overlay"></div>
               <div class="icon-container">
                 <div>
-                  <input
-                    formControlName="registrationCertificate"
-                    id="avatar-file-input2"
-                    class="file-input"
-                    type="file"
-                    [multiple]="false"
-                    [accept]="'image/jpeg, image/png'"
-                    (change)="selectFile($event, 'registrationCertificate')"
-                  />
-                  <label
-                    class="camera-button"
-                    for="avatar-file-input2"
-                    nz-button
-                    nzType="default"
-                  >
-                    <i
-                      nz-icon
-                      nzType="camera"
-                      nzTheme="outline"
-                      class="camera-icon"
-                    ></i>
+                  <input formControlName="registrationCertificate" id="avatar-file-input2" class="file-input"
+                    type="file" [multiple]="false" [accept]="'image/jpeg, image/png'"
+                    (change)="selectFile($event, 'registrationCertificate')" />
+                  <label class="camera-button" for="avatar-file-input2" nz-button nzType="default">
+                    <i nz-icon nzType="camera" nzTheme="outline" class="camera-icon"></i>
                   </label>
                 </div>
               </div>
-              <img
-                class="file-image"
-                *ngIf="registrationCertificate"
-                [src]="registrationCertificate"
-              />
+              <img class="file-image" *ngIf="registrationCertificate" [src]="registrationCertificate" />
             </div>
           </div>
           <div class="file-container">
@@ -324,27 +178,10 @@
               <div class="overlay"></div>
               <div class="icon-container">
                 <div>
-                  <input
-                    formControlName="logo"
-                    id="avatar-file-input3"
-                    class="file-input"
-                    type="file"
-                    [multiple]="false"
-                    [accept]="'image/jpeg, image/png'"
-                    (change)="selectFile($event, 'logo')"
-                  />
-                  <label
-                    class="camera-button"
-                    for="avatar-file-input3"
-                    nz-button
-                    nzType="default"
-                  >
-                    <i
-                      nz-icon
-                      nzType="camera"
-                      nzTheme="outline"
-                      class="camera-icon"
-                    ></i>
+                  <input formControlName="logo" id="avatar-file-input3" class="file-input" type="file"
+                    [multiple]="false" [accept]="'image/jpeg, image/png'" (change)="selectFile($event, 'logo')" />
+                  <label class="camera-button" for="avatar-file-input3" nz-button nzType="default">
+                    <i nz-icon nzType="camera" nzTheme="outline" class="camera-icon"></i>
                   </label>
                 </div>
               </div>
@@ -357,37 +194,18 @@
               <div class="overlay"></div>
               <div class="icon-container">
                 <div>
-                  <input
-                    formControlName="transportationCertificate"
-                    id="avatar-file-input4"
-                    class="file-input"
-                    type="file"
-                    [multiple]="false"
-                    [accept]="'image/jpeg, image/png'"
-                    (change)="selectFile($event, 'transportationCertificate')"
-                  />
-                  <label
-                    class="camera-button"
-                    for="avatar-file-input4"
-                    nz-button
-                    nzType="default"
-                  >
-                    <i
-                      nz-icon
-                      nzType="camera"
-                      nzTheme="outline"
-                      class="camera-icon"
-                    ></i>
+                  <input formControlName="transportationCertificate" id="avatar-file-input4" class="file-input"
+                    type="file" [multiple]="false" [accept]="'image/jpeg, image/png'"
+                    (change)="selectFile($event, 'transportationCertificate')" />
+                  <label class="camera-button" for="avatar-file-input4" nz-button nzType="default">
+                    <i nz-icon nzType="camera" nzTheme="outline" class="camera-icon"></i>
                   </label>
                 </div>
               </div>
-              <img
-                class="file-image"
-                *ngIf="transportationCertificate"
-                [src]="transportationCertificate"
-              />
+              <img class="file-image" *ngIf="transportationCertificate" [src]="transportationCertificate" />
             </div>
           </div>
+          
         </div>
       </ng-container>
       <!-- STEP 2 -->
@@ -396,182 +214,89 @@
         <div class="flex">
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Наименование банка</nz-form-label>
-            <input
-              formControlName="bankName"
-              type="text"
-              nz-input
-              placeholder="Наименование банка"
-              style="height: 40px"
-            />
+            <input formControlName="bankName" type="text" nz-input placeholder="Наименование банка"
+              style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Наименование филиала банка</nz-form-label>
-            <input
-              formControlName="bankBranchName"
-              type="text"
-              nz-input
-              placeholder="Наименование филиала банка"
-              style="height: 40px"
-            />
+            <input formControlName="bankBranchName" type="text" nz-input placeholder="Наименование филиала банка"
+              style="height: 40px" />
           </nz-input-group>
         </div>
 
         <div class="flex">
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>ИНН</nz-form-label>
-            <input
-              formControlName="inn"
-              type="text"
-              nz-input
-              placeholder="ИНН"
-              mask="999999999"
-              style="height: 40px"
-            />
+            <input formControlName="inn" type="text" nz-input placeholder="ИНН" mask="999999999" style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Код плательщика НДС</nz-form-label>
-            <input
-              formControlName="taxPayerCode"
-              type="text"
-              nz-input
-              placeholder="Код плательщика НДС"
-              mask="999999999999"
-              style="height: 40px"
-            />
+            <input formControlName="taxPayerCode" type="text" nz-input placeholder="Код плательщика НДС"
+              mask="999999999999" style="height: 40px" />
           </nz-input-group>
         </div>
         <div class="flex">
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>ОКЭД</nz-form-label>
-            <input
-              formControlName="oked"
-              type="text"
-              nz-input
-              placeholder="ОКЭД"
-              mask="99999"
-              style="height: 40px"
-            />
+            <input formControlName="oked" type="text" nz-input placeholder="ОКЭД" mask="99999" style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>МФО</nz-form-label>
-            <input
-              formControlName="mfo"
-              type="text"
-              nz-input
-              placeholder="МФО"
-              mask="99999"
-              style="height: 40px"
-            />
+            <input formControlName="mfo" type="text" nz-input placeholder="МФО" mask="99999" style="height: 40px" />
           </nz-input-group>
         </div>
 
         <div class="flex">
           <nz-input-group class="input-group">
             <nz-form-label>DUNS номер</nz-form-label>
-            <input
-              formControlName="dunsNumber"
-              type="text"
-              nz-input
-              placeholder="DUNS номер"
-              mask="999999999"
-              style="height: 40px"
-            />
+            <input formControlName="dunsNumber" type="text" nz-input placeholder="DUNS номер" mask="999999999"
+              style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
             <nz-form-label>IBAN номер</nz-form-label>
-            <input
-              formControlName="ibanNumber"
-              type="text"
-              nz-input
-              placeholder="IBAN номер"
-              mask="999999999999999999"
-              style="height: 40px"
-            />
+            <input formControlName="ibanNumber" type="text" nz-input placeholder="IBAN номер" mask="999999999999999999"
+              style="height: 40px" />
           </nz-input-group>
         </div>
 
         <div class="flex" style="align-items: center">
           <nz-input-group class="input-group">
             <nz-form-label nzRequired>Расчетный счет</nz-form-label>
-            <div
-              class="flex"
-              style="gap: 0 !important; align-items: center; margin: 0"
-            >
+            <div class="flex" style="gap: 0 !important; align-items: center; margin: 0">
               <nz-select formControlName="currency">
-                <nz-option
-                  *ngFor="let item of currencies"
-                  [nzValue]="item.id"
-                  [nzLabel]="item.name"
-                ></nz-option>
+                <nz-option *ngFor="let item of currencies" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
               </nz-select>
-              <input
-                formControlName="bankAccount"
-                type="text"
-                nz-input
-                mask="99999999999999999999"
-                style="height: 40px"
-              />
-              <i
-                nz-icon
-                *ngIf="!showBankAccount2"
-                [nzType]="'plus'"
-                style="color: green; cursor: pointer; margin-left: 5px"
-                nzTheme="outline"
-                (click)="toggleShowBankAccount2()"
-              ></i>
+              <input formControlName="bankAccount" type="text" nz-input mask="99999999999999999999"
+                style="height: 40px" />
+              <i nz-icon *ngIf="!showBankAccount2" [nzType]="'plus'"
+                style="color: green; cursor: pointer; margin-left: 5px" nzTheme="outline"
+                (click)="toggleShowBankAccount2()"></i>
             </div>
           </nz-input-group>
 
           <nz-input-group class="input-group" *ngIf="showBankAccount2">
             <nz-form-label nzRequired>Расчетный счет</nz-form-label>
-            <div
-              class="flex"
-              style="gap: 0 !important; align-items: center; margin: 0"
-            >
+            <div class="flex" style="gap: 0 !important; align-items: center; margin: 0">
               <nz-select formControlName="currency2">
-                <nz-option
-                  *ngFor="let item of currencies"
-                  [nzValue]="item.id"
-                  [nzLabel]="item.name"
-                ></nz-option>
+                <nz-option *ngFor="let item of currencies" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
               </nz-select>
-              <input
-                formControlName="bankAccount2"
-                type="text"
-                nz-input
-                mask="99999999999999999999"
-                style="height: 40px"
-              />
-              <i
-                nz-icon
-                [nzType]="'close-circle'"
-                style="color: red; cursor: pointer; margin-left: 5px"
-                nzTheme="outline"
-                (click)="toggleShowBankAccount2()"
-              ></i>
+              <input formControlName="bankAccount2" type="text" nz-input mask="99999999999999999999"
+                style="height: 40px" />
+              <i nz-icon [nzType]="'close-circle'" style="color: red; cursor: pointer; margin-left: 5px"
+                nzTheme="outline" (click)="toggleShowBankAccount2()"></i>
             </div>
           </nz-input-group>
         </div>
 
         <nz-input-group class="input-group">
           <nz-form-label>Заметки</nz-form-label>
-          <textarea
-            formControlName="notes"
-            nz-input
-            placeholder="Заметки"
-            [nzAutosize]="{ minRows: 2, maxRows: 6 }"
-          ></textarea>
+          <textarea formControlName="notes" nz-input placeholder="Заметки"
+            [nzAutosize]="{ minRows: 2, maxRows: 6 }"></textarea>
         </nz-input-group>
       </ng-container>
       <!-- STEP 3 -->
-      <button
-        type="submit"
-        nz-button
-        nzType="primary"
-        class="login-button"
-        [nzLoading]="formStep2.disabled"
-        (click)="onSubmit2()"
-      >
+      <button type="submit" nz-button nzType="primary" class="login-button" [nzLoading]="formStep2.disabled"
+        (click)="onSubmit2()">
         {{ step == 2 ? "Продалжить" : "Сохранить" }}
       </button>
     </form>
@@ -586,13 +311,7 @@
         </div> -->
         <p class="main-message">Ваша заявка принята на обработку</p>
         <p class="sub-message">Ответ придет к вам на почту</p>
-        <button
-          (click)="redirectToAuth()"
-          type="submit"
-          nz-button
-          nzType="primary"
-          class="login-button"
-        >
+        <button (click)="redirectToAuth()" type="submit" nz-button nzType="primary" class="login-button">
           Авторизоваться
         </button>
       </div>
@@ -608,13 +327,7 @@
         <p class="sub-message">
           Пожалуйста, проверьте вашу информацию и попробуйте снова.
         </p>
-        <button
-          (click)="redirectToAuth()"
-          type="button"
-          nz-button
-          nzType="primary"
-          class="login-button"
-        >
+        <button (click)="redirectToAuth()" type="button" nz-button nzType="primary" class="login-button">
           Авторизоваться
         </button>
       </div>

@@ -60,7 +60,7 @@
     "blockDataFailed": "Блокировка не удалась",
     "awsStoreFileFailed": "Ошибка хранилища файлов",
     "duplateError": "Дубликат ошибки",
-    "fileSize": "Размер файла не должен превышать 500KB",
+    "fileSize": "Размер файла не должен превышать 5MB",
     "phoneNumberDuplateError": "ошибка дублирования номера телефона",
     "phoneNumbeersMustBeArray": "номера телефонов должны быть массивом",
     "alreadyDeleted": "Уже удалено",
