@@ -18,7 +18,13 @@
         </nz-select>
     </nz-input-group>
 
-    <nz-input-group class="input-group w-full">
+    <nz-input-group class="input-group w-full" *ngIf="form.value.driverId">
+        <nz-form-label nzRequired>{{ 'gsm.cardNumber' | translate }}</nz-form-label>
+        <input nz-input type="text" formControlName="gsmCardNumber" readonly>
+        <span *ngIf="!form.value.gsmCardNumber" style="color: red;">{{'У водителя нет ГСМ карты' | translate}}</span>
+    </nz-input-group>
+
+    <nz-input-group class="input-group w-full" *ngIf="form.value.gsmCardNumber">
         <nz-form-label nzRequired>{{ 'volume_l' | translate }}</nz-form-label>
         <input nz-input type="text" formControlName="amount" mask="separator.2">
     </nz-input-group>

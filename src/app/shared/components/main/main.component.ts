@@ -9,10 +9,11 @@ import { ThemeService } from '../../services/theme.service';
 import { ChatComponent } from '../chat/chat.component';
 import { SocketService } from '../../services/socket.service';
 import { ServicesService } from 'src/app/pages/services/services/services.service';
+import { PushService } from '../../services/push.service';
 
 @Component({
   selector: 'app-main',
-  imports: [FormsModule, TranslateModule, NzModules, NgFor, NgIf, NgClass, RouterLink, RouterOutlet, ChatComponent],
+  imports: [FormsModule, TranslateModule, NzModules, NgIf, RouterLink, RouterOutlet, ChatComponent],
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
   standalone: true,
@@ -37,6 +38,7 @@ export class MainComponent {
     public authService: AuthService,
     private router: Router,
     private serviceApi: ServicesService,
+    private pushService: PushService,
     private socketService: SocketService) {
   }
   ngOnInit(): void {
@@ -46,7 +48,23 @@ export class MainComponent {
     this.sseSubscription = this.socketService.getSSEEvents().subscribe((event) => {
       if (event.event === 'newMessage') {
         this.newMessageCount = this.newMessageCount + 1;
-        this.cdr.detectChanges(); 
+        this.pushService.showPushNotification(`Новое сообщение поступило на услугу в id ${event.data.requestId}`, event.data.message.message, 'service');
+        this.cdr.detectChanges();
+      }
+      else if (event.event === 'tmsBalanceTopup') {
+        this.pushService.showPushNotification(`ГСМ запрос на объем ${event.data.amount} литров ${event.data.isRejected ? 'отклонен' : 'принят'}`, '', 'gsm');
+      }
+      else if(event.event == 'serviceRequestPriced') {
+        this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} оценена`, '', 'service');
+      }
+      else if(event.event == 'serviceRequestToWorking') {
+        this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} в работе`, '', 'service');
+      }
+      else if(event.event == 'serviceRequestToCompleted') {
+        this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} выполнена`, '', 'service');
+      }
+      else if(event.event == 'serviceRequestCanceled') {
+        this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} отменена`, '', 'service');
       }
     });
     this.getChats();
@@ -64,7 +82,7 @@ export class MainComponent {
   logout() {
     this.authService.signOut();
     // this.router.navigate(['/auth/sign-in']);
-  } 
+  }
   toggleChat() {
     this.isChatVisible = !this.isChatVisible;
   }

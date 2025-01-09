@@ -66,9 +66,9 @@
 
     <nz-tabset (nzSelectedIndexChange)="onTabChange($event)">
         <nz-tab nzTitle="{{ 'requests' | translate }}">
-            <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty"
-            [nzFrontPagination]="false" [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount"
-            [nzShowSizeChanger]="true" [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
+            <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzFrontPagination]="false"
+                [nzPaginationPosition]="'both'" [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount"
+                [nzShowSizeChanger]="true" [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -96,16 +96,16 @@
                             item.verifiedBy.fullName : '' }}
                         </td>
                         <td>{{'('+item.driverId+') ' + item.driverFullName}}</td>
-                        <td>{{item.amount}}</td>
-                        <td>{{item.createdAt | date : "dd.MM.yyyy HH:mm"}}</td> 
+                        <td>{{item.amount | priceFormat}}</td>
+                        <td>{{item.createdAt | date : "dd.MM.yyyy HH:mm"}}</td>
                     </tr>
                 </tbody>
             </nz-table>
         </nz-tab>
         <nz-tab nzTitle="{{ 'topUp' | translate }}">
             <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzFrontPagination]="false"
-                [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount" [nzShowSizeChanger]="true"
-                [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
+                [nzPaginationPosition]="'both'" [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount"
+                [nzShowSizeChanger]="true" [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
                 <thead>
                     <tr>
                         <th>No</th>
