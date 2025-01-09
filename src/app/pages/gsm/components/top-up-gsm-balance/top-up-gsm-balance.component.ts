@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxMaskDirective } from 'ngx-mask';
-import { of } from 'rxjs';
+import { map, of } from 'rxjs';
 import { CommonModules } from 'src/app/shared/modules/common.module';
 import { NzModules } from 'src/app/shared/modules/nz-modules.module';
 import { PipeModule } from 'src/app/shared/pipes/pipes.module';
@@ -25,6 +25,7 @@ export class TopUpGsmBalanceComponent implements OnInit {
   loading: boolean = false;
   drivers$
   currentUser
+  selectedDriver
   constructor(
     private gsmService: GSMService,
     private toastr: NotificationService,
@@ -35,12 +36,15 @@ export class TopUpGsmBalanceComponent implements OnInit {
   ngOnInit(): void { 
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
     this.initForm();
+    this.listenToDriverChange();
   }
   findDriver(searchTerm: string) {
-    console.log(this.currentUser);
-    
     this.driverService.findDrivers(this.currentUser.merchantId , searchTerm, this.form.value.searchAs).subscribe((response:any) => {
-      this.drivers$ = of(response.data.content);
+      if(response && response.data) {
+        this.drivers$ = of(response.data.content);
+      }else {
+        this.drivers$ = of([]);
+      }
     });
   }
   initForm() {
@@ -49,13 +53,30 @@ export class TopUpGsmBalanceComponent implements OnInit {
       tmsId: new FormControl(this.currentUser.merchantId),
       driverId: new FormControl(null, Validators.required),
       amount: new FormControl(null, Validators.required),
+      gsmCardNumber: new FormControl(null, Validators.required)
     })
   }
-
+  listenToDriverChange() {
+    this.form.get('driverId')?.valueChanges.subscribe((driverId) => {
+      if (driverId) {
+        const selectedDriver = this.drivers$.pipe(
+          map((drivers:any) => drivers.find((driver: any) => driver.id === driverId))
+        );
+        selectedDriver.subscribe((driver: any) => {
+          if (driver) {
+            this.form.get('gsmCardNumber')?.setValue(driver.gsmCardNumber || '');
+          }
+        });
+      } else {
+        this.form.get('gsmCardNumber')?.setValue('');
+      }
+    });
+  }
   onSubmit() {
     this.loading = true;
     this.form.value.amount = this.form.value.amount.toString(); 
     this.gsmService.topUpTmsGSMBalance(this.form.value).subscribe((res:any) => {
+      console.log(res);
       if(res && res.success) {
         this.loading = false;
         this.toastr.success(this.translate.instant('successfullUpdated'));

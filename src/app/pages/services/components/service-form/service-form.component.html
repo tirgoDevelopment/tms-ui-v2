@@ -21,7 +21,7 @@
 
     <nz-input-group class="input-group w-full">
         <nz-form-label nzRequired>{{ 'services.title' | translate }}</nz-form-label>
-        <nz-select style="width: 100%;" nzPlaceHolder="{{ 'services.title' | translate }}" formControlName="servicesIds" nzMode="multiple">
+        <nz-select style="width: 100%;" nzPlaceHolder="{{ 'services.title' | translate }}" formControlName="servicesIds">
             <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of services"></nz-option>
         </nz-select>
     </nz-input-group>

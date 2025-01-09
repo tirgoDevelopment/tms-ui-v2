@@ -74,6 +74,11 @@ export class ServiceFormComponent implements OnInit {
   }
   onSubmit() {
     this.loading = true;
+    this.form.patchValue({
+      servicesIds: Array.isArray(this.form.value.servicesIds)
+        ? this.form.value.servicesIds
+        : [this.form.value.servicesIds]
+    });
     this.serviceApi.postDriverServices(this.form.value).subscribe((res: any) => {
       if (res) {
         this.loading = false;

@@ -12,7 +12,7 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { SocketService } from 'src/app/shared/services/socket.service';
 import { DriverFormComponent } from '../drivers/components/driver-form/driver-form.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { BehaviorSubject, catchError, debounceTime, distinctUntilChanged, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
 import { AssignDriverCardComponent } from './components/assign-driver-card/assign-driver-card.component';
@@ -54,7 +54,8 @@ export class GSMComponent implements OnInit {
   searchTms$ = new BehaviorSubject<string>('');
   tms$: Observable<any>;
   gsmBalance = 0;
-  loaderBalance=false;
+  loaderBalance = false;
+  sseSubscription
   constructor(
     private gsmService: GSMService,
     private modal: NzModalService,
@@ -69,12 +70,23 @@ export class GSMComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
     this.getGsmBalance();
+
+    this.sseSubscription = this.socketService.getSSEEvents().subscribe((event) => {
+      if (event.event === 'tmsBalanceTopup') {
+        this.getGsmBalance();
+        const index = this.data.findIndex(item => item.id === event.data.id);
+        if (index !== -1) {
+          this.data[index] = event.data;
+        }
+      }
+    });
   }
   find(ev: string) {
     let filter = generateQueryFilter({ companyName: ev });
     this.searchTms$.next(filter);
   }
   getAll() {
+
     this.filter['tmsId'] = this.currentUser.merchantId;
     const params = {
       ...this.filter,
@@ -82,23 +94,25 @@ export class GSMComponent implements OnInit {
       pageSize: this.pageParams.pageSize
     };
     this.loader = true;
-      this.gsmService.getTmsGSMTransactions(generateQueryFilter(params)).subscribe((res:any) => {
-        if(res && res.success) {
-          this.loader =false;
-          this.data = res.data.content;
-        } 
-      },err => {
+    this.gsmService.getTmsGSMTransactions(generateQueryFilter(params)).subscribe((res: any) => {
+      if (res && res.success) {
         this.loader = false;
-      })
+        this.data = res.data?.content || [];
+        this.pageParams.totalPagesCount = res.data.totalPagesCount;
+        this.totalItemsCount = this.pageParams.pageSize * this.pageParams.totalPagesCount;
+      }
+    }, err => {
+      this.loader = false;
+    })
   }
   getGsmBalance() {
     this.loaderBalance = true
-    this.gsmService.getTmsGSMBalance(this.currentUser.merchantId).subscribe((res:any) => {
-      if(res && res.success) {
+    this.gsmService.getTmsGSMBalance(this.currentUser.merchantId).subscribe((res: any) => {
+      if (res && res.success) {
         this.loaderBalance = false;
         this.gsmBalance = res.data.balance;
       }
-    },err => {
+    }, err => {
       this.loaderBalance = false;
     })
   }
@@ -117,8 +131,12 @@ export class GSMComponent implements OnInit {
       nzPlacement: 'right',
       nzWidth: '400px',
     });
+    drawerRef.afterClose.subscribe((res: any) => {
+      if (res) {
+        this.getAll();
+      }
+    })
   }
-  changeStatus(item) { }
   showDriver(id) {
     const drawerRef: any = this.drawer.create({
       nzTitle: this.translate.instant('information'),
@@ -142,31 +160,27 @@ export class GSMComponent implements OnInit {
   private initializeFilter(): Record<string, string> {
     return {
       driverId: '',
-      tmsId:'',
+      tmsId: '',
       transactionType: 'request',
       statusId: '',
       createdAtFrom: '',
       createdAtTo: '',
     };
   }
-  public onQueryParamsChange(params: NzTableQueryParams): void {
-    this.pageParams.pageIndex = params.pageIndex;
-    this.pageParams.pageSize = params.pageSize;
-    let { sort } = params;
-    let currentSort = sort.find((item) => item.value !== null);
-    let sortField = (currentSort && currentSort.key) || null;
-    let sortOrder = (currentSort && currentSort.value) || null;
-    sortOrder === 'ascend'
-      ? (sortOrder = 'asc')
-      : sortOrder === 'descend'
-        ? (sortOrder = 'desc')
-        : (sortOrder = '');
-    this.pageParams.sortBy = sortField;
-    this.pageParams.sortType = sortOrder;
+  onQueryParamsChange(params: NzTableQueryParams): void {
+    const { pageIndex, pageSize, sort } = params;
+    this.pageParams.pageIndex = pageIndex;
+    this.pageParams.pageSize = pageSize;
+
+    const currentSort = sort.find(item => item.value !== null);
+    this.pageParams.sortBy = currentSort?.key || null;
+    this.pageParams.sortType = currentSort?.value === 'ascend' ? 'asc' : currentSort?.value === 'descend' ? 'desc' : '';
+
     this.getAll();
   }
   onTabChange(index: number): void {
     this.filter['transactionType'] = index === 0 ? 'request' : 'topup';
     this.getAll();
   }
+
 }
