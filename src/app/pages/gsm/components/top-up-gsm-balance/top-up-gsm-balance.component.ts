@@ -76,7 +76,6 @@ export class TopUpGsmBalanceComponent implements OnInit {
     this.loading = true;
     this.form.value.amount = this.form.value.amount.toString(); 
     this.gsmService.topUpTmsGSMBalance(this.form.value).subscribe((res:any) => {
-      console.log(res);
       if(res && res.success) {
         this.loading = false;
         this.toastr.success(this.translate.instant('successfullUpdated'));

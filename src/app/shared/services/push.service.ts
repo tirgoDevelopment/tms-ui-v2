@@ -27,7 +27,6 @@ showPushNotification(title, message, type) {
         audio.play();
       }
     } else {
-      console.error('Brauzer Notification API ni qo‘llab-quvvatlamaydi.');
     }
   }
 }

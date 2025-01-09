@@ -28,7 +28,6 @@ export class FileUrlService {
         link.click();
         document.body.removeChild(link);
     }, error => {
-        console.error('Error downloading the image: ', error.error.message);
     });
   }
 

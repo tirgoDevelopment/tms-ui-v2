@@ -32,8 +32,6 @@ export class CounterAnimationPipe implements PipeTransform {
         this.currentValue = end;
       }
     }, frameRate);
-console.log(`Current Value: ${this.currentValue}, Target Value: ${value}`);
-
     return Math.round(this.currentValue);
   }
 }

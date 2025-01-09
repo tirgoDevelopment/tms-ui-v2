@@ -128,7 +128,6 @@ export class AddTransportComponent implements OnInit {
       },
 
       error: (error: any) => {
-        console.error('Error fetching currencies and cargo types:', error);
       }
     });
   }

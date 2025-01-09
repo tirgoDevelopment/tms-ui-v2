@@ -22,6 +22,5 @@ export class DetailComponent implements OnInit {
     if(this.item) {
       this.loadingPage = false;
     }
-    console.log(this.item);
   }
 }
