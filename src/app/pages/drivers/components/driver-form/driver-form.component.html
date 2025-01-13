@@ -335,7 +335,7 @@
           <div class="info-column">
             <div class="info-label">{{ 'drivers.total_balance' | translate }}</div>
             <div class="info-value">
-              {{ data?.isOwnBalance ? 'on' : 'off' | translate }}
+              {{ data?.isOwnBalance ? ('on'| translate)  : ('off' | translate) }}
             </div>
           </div>
         </div>
@@ -343,12 +343,12 @@
         <div class="info-row">
           <div class="info-column">
             <div class="info-label">{{ 'paid_way' | translate }}</div>
-            <p class="info-value">{{ data?.isKzPaidWay ? 'on' : 'off' | translate }}</p>
+            <p class="info-value">{{ data?.isKzPaidWay ? ('on' | translate) : ('off' | translate) }}</p>
           </div>
           <div class="info-column">
             <div class="info-label">{{ 'drivers.take_orders' | translate }}</div>
             <div class="info-value">
-              {{ data?.isOwnOrder ? 'on' : 'off' | translate }}
+              {{ data?.isOwnOrder ? ('on' | translate) : ('off' | translate) }}
             </div>
           </div>
         </div>
@@ -385,14 +385,14 @@
                 <div class="info-column">
                   <div class="info-label">{{ 'type_transport' | translate }}</div>
                   <div class="info-value">
-                    <p>{{ transport.transportType.name }}</p>
+                    <p>{{ transport?.transportType?.name }}</p>
                   </div>
                 </div>
 
                 <div class="info-column">
                   <div class="info-label">{{ 'transport_kind' | translate }}</div>
                   <div class="info-value">
-                    <p>{{ transport.transportKind.name }}</p>
+                    <p>{{ transport?.transportKind?.name }}</p>
                   </div>
                 </div>
               </div>
@@ -400,7 +400,7 @@
                 <div class="info-column">
                   <div class="info-label">{{ 'load_side' | translate }}</div>
                   <div class="info-value" *ngFor="let item of transport.cargoLoadMethods">
-                    <p>{{ item.name }}</p>
+                    <p>{{ item?.name }}</p>
                   </div>
                 </div>
 
