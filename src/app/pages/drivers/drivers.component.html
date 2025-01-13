@@ -65,9 +65,9 @@
 </div>
 
 
-<nz-table #sortTable [nzShowSizeChanger]="true" [nzShowPagination]="false" [nzData]="data" [nzFrontPagination]="false"
+<nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzFrontPagination]="false" [nzPaginationPosition]="'both'"
 [nzPageSize]="pageParams.pageSize" [nzTotal]="pageParams.totalPagesCount" [nzShowSizeChanger]="true" [nzShowPagination]="true"
-  [nzLoading]="loader" [nzNoResult]="empty" (nzQueryParams)="onQueryParamsChange($event)">
+(nzQueryParams)="onQueryParamsChange($event)">
   <thead>
     <tr>
       <th>No</th>
