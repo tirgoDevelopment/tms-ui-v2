@@ -60,7 +60,6 @@ export class DriversComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms'));
-   
   }
 
   getAll(): void {

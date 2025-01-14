@@ -14,7 +14,7 @@ export class DriversService {
   constructor(private http: HttpClient) { }
 
   getAll(merchantId?: any, params?: any, filter?: any): Observable<Response<DriverModel[]>> {
-    return this.http.get<Response<DriverModel[]>>(`${env.apiUrl}/users/drivers/merchants/${merchantId}?${filter}`, { params})
+    return this.http.get<Response<DriverModel[]>>(`${env.apiUrl}/users/drivers/merchants/${merchantId}?${filter}`, { params })
   }
   getAllAdmin(filter?: any): Observable<Response<DriverModel[]>> {
     return this.http.get<Response<DriverModel[]>>(`${env.apiUrl}/users/drivers?${filter}`)
@@ -58,10 +58,13 @@ export class DriversService {
   topupDriverBalance(data: any) {
     return this.http.post<Response<DriverModel>>(env.apiUrl + `/users/drivers/${data.driverId}/balances`, data)
   }
-  findDrivers(merchantId,searchTerm: string, searchAs: string) {
+  findDrivers(merchantId, searchTerm: string, searchAs: string) {
     const filter = generateQueryFilter({ [searchAs]: searchTerm });
-    return this.getAll(merchantId,{}, filter).pipe(
+    return this.getAll(merchantId, {}, filter).pipe(
       catchError(() => of({ data: { content: [] } }))
     );
+  }
+  sendOtp(data: any) {
+    return this.http.post(env.apiUrl + `/users/send-otp/additional-phone`, data)
   }
 }

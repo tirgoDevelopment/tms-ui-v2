@@ -17,13 +17,14 @@ import { AddTransportComponent } from '../add-transport/add-transport.component'
 import { Router } from '@angular/router';
 import { catchError, debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap } from 'rxjs';
 import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
+import { CodeInputModule } from 'angular-code-input';
 
 @Component({
   selector: 'app-driver-form',
   templateUrl: './driver-form.component.html',
   styleUrls: ['./driver-form.component.scss'],
   standalone: true,
-  imports: [NzModules, TranslateModule, CommonModules, NzModalModule, PipeModule, NgxMaskDirective]
+  imports: [NzModules, TranslateModule, CommonModules, NzModalModule, PipeModule, NgxMaskDirective, CodeInputModule]
 })
 export class DriverFormComponent implements OnInit {
   confirmModal?: NzModalRef;
@@ -33,8 +34,12 @@ export class DriverFormComponent implements OnInit {
   showForm: boolean = false;
   loading: boolean = false;
   edit: boolean = false;
-
-  fileRemovedPassport: boolean = false;
+  timerOtp
+  countdown: number = 119;
+  intervalId: any;
+  isCodeExpired: boolean = false;
+  codeEntered:boolean = false;
+  verifyCode:string;  fileRemovedPassport: boolean = false;
   previewUrlPassport: any;
 
   fileRemovedLicense: boolean = false;
@@ -43,6 +48,7 @@ export class DriverFormComponent implements OnInit {
   selectedFilePassport: File | null = null;
   selectedFileLicense: File | null = null;
 
+  phoneVerified = false;
   form: FormGroup;
   data: DriverModel;
   countries = [
@@ -57,6 +63,7 @@ export class DriverFormComponent implements OnInit {
   drivers$!: Observable<any>;
   searchDriver$ = new Subject<string>();
   selectedDriver: any;
+  otpCode
   constructor(
     private modal: NzModalService,
     private toastr: NotificationService,
@@ -116,11 +123,94 @@ export class DriverFormComponent implements OnInit {
       this.previewUrlLicense = this.data?.driverLicenseFilePath;
       this.edit = true;
       const mainPhoneNumber = this.data?.phoneNumbers?.find(phone => phone.isMain);
-      const formattedPhoneNumber = mainPhoneNumber ? `+${mainPhoneNumber.code}${mainPhoneNumber.number}` : '';
+      const formattedPhoneNumber = mainPhoneNumber ? `${mainPhoneNumber.code}${mainPhoneNumber.number}` : '';
       this.form.patchValue(this.data)
       this.form.patchValue({
         phoneNumbers: formattedPhoneNumber,
       });
+    }
+  }
+ 
+  sendSms() {
+    const phoneNumbers = this.form.value.phoneNumbers;
+    let numberWithoutCode = phoneNumbers.replace(/[^0-9]/g, "");
+    let countryDialCode = "";
+    switch (this.selectedCountry.code) {
+      case 'UZ':
+        countryDialCode = "998";
+        numberWithoutCode = numberWithoutCode.slice(3); 
+        break;
+      case 'KZ':
+        countryDialCode = "7";
+        numberWithoutCode = numberWithoutCode.slice(1);
+        break;
+      case 'RU':
+        countryDialCode = "7";
+        numberWithoutCode = numberWithoutCode.slice(1); 
+        break;
+      default:
+        console.error("Noto'g'ri mamlakat kodi tanlandi.");
+        return;
+    }
+  
+    let data = {
+      number: numberWithoutCode,
+      code: countryDialCode,
+      userType: "driver",
+      sendBy: "sms"
+    };
+  
+    this.loading = true;
+    this.driversService.sendOtp(data).subscribe((res: any) => {
+      if(res && res.success && res.data.isRegistered) {
+        this.loading = false;
+        this.toastr.error('Водитель уже зарегистрирован.', 'Пожалуйста, отправьте запрос на водтитель.');
+      }
+      else if(res && res.success && !res.data.isRegistered) {
+        this.toastr.success('Код отправлен успешно', '');
+        this.loading = false;
+        this.otpCode = res.data.otpCode;
+        this.isCodeExpired = false;
+        this.countdown = 119;
+        this.startCountdown();
+      }
+    }, err => {
+      this.loading = false;
+    })
+  }
+  startCountdown() {
+    this.countdown = 119;
+    this.intervalId = setInterval(() => {
+      if (this.countdown >= 0) {
+        this.formatTime(this.countdown);
+        this.countdown--;
+      } else {
+        this.stopCountdown();
+        this.isCodeExpired = true;
+      }
+    }, 1000);
+  }
+  stopCountdown() {
+    clearInterval(this.intervalId);
+  }
+  formatTime(seconds: number) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    this.timerOtp = `${"0" + minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  }
+  sendVerifyedCode() {
+    this.loading = true;
+    if (this.isCodeExpired) {
+      this.loading = false;
+      this.toastr.error('Срок действия SMS-кода истек. Пожалуйста, запросите новый.','');
+    }
+    else if (this.otpCode != this.verifyCode) {
+      this.loading = false;
+      this.toastr.error('Пароль не совпадает','');
+    }
+    else if (this.otpCode == this.verifyCode) {
+      this.phoneVerified = true;
+      this.loading = false;
     }
   }
   onCancel(): void {
@@ -307,5 +397,9 @@ export class DriverFormComponent implements OnInit {
     },err => {
       this.loading = false;
     });
+  }
+  onCodeChanged(code: string) {
+    code.length == 6 ? (this.codeEntered = true) : (this.codeEntered = false);
+    this.verifyCode = code;
   }
 }
