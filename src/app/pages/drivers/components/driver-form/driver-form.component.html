@@ -2,66 +2,91 @@
   <nz-tabset>
     <nz-tab nzTitle="{{ 'new' | translate }}">
       <form [formGroup]="form">
+        <div *ngIf="!phoneVerified">
+          <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown" style="width: 100%;">
+            <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask"
+              required [readonly]="otpCode" />
+            <div *ngIf="form.get('phoneNumbers').touched && form.get('phoneNumbers').hasError('required')"
+              class="error-message">
+              {{ 'is_required' | translate }}
+            </div>
+          </nz-input-group>
 
-        <nz-input-group class="input-group">
-          <nz-form-label nzRequired>{{ 'first_name' | translate }}</nz-form-label>
-          <input formControlName="firstName" type="text" nz-input placeholder="{{ 'first_name' | translate }}"
-            required />
-          <div *ngIf="form.get('firstName').touched && form.get('firstName').hasError('required')"
-            class="error-message">
-            {{ 'is_required' | translate }}
+          <ng-template #countryDropdown>
+            <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="display: flex; align-items: center;">
+              <img src="{{ selectedCountry.flag }}" alt="Selected Country Flag" class="flag-icon" width="20">
+            </a>
+          </ng-template>
+
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item *ngFor="let country of countries" (click)="selectCountry(country)">
+                <img style="margin-right: 5px;" src="{{ country.flag }}" alt="Country Flag" width="20">
+                {{ country.name }}
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+
+          <div *ngIf="otpCode">
+            <h2 class="title">Подтверждение</h2>
+            <div>Введите 5 значный код отправлен на номер </div>
+            <code-input [disabled]="loading" [isCodeHidden]="false" [codeLength]="5" (codeChanged)="onCodeChanged($event)"
+              (codeCompleted)="sendVerifyedCode()"></code-input>
+    
+              <div style="text-align: center; margin-top: 10px;">{{timerOtp ? timerOtp : '01:59'}}</div>
           </div>
-        </nz-input-group>
 
-        <nz-input-group class="input-group">
-          <nz-form-label nzRequired>{{ 'last_name' | translate }}</nz-form-label>
-          <input formControlName="lastName" type="text" nz-input placeholder="{{ 'last_name' | translate }}" required />
-          <div *ngIf="form.get('lastName').touched && form.get('lastName').hasError('required')" class="error-message">
-            {{ 'is_required' | translate }}
+          <div class="button-wrapper">
+            <button *ngIf="isCodeExpired" nz-button nzType="link" (click)="sendSms()">Отправить еще раз</button>
+
+            <button nz-button class="success-button" (click)="sendSms()">
+              {{ otpCode ? ('confirm' | translate) : ('sendSms' | translate) }}
+            </button>
           </div>
-        </nz-input-group>
-
-        <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown" style="width: 100%;">
-          <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask"
-            required />
-          <div *ngIf="form.get('phoneNumbers').touched && form.get('phoneNumbers').hasError('required')"
-            class="error-message">
-            {{ 'is_required' | translate }}
-          </div>
-        </nz-input-group>
-
-        <ng-template #countryDropdown>
-          <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="display: flex; align-items: center;">
-            <img src="{{ selectedCountry.flag }}" alt="Selected Country Flag" class="flag-icon" width="20">
-          </a>
-        </ng-template>
-
-        <nz-dropdown-menu #menu="nzDropdownMenu">
-          <ul nz-menu>
-            <li nz-menu-item *ngFor="let country of countries" (click)="selectCountry(country)">
-              <img style="margin-right: 5px;" src="{{ country.flag }}" alt="Country Flag" width="20">
-              {{ country.name }}
-            </li>
-          </ul>
-        </nz-dropdown-menu>
-
-        <label nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
-        <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
-          translate}}</label>
-        <label nz-checkbox formControlName="isOwnBalance" class="m-0" style="margin: 0 !important;">{{'total_balance' |
-          translate}}</label>
-        <label nz-checkbox formControlName="isOwnService" class="m-0" style="margin: 0 !important;">{{'apply_service' |
-          translate}}</label>
-
-        <div class="button-wrapper">
-          <button nz-button class="danger-button" (click)="onCancel()">
-            {{ 'cancel' | translate }}
-          </button>
-          <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
-            [disabled]="form.invalid || loading">
-            {{ 'save' | translate }}
-          </button>
         </div>
+
+        <div *ngIf="phoneVerified">
+          <nz-input-group class="input-group">
+            <nz-form-label nzRequired>{{ 'first_name' | translate }}</nz-form-label>
+            <input formControlName="firstName" type="text" nz-input placeholder="{{ 'first_name' | translate }}"
+              required />
+            <div *ngIf="form.get('firstName').touched && form.get('firstName').hasError('required')"
+              class="error-message">
+              {{ 'is_required' | translate }}
+            </div>
+          </nz-input-group>
+
+          <nz-input-group class="input-group">
+            <nz-form-label nzRequired>{{ 'last_name' | translate }}</nz-form-label>
+            <input formControlName="lastName" type="text" nz-input placeholder="{{ 'last_name' | translate }}"
+              required />
+            <div *ngIf="form.get('lastName').touched && form.get('lastName').hasError('required')"
+              class="error-message">
+              {{ 'is_required' | translate }}
+            </div>
+          </nz-input-group>
+
+          <label nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
+          <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
+            translate}}</label>
+          <label nz-checkbox formControlName="isOwnBalance" class="m-0" style="margin: 0 !important;">{{'total_balance'
+            |
+            translate}}</label>
+          <label nz-checkbox formControlName="isOwnService" class="m-0" style="margin: 0 !important;">{{'apply_service'
+            |
+            translate}}</label>
+
+          <div class="button-wrapper">
+            <button nz-button class="danger-button" (click)="onCancel()">
+              {{ 'cancel' | translate }}
+            </button>
+            <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
+              [disabled]="form.invalid || loading">
+              {{ 'save' | translate }}
+            </button>
+          </div>
+        </div>
+
       </form>
     </nz-tab>
     <nz-tab nzTitle="{{ 'existing' | translate }}">
@@ -117,7 +142,7 @@
         </div>
       </nz-input-group>
 
-     
+
 
       <!-- <nz-input-group class="input-group" *ngIf="!edit" >
         <nz-form-label nzRequired>{{ 'password' | translate }}</nz-form-label>
@@ -275,7 +300,7 @@
             <div class="info-label">{{ 'serviceBalance' | translate }}</div>
             <div class="info-value">
               {{data?.serviceBalance | priceFormat}} TIR
-              
+
             </div>
           </div>
           <div class="info-column">
@@ -335,7 +360,7 @@
           <div class="info-column">
             <div class="info-label">{{ 'drivers.total_balance' | translate }}</div>
             <div class="info-value">
-              {{ data?.isOwnBalance ? ('on'| translate)  : ('off' | translate) }}
+              {{ data?.isOwnBalance ? ('on'| translate) : ('off' | translate) }}
             </div>
           </div>
         </div>

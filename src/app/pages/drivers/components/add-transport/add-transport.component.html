@@ -122,7 +122,7 @@
 
   <nz-input-group class="input-group">
     <nz-form-label nzRequired>{{'state_number' | translate}}</nz-form-label>
-    <input formControlName="transportNumber" type="text" nz-input placeholder="{{ 'state_number' | translate }}" appUppercaseValidation/>
+    <input formControlName="transportNumber" type="text" nz-input placeholder="{{ 'state_number' | translate }}" appUppercaseValidation [readonly]="form.value?.id"/>
     <div *ngIf="form.get('transportNumber').touched && form.get('transportNumber').hasError('required')"
       class="error-message">
       {{ 'is_required' | translate }}

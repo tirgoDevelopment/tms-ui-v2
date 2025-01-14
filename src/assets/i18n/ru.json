@@ -218,6 +218,8 @@
     "request": "Запрос",
     "type": "Тип",
     "topUp": "Пополнение",
+    "sendSms": "Отправить СМС",
+    "alreadyAssigned": "У водителя уже есть ТМС",
     "sidebar": {
         "orders": "Заказы",
         "drivers": "Перевозчики",
