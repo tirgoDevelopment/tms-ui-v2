@@ -56,9 +56,14 @@ export class ServiceFormComponent implements OnInit {
     this.searchDriver$.next(filter);
   }
   getServices() {
-    this.serviceApi.getServiceList().subscribe((res: Response<ServiceModel[]>) => {
-      if (res) {
-        this.services = res.data;
+    this.serviceApi.getServiceList().subscribe((res: any) => {
+      if (res.data && Array.isArray(res.data)) {
+        const uniqueServices = Array.from(new Set(res.data.map((service: any) => service.name)))
+          .map((name: any) => res.data.find((service: any) => service.name === name));
+
+        this.services = uniqueServices;
+      } else {
+        this.services = [];
       }
     });
   }

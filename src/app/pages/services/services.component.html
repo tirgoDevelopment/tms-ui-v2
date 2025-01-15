@@ -16,7 +16,7 @@
     <div class="filter" [@showHideFilter]="isFilterVisible ? 'show' : 'hide'">
         <div>
             <nz-select nzAllowClear="true" [(ngModel)]="filter['serviceId']"
-                nzPlaceHolder="{{ 'services.serviceId' | translate }}">
+                nzPlaceHolder="{{ 'services.title' | translate }}">
                 <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of services">
                 </nz-option>
             </nz-select>
@@ -48,7 +48,7 @@
         <div>
             <nz-input-group class="input-group">
                 <nz-date-picker style="min-width: 150px;" [(ngModel)]="filter['createdAtTo']" type="date" nz-input [nzAllowClear]="false"
-                    nzPlaceHolder="{{ 'date_creation-to' | translate }}" class="custom-date-picker">
+                    nzPlaceHolder="{{ 'date_creation_to' | translate }}" class="custom-date-picker">
                 </nz-date-picker>
             </nz-input-group>
         </div>
@@ -119,7 +119,7 @@
                         {{ "no_data" | translate }}
                     </ng-template>
                 </td>
-                <td>{{ item.createdAt | date : "dd.MM.yyyy" }}</td>
+                <td>{{ item.createdAt | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>{{ item.statusesHistory | createdAt : 3 | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>{{ item.statusesHistory | createdAt : 5 | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>

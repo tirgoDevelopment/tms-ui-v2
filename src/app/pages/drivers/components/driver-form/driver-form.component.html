@@ -184,7 +184,7 @@
           </li>
         </ul>
       </nz-dropdown-menu>
-      <label nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
+      <label [nzDisabled]="true" nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
       <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
         translate}}</label>
       <label nz-checkbox formControlName="isOwnBalance" class="m-0" style="margin: 0 !important;">{{'total_balance' |
