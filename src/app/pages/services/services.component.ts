@@ -76,9 +76,9 @@ export class ServicesComponent implements OnInit, OnDestroy {
   selectedServiceId: string | null = null;
 
 
-  currentUser:any;
-  tirBalance:number = 0;
-  serviceBalance:number = 0;
+  currentUser: any;
+  tirBalance: number = 0;
+  serviceBalance: number = 0;
   public data: any[] = [];
   public loader = false;
   public isFilterVisible = false;
@@ -233,23 +233,24 @@ export class ServicesComponent implements OnInit, OnDestroy {
   }
   getRefServices() {
     this.servicesService.getServiceList().subscribe((res: any) => {
-      this.services = res.data;
+      if (res.data && Array.isArray(res.data)) {
+        const uniqueServices = Array.from(new Set(res.data.map((service: any) => service.name)))
+          .map((name: any) => res.data.find((service: any) => service.name === name));
+        this.services = uniqueServices;
+      } else {
+        this.services = [];
+      }
     });
   }
   public onQueryParamsChange(params: NzTableQueryParams): void {
-    this.pageParams.pageIndex = params.pageIndex;
-    this.pageParams.pageSize = params.pageSize;
-    let { sort } = params;
-    let currentSort = sort.find((item) => item.value !== null);
-    let sortField = (currentSort && currentSort.key) || null;
-    let sortOrder = (currentSort && currentSort.value) || null;
-    sortOrder === 'ascend'
-      ? (sortOrder = 'asc')
-      : sortOrder === 'descend'
-        ? (sortOrder = 'desc')
-        : (sortOrder = '');
-    this.pageParams.sortBy = sortField;
-    this.pageParams.sortType = sortOrder;
+    const { pageIndex, pageSize, sort } = params;
+    this.pageParams.pageIndex = pageIndex;
+    this.pageParams.pageSize = pageSize;
+
+    const currentSort = sort.find(item => item.value !== null);
+    this.pageParams.sortBy = currentSort?.key || null;
+    this.pageParams.sortType = currentSort?.value === 'ascend' ? 'asc' : currentSort?.value === 'descend' ? 'desc' : '';
+
     this.getAll();
   }
   public toggleFilter(): void {

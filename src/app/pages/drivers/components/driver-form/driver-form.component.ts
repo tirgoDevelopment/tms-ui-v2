@@ -243,7 +243,7 @@ export class DriverFormComponent implements OnInit {
       const file = new File([this.selectedFileLicense], Date.now() + this.selectedFileLicense.name, { type: this.selectedFileLicense.type });
       formData.append('driverLicense', file);
     }
-
+    this.form.value.isKzPaidWay = this.data.isKzPaidWay
     this.loading = true;
     const uniqueFormData = removeDuplicateKeys(formData);
 
