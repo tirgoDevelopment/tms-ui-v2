@@ -223,6 +223,7 @@
     "alreadyAssigned": "У водителя уже есть ТМС",
     "date_creation_from": "Дата создания от",
     "date_creation_to": "Дата создания по",
+    "excel": "Excel",
     "sidebar": {
         "orders": "Заказы",
         "drivers": "Перевозчики",

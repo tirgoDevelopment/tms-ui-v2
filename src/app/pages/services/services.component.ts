@@ -263,6 +263,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
   }
   public resetFilter(): void {
     this.filter = this.initializeFilter();
+    this.tabType == 0 ? this.filter['excludedServicesIds'] = [16, 15] : this.filter['excludedServicesIds'] = [], this.filter['servicesIds'] = [15, 16];
     this.getAll();
   }
   private initializeFilter(): Record<any, any> {
@@ -277,10 +278,11 @@ export class ServicesComponent implements OnInit, OnDestroy {
   }
   calculateSum(amountDetails: any[]): number {
     if (!Array.isArray(amountDetails)) return 0;
-    return amountDetails.reduce(
-      (sum, detail) => sum + parseFloat(detail.amount || 0),
+    const sum = amountDetails.reduce(
+      (sum, detail) => sum + detail.amount || 0,
       0
     );
+    return sum;
   }
   getServicePriceMessage(serviceName: string, totalPrice: number): string {
     return this.translate.instant('services.servicePriceMessage', {
@@ -314,12 +316,12 @@ export class ServicesComponent implements OnInit, OnDestroy {
   onTabChange(selectedIndex: number): void {
     this.pageParams.pageIndex = 1;
     this.tabType = selectedIndex;
-    if(this.tabType) {
+    if (this.tabType) {
       this.filter['excludedServicesIds'] = [null];
-      this.filter['servicesIds'] = [15,16];
+      this.filter['servicesIds'] = [15, 16];
     }
     else {
-      this.filter['excludedServicesIds'] = [15,16];
+      this.filter['excludedServicesIds'] = [15, 16];
       this.filter['servicesIds'] = [''];
     }
     this.getAll();
@@ -343,5 +345,26 @@ export class ServicesComponent implements OnInit, OnDestroy {
       this.filter['servicesIds'] = Array.from(new Set([...this.filter['servicesIds'], ...duplicateIds]));
     }
   }
+  getExcel() {
+    this.filter['excludedServicesIds'] = []
+    const params = {
+      pageIndex: this.pageParams.pageIndex,
+      pageSize: this.pageParams.pageSize,
+      sortBy: this.pageParams.sortBy,
+      sortType: this.pageParams.sortType,
+      ...this.filter,
+    };
+    let query = generateQueryFilter(params)
 
+    this.servicesService.excelService(query).subscribe((res: any) => {
+      const url = window.URL.createObjectURL(res);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'services.xlsx';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    })
+  }
 }
