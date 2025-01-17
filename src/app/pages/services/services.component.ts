@@ -82,9 +82,11 @@ export class ServicesComponent implements OnInit, OnDestroy {
   public data: any[] = [];
   public loader = false;
   public isFilterVisible = false;
-  public filter: Record<string, string> = this.initializeFilter();
+  public filter: Record<any, any> = this.initializeFilter();
   statuses: any[] = [];
   services: any[] = [];
+  tabType = 0;
+  uniqueServices = [];
   pageParams = {
     pageIndex: 1,
     pageSize: 10,
@@ -234,11 +236,14 @@ export class ServicesComponent implements OnInit, OnDestroy {
   getRefServices() {
     this.servicesService.getServiceList().subscribe((res: any) => {
       if (res.data && Array.isArray(res.data)) {
-        const uniqueServices = Array.from(new Set(res.data.map((service: any) => service.name)))
+        this.services = res.data;
+        this.uniqueServices = Array.from(new Set(res.data.map((service: any) => service.name)))
           .map((name: any) => res.data.find((service: any) => service.name === name));
-        this.services = uniqueServices;
+        this.uniqueServices = this.uniqueServices.filter(
+          (service: any) => service.id !== 15 && service.id !== 16
+        );
       } else {
-        this.services = [];
+        this.uniqueServices = [];
       }
     });
   }
@@ -260,13 +265,14 @@ export class ServicesComponent implements OnInit, OnDestroy {
     this.filter = this.initializeFilter();
     this.getAll();
   }
-  private initializeFilter(): Record<string, string> {
+  private initializeFilter(): Record<any, any> {
     return {
       serviceId: '',
       driverId: '',
       statusId: '',
       createdAtFrom: '',
       createdAtTo: '',
+      excludedServicesIds: [16, 15]
     };
   }
   calculateSum(amountDetails: any[]): number {
@@ -305,4 +311,37 @@ export class ServicesComponent implements OnInit, OnDestroy {
       }
     });
   }
+  onTabChange(selectedIndex: number): void {
+    this.pageParams.pageIndex = 1;
+    this.tabType = selectedIndex;
+    if(this.tabType) {
+      this.filter['excludedServicesIds'] = [null];
+      this.filter['servicesIds'] = [15,16];
+    }
+    else {
+      this.filter['excludedServicesIds'] = [15,16];
+      this.filter['servicesIds'] = [''];
+    }
+    this.getAll();
+  }
+  onServiceSelect(selectedServiceId: number): void {
+    if (!Array.isArray(this.filter['servicesIds'])) {
+      this.filter['servicesIds'] = [];
+    }
+
+    if (!selectedServiceId) {
+      this.filter['servicesIds'] = [];
+      return;
+    }
+
+    const selectedService = this.services.find((service) => service.id === selectedServiceId);
+
+    if (selectedService) {
+      const duplicateIds = this.services
+        .filter((service) => service.name === selectedService.name)
+        .map((service) => service.id);
+      this.filter['servicesIds'] = Array.from(new Set([...this.filter['servicesIds'], ...duplicateIds]));
+    }
+  }
+
 }
