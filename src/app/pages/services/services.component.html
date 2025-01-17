@@ -14,13 +14,14 @@
     </div>
 
     <div class="filter" [@showHideFilter]="isFilterVisible ? 'show' : 'hide'">
-        <div>
-            <nz-select nzAllowClear="true" [(ngModel)]="filter['serviceId']"
-                nzPlaceHolder="{{ 'services.title' | translate }}">
-                <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of services">
-                </nz-option>
+        <div *ngIf="tabType == 0">
+            <nz-select style="width:250px" nzAllowClear="true" [(ngModel)]="filter['servicesIds']" (ngModelChange)="onServiceSelect($event)"
+              nzPlaceHolder="{{ 'services.title' | translate }}">
+              <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of uniqueServices">
+              </nz-option>
             </nz-select>
-        </div>
+          </div>
+    
 
         <div>
             <nz-input-group class="input-group">
@@ -82,6 +83,12 @@
         </nz-card>
     </div>
 
+    <nz-tabset (nzSelectedIndexChange)="onTabChange($event)">
+        <nz-tab nzTitle="{{'services.title' | translate}}"></nz-tab>
+        <nz-tab nzTitle="{{'kzPaidWay' | translate}}"></nz-tab>
+      </nz-tabset>
+
+      
     <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzScroll]="{ x: 'max-content' }"
         [nzFrontPagination]="false" [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount"
         [nzShowSizeChanger]="true" [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
@@ -96,7 +103,7 @@
                 <th>{{ "services.processingTime" | translate }}</th>
                 <th>{{ "services.processingTimeEnd" | translate }}</th>
                 <th>{{ "total" | translate }}</th>
-                <th nzRight>{{ "status" | translate }}</th>
+                <th nzRight nzWidth="150px">{{ "status" | translate }}</th>
                 <th nzRight></th>
             </tr>
         </thead>
