@@ -28,7 +28,7 @@ import { CodeInputModule } from 'angular-code-input';
 })
 export class DriverFormComponent implements OnInit {
   confirmModal?: NzModalRef;
-  @Input() id?: number|string;
+  @Input() id?: number | string;
   @Input() mode?: 'add' | 'edit' | 'view';
   @Output() close = new EventEmitter<void>();
   showForm: boolean = false;
@@ -38,8 +38,8 @@ export class DriverFormComponent implements OnInit {
   countdown: number = 119;
   intervalId: any;
   isCodeExpired: boolean = false;
-  codeEntered:boolean = false;
-  verifyCode:string;  fileRemovedPassport: boolean = false;
+  codeEntered: boolean = false;
+  verifyCode: string; fileRemovedPassport: boolean = false;
   previewUrlPassport: any;
 
   fileRemovedLicense: boolean = false;
@@ -52,18 +52,23 @@ export class DriverFormComponent implements OnInit {
   form: FormGroup;
   data: DriverModel;
   countries = [
-    { code: 'UZ', name: 'Uzbekistan', flag: 'assets/images/flags/UZ.svg' },
-    { code: 'KZ', name: 'Kazakhstan', flag: 'assets/images/flags/KZ.svg' },
-    { code: 'RU', name: 'Russia', flag: 'assets/images/flags/RU.svg' },
+    { code: '+998', name: 'Uzbekistan', flag: 'assets/images/flags/UZ.svg' },
+    { code: '+7', name: 'Kazakhstan', flag: 'assets/images/flags/KZ.svg' },
+    { code: '+7', name: 'Russia', flag: 'assets/images/flags/RU.svg' },
+    { code: '+992', name: 'Tajikistan', flag: 'assets/images/flags/TJ.png' },
+    { code: '+996', name: 'Kyrgyzstan', flag: 'assets/images/flags/KG.png' },
   ];
   selectedCountry: { code: string; name: string; flag: string } = this.countries[0];
   currentMask: string = '+000 00 000-00-00';
   currentUser: any;
-  loadingPage:boolean = false;
+  loadingPage: boolean = false;
   drivers$!: Observable<any>;
   searchDriver$ = new Subject<string>();
   selectedDriver: any;
   otpCode
+
+  debounceTimeout
+  phoneCodeInvalid = false;
   constructor(
     private modal: NzModalService,
     private toastr: NotificationService,
@@ -99,7 +104,9 @@ export class DriverFormComponent implements OnInit {
       isOwnService: new FormControl(false),
       isOwnOrder: new FormControl(false),
       isKzPaidWay: new FormControl(false),
-    });  
+    });
+    this.selectCountry(this.countries[0]);
+
     if (this.mode == 'view' || this.mode == 'edit') {
       this.getById();
     }
@@ -116,21 +123,75 @@ export class DriverFormComponent implements OnInit {
       });
     }
   }
+  onPhoneNumberChange(inputValue: string): void {
+    clearTimeout(this.debounceTimeout);
+    this.debounceTimeout = setTimeout(() => {
+      let inputCode: string;
+      if (inputValue.startsWith('7')) {
+        inputCode = inputValue.startsWith('+')
+          ? inputValue.split(' ')[0]
+          : '+' + inputValue.substring(0, 1);
+      } else {
+        inputCode = inputValue.startsWith('+')
+          ? inputValue.split(' ')[0]
+          : '+' + inputValue.substring(0, 3);
+      }
+      const matchedCountry = this.countries.find(country => country.code === inputCode);
+      this.phoneCodeInvalid = false;
+      if (matchedCountry) {
+        if (matchedCountry.code !== this.selectedCountry.code) {
+          this.selectCountry(matchedCountry);
+        }
+      } else {
+        this.phoneCodeInvalid = true;
+      }
+    }, 300);
+  }
+  updateMask(code: string) {
+    switch (code) {
+      case '+998':
+        this.currentMask = '+000 00 000-00-00';
+        break;
+      case '+7':
+        this.currentMask = '+0 000 000-00-00';
+        break;
+      case '+7':
+        this.currentMask = '+0 000 000-00-00';
+        break;
+      case '+992':
+        this.currentMask = '+000 00 000-00-00';
+        break;
+      case '+996':
+        this.currentMask = '+000 000 000-000';
+        break;
+      default:
+        this.currentMask = '';
+    }
+    this.form.get('phoneNumbers')?.updateValueAndValidity();
+  }
+  selectCountry(country: { code: string; name: string; flag: string }) {
+    this.selectedCountry = country;
+    this.updateMask(country.code);
+    this.form.patchValue({
+      phoneNumbers: this.selectedCountry.code
+    });
+  }
   patchForm() {
-    this.updateMask();
     if (this.data) {
       this.previewUrlPassport = this.data?.passportFilePath;
       this.previewUrlLicense = this.data?.driverLicenseFilePath;
       this.edit = true;
-      const mainPhoneNumber = this.data?.phoneNumbers?.find(phone => phone.isMain);
-      const formattedPhoneNumber = mainPhoneNumber ? `${mainPhoneNumber.code}${mainPhoneNumber.number}` : '';
+      const mainPhoneNumber = this.data?.phoneNumbers?.find(phone => phone.isMain ? phone.isMain : this.data?.phoneNumbers[0]);
+      const matchedCountry = this.countries.find(country => country.code === '+' + mainPhoneNumber.code);
+      this.selectCountry(matchedCountry);
+      const formattedPhoneNumber = mainPhoneNumber ? `+${mainPhoneNumber.code}${mainPhoneNumber.number}` : '';
       this.form.patchValue(this.data)
       this.form.patchValue({
         phoneNumbers: formattedPhoneNumber,
       });
     }
   }
- 
+
   sendSms() {
     const phoneNumbers = this.form.value.phoneNumbers;
     let numberWithoutCode = phoneNumbers.replace(/[^0-9]/g, "");
@@ -138,7 +199,7 @@ export class DriverFormComponent implements OnInit {
     switch (this.selectedCountry.code) {
       case 'UZ':
         countryDialCode = "998";
-        numberWithoutCode = numberWithoutCode.slice(3); 
+        numberWithoutCode = numberWithoutCode.slice(3);
         break;
       case 'KZ':
         countryDialCode = "7";
@@ -146,27 +207,27 @@ export class DriverFormComponent implements OnInit {
         break;
       case 'RU':
         countryDialCode = "7";
-        numberWithoutCode = numberWithoutCode.slice(1); 
+        numberWithoutCode = numberWithoutCode.slice(1);
         break;
       default:
         console.error("Noto'g'ri mamlakat kodi tanlandi.");
         return;
     }
-  
+
     let data = {
       number: numberWithoutCode,
       code: countryDialCode,
       userType: "driver",
       sendBy: "sms"
     };
-  
+
     this.loading = true;
     this.driversService.sendOtp(data).subscribe((res: any) => {
-      if(res && res.success && res.data.isRegistered) {
+      if (res && res.success && res.data.isRegistered) {
         this.loading = false;
         this.toastr.error('Водитель уже зарегистрирован.', 'Пожалуйста, отправьте запрос на водтитель.');
       }
-      else if(res && res.success && !res.data.isRegistered) {
+      else if (res && res.success && !res.data.isRegistered) {
         this.toastr.success('Код отправлен успешно', '');
         this.loading = false;
         this.otpCode = res.data.otpCode;
@@ -202,11 +263,11 @@ export class DriverFormComponent implements OnInit {
     this.loading = true;
     if (this.isCodeExpired) {
       this.loading = false;
-      this.toastr.error('Срок действия SMS-кода истек. Пожалуйста, запросите новый.','');
+      this.toastr.error('Срок действия SMS-кода истек. Пожалуйста, запросите новый.', '');
     }
     else if (this.otpCode != this.verifyCode) {
       this.loading = false;
-      this.toastr.error('Пароль не совпадает','');
+      this.toastr.error('Пароль не совпадает', '');
     }
     else if (this.otpCode == this.verifyCode) {
       this.phoneVerified = true;
@@ -227,13 +288,22 @@ export class DriverFormComponent implements OnInit {
     formData.append('isOwnService', this.form.get('isOwnService')?.value);
     formData.append('isOwnOrder', this.form.get('isOwnOrder')?.value);
     formData.append('isKzPaidWay', this.form.get('isKzPaidWay')?.value);
-    const phoneNumbers = [
-      {
+
+    let phoneNumbers: any[] = [];
+    if (this.selectedCountry.code === '+998' || this.selectedCountry.code === '+992' || this.selectedCountry.code === '+996') {
+      phoneNumbers.push({
         code: this.form.value.phoneNumbers.substring(0, 3),
         number: this.form.value.phoneNumbers.substring(3),
         isMain: true,
-      }
-    ];
+      });
+    }
+    else if (this.selectedCountry.code === '+7') {
+      phoneNumbers.push({
+        code: this.form.value.phoneNumbers.substring(0, 1),
+        number: this.form.value.phoneNumbers.substring(1),
+        isMain: true,
+      });
+    }
     formData.append('phoneNumbers', JSON.stringify(phoneNumbers));
     if (this.selectedFilePassport) {
       const file = new File([this.selectedFilePassport], Date.now() + this.selectedFilePassport.name, { type: this.selectedFilePassport.type });
@@ -248,7 +318,7 @@ export class DriverFormComponent implements OnInit {
     const uniqueFormData = removeDuplicateKeys(formData);
 
     const submitObservable = this.data
-      ? this.driversService.update(this.form.get('id')?.value,uniqueFormData)
+      ? this.driversService.update(this.form.get('id')?.value, uniqueFormData)
       : this.driversService.create(uniqueFormData);
 
     submitObservable.subscribe(
@@ -298,26 +368,7 @@ export class DriverFormComponent implements OnInit {
       this.selectedFileLicense = null;
     }
   }
-  updateMask() {
-    switch (this.selectedCountry.code) {
-      case 'UZ':
-        this.currentMask = '+000 00 000-00-00';
-        break;
-      case 'KZ':
-        this.currentMask = '+0 000 000-00-00';
-        break;
-      case 'RU':
-        this.currentMask = '+0 000 000-00-00';
-        break;
-      default:
-        this.currentMask = '';
-    }
-    this.form.get('phoneNumbers')?.updateValueAndValidity();
-  }
-  selectCountry(country: { code: string; name: string; flag: string }) {
-    this.selectedCountry = country;
-    this.updateMask();
-  }
+
   onBlock() {
     if (this.data.blocked) {
       this.driversService.unblock(this.data.id).subscribe((res: Response<DriverModel>) => {
@@ -379,8 +430,8 @@ export class DriverFormComponent implements OnInit {
     });
   }
   allOrders() {
-    this.router.navigate(['/orders', { driverId: this.data.id  }]);
-    this.drawerRef.close({success: true});
+    this.router.navigate(['/orders', { driverId: this.data.id }]);
+    this.drawerRef.close({ success: true });
   }
   findDriver(ev: string) {
     let query = generateQueryFilter({ driverId: ev });
@@ -388,13 +439,13 @@ export class DriverFormComponent implements OnInit {
   }
   onSendRequest() {
     this.loading = true;
-    this.driversService.sendRequestToAddDriver({driverId: this.selectedDriver,tmsId: this.currentUser.merchantId}).subscribe((res: any) => {
+    this.driversService.sendRequestToAddDriver({ driverId: this.selectedDriver, tmsId: this.currentUser.merchantId }).subscribe((res: any) => {
       this.loading = false;
       if (res && res?.success) {
         this.toastr.success(this.translate.instant('successfullSendRequest'), this.translate.instant('wait_for_response'));
-        this.drawerRef.close({success: true});
+        this.drawerRef.close({ success: true });
       }
-    },err => {
+    }, err => {
       this.loading = false;
     });
   }

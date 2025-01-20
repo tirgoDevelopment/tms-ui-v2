@@ -5,10 +5,13 @@
         <div *ngIf="!phoneVerified">
           <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown" style="width: 100%;">
             <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask"
-              required [readonly]="otpCode" />
+              required (ngModelChange)="onPhoneNumberChange($event)" />
             <div *ngIf="form.get('phoneNumbers').touched && form.get('phoneNumbers').hasError('required')"
               class="error-message">
-              {{ 'is_required' | translate }}
+              {{ 'is_empty' | translate }}
+            </div>
+            <div *ngIf="phoneCodeInvalid" class="error-message">
+              {{ 'phoneCodeInvalid' | translate }}
             </div>
           </nz-input-group>
 
@@ -30,10 +33,10 @@
           <div *ngIf="otpCode">
             <h2 class="title">Подтверждение</h2>
             <div>Введите 5 значный код отправлен на номер </div>
-            <code-input [disabled]="loading" [isCodeHidden]="false" [codeLength]="5" (codeChanged)="onCodeChanged($event)"
-              (codeCompleted)="sendVerifyedCode()"></code-input>
-    
-              <div style="text-align: center; margin-top: 10px;">{{timerOtp ? timerOtp : '01:59'}}</div>
+            <code-input [disabled]="loading" [isCodeHidden]="false" [codeLength]="5"
+              (codeChanged)="onCodeChanged($event)" (codeCompleted)="sendVerifyedCode()"></code-input>
+
+            <div style="text-align: center; margin-top: 10px;">{{timerOtp ? timerOtp : '01:59'}}</div>
           </div>
 
           <div class="button-wrapper">
@@ -142,31 +145,15 @@
         </div>
       </nz-input-group>
 
-
-
-      <!-- <nz-input-group class="input-group" *ngIf="!edit" >
-        <nz-form-label nzRequired>{{ 'password' | translate }}</nz-form-label>
-        <input formControlName="password" type="text" nz-input placeholder="{{ 'password' | translate }}" required />
-
-        <div *ngIf="form.get('password').touched && form.get('password').hasError('required')" class="error-message">
-          {{ 'is_empty' | translate }}
-        </div>
-        <div *ngIf="form.get('password').touched && form.get('password').hasError('minlength')" class="error-message">
-          {{ 'min_length' | translate }}
-        </div>
-        <div *ngIf="form.get('password').touched && form.get('password').hasError('maxlength')" class="error-message">
-          {{ 'max_length' | translate }}
-        </div>
-        <div *ngIf="form.get('password').touched && form.get('password').hasError('pattern')" class="error-message">
-          {{ 'pattern' | translate }}
-        </div>
-      </nz-input-group> -->
       <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown" style="width: 100%;">
         <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask"
-          required />
+          required (ngModelChange)="onPhoneNumberChange($event)" />
         <div *ngIf="form.get('phoneNumbers').touched && form.get('phoneNumbers').hasError('required')"
           class="error-message">
           {{ 'is_empty' | translate }}
+        </div>
+        <div *ngIf="phoneCodeInvalid" class="error-message">
+          {{ 'phoneCodeInvalid' | translate }}
         </div>
       </nz-input-group>
 
@@ -184,6 +171,7 @@
           </li>
         </ul>
       </nz-dropdown-menu>
+
       <label [nzDisabled]="true" nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
       <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
         translate}}</label>

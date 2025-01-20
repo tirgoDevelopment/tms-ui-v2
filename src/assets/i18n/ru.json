@@ -36,6 +36,7 @@
     "cargoLoadingMethodNotFound": "Метод погрузки груза не найден",
     "cargoPackageNotFound": "Грузовой пакет не найден",
     "duplicateError": "Этот номер телефона уже существует",
+    "phoneCodeInvalid": "Неправильный телефонный код",
     "driverNotFound": "Драйвер не найден",
     "userTypeRequired": "Требуется тип пользователя",
     "invalidUserType": "Неверный тип пользователя",

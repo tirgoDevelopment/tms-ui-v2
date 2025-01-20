@@ -74,8 +74,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
 
   showChat: boolean = false;
   selectedServiceId: string | null = null;
-
-
+  filteredServiceId
   currentUser: any;
   tirBalance: number = 0;
   serviceBalance: number = 0;
@@ -87,6 +86,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
   services: any[] = [];
   tabType = 0;
   uniqueServices = [];
+  uniqueServices0: any[] = [];
+  uniqueServices1: any[] = [];
   pageParams = {
     pageIndex: 1,
     pageSize: 10,
@@ -237,16 +238,11 @@ export class ServicesComponent implements OnInit, OnDestroy {
     this.servicesService.getServiceList().subscribe((res: any) => {
       if (res.data && Array.isArray(res.data)) {
         this.services = res.data;
-        this.uniqueServices = Array.from(new Set(res.data.map((service: any) => service.name)))
-          .map((name: any) => res.data.find((service: any) => service.name === name));
-        this.uniqueServices = this.uniqueServices.filter(
-          (service: any) => service.id !== 15 && service.id !== 16
-        );
-      } else {
-        this.uniqueServices = [];
+        this.filterServices();
       }
     });
   }
+
   public onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageIndex, pageSize, sort } = params;
     this.pageParams.pageIndex = pageIndex;
@@ -262,8 +258,16 @@ export class ServicesComponent implements OnInit, OnDestroy {
     this.isFilterVisible = !this.isFilterVisible;
   }
   public resetFilter(): void {
+    this.filteredServiceId = null;
     this.filter = this.initializeFilter();
-    this.tabType == 0 ? this.filter['excludedServicesIds'] = [16, 15] : this.filter['excludedServicesIds'] = [], this.filter['servicesIds'] = [15, 16];
+    if (this.tabType) {
+      this.filter['excludedServicesIds'] = [null];
+      this.filter['servicesIds'] = [15, 16];
+    }
+    else {
+      this.filter['excludedServicesIds'] = [15, 16];
+      this.filter['servicesIds'] = [''];
+    }
     this.getAll();
   }
   private initializeFilter(): Record<any, any> {
@@ -314,8 +318,10 @@ export class ServicesComponent implements OnInit, OnDestroy {
     });
   }
   onTabChange(selectedIndex: number): void {
+    this.filteredServiceId = null;
     this.pageParams.pageIndex = 1;
     this.tabType = selectedIndex;
+    this.filterServices();
     if (this.tabType) {
       this.filter['excludedServicesIds'] = [null];
       this.filter['servicesIds'] = [15, 16];
@@ -326,22 +332,19 @@ export class ServicesComponent implements OnInit, OnDestroy {
     }
     this.getAll();
   }
-  onServiceSelect(selectedServiceId: number): void {
-    if (!Array.isArray(this.filter['servicesIds'])) {
-      this.filter['servicesIds'] = [];
-    }
-
-    if (!selectedServiceId) {
+  onServiceSelect(filteredServiceId): void {
+    this.filter['servicesIds'] = [];
+    if (!filteredServiceId) {
       this.filter['servicesIds'] = [];
       return;
     }
-
-    const selectedService = this.services.find((service) => service.id === selectedServiceId);
+    const selectedService = this.services.find(service => service.id === filteredServiceId);
 
     if (selectedService) {
       const duplicateIds = this.services
-        .filter((service) => service.name === selectedService.name)
-        .map((service) => service.id);
+        .filter(service => service.name === selectedService.name)
+        .map(service => service.id);
+
       this.filter['servicesIds'] = Array.from(new Set([...this.filter['servicesIds'], ...duplicateIds]));
     }
   }
@@ -366,5 +369,15 @@ export class ServicesComponent implements OnInit, OnDestroy {
       a.click();
       window.URL.revokeObjectURL(url);
     })
+  }
+  filterServices() {
+    this.uniqueServices = Array.from(new Set(this.services.map((service: any) => service.name)))
+      .map((name: any) => this.services.find((service: any) => service.name === name));
+    if (this.tabType === 0) {
+      this.uniqueServices0 = this.uniqueServices.filter((service: any) => service.id !== 15 && service.id !== 16);
+    }
+    else if (this.tabType === 1) {
+      this.uniqueServices1 = this.uniqueServices.filter((service: any) => service.id === 15 || service.id === 16);
+    }
   }
 }
