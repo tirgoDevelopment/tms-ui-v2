@@ -108,7 +108,7 @@
           </button>
 
           <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
-            <nz-avatar [nzSize]="38" [nzText]="currentUser.username.slice(0, 1).toUpperCase()"
+            <nz-avatar [nzSize]="38" [nzText]=" currentUser && currentUser.username ? currentUser.username.slice(0, 1).toUpperCase() : ''"
               style="margin-bottom: 3px; color:#f56a00; background-color:#fde3cf;cursor: pointer;font-size: 16px; font-weight: bold;"></nz-avatar>
               <span class="main-username">{{ currentUser.username }}</span>
               <i class="down-icon" nz-icon nzType="down"></i>

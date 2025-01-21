@@ -45,8 +45,6 @@ export class MainComponent {
   }
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
-    console.log(this.currentUser);
-    
     
     const lang = localStorage.getItem('lang') || 'ru';
     this.changeLanguage(lang.toLocaleLowerCase(), `../assets/images/flags/${lang}.svg`);
