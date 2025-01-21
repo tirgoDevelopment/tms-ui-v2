@@ -199,7 +199,12 @@ body {
 }
 
 .action-col {
+  text-align: right;
   width: 30px;
+  padding: 0 !important;
+  a {
+    padding: 20px;
+  }
 }
 
 
@@ -539,10 +544,6 @@ input:-webkit-autofill:focus {
 .button-group {
   display: flex;
   gap: 10px;
-}
-
-.action-col {
-  text-align: right;
 }
 
 .dropdown-menu {

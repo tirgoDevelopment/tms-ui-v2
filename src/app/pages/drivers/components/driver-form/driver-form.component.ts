@@ -149,9 +149,6 @@ export class DriverFormComponent implements OnInit {
   }
   updateMask(code: string) {
     switch (code) {
-      case '+99':
-        this.currentMask = '+000 00 000-00-00';
-        break;
       case '+998':
         this.currentMask = '+000 00 000-00-00';
         break;
@@ -192,13 +189,14 @@ export class DriverFormComponent implements OnInit {
           mainPhoneNumber.number = mainPhoneNumber.number.substring(1);
         }
       }
+
       const matchedCountry = this.countries.find(country => country.code === '+' + mainPhoneNumber.code);
 
       this.selectCountry(matchedCountry);
       const formattedPhoneNumber = mainPhoneNumber ? `+${mainPhoneNumber.code}${mainPhoneNumber.number}` : '';
-      this.form.patchValue(this.data)
+      this.form.patchValue(this.data);
       this.form.patchValue({
-        phoneNumbers: formattedPhoneNumber,
+        phoneNumbers: formattedPhoneNumber
       });
     }
   }
@@ -299,7 +297,6 @@ export class DriverFormComponent implements OnInit {
     formData.append('isOwnService', this.form.get('isOwnService')?.value);
     formData.append('isOwnOrder', this.form.get('isOwnOrder')?.value);
     formData.append('isKzPaidWay', this.form.get('isKzPaidWay')?.value);
-
     let phoneNumbers: any[] = [];
     if (this.selectedCountry.code === '+998' || this.selectedCountry.code === '+992' || this.selectedCountry.code === '+996') {
       phoneNumbers.push({

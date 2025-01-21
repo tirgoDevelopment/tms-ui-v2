@@ -74,6 +74,7 @@
       <th nzColumnKey="id" [nzSortFn]="true">{{'drivers.id' | translate}}</th>
       <th>{{ 'full_name' | translate }}</th>
       <th>{{ 'transport_number' | translate }}</th>
+      <th>{{ 'phone' | translate }}</th>
       <th></th>
     </tr>
   </thead>
@@ -86,6 +87,7 @@
       <td>
         <div *ngFor="let transport of item.driverTransports">{{transport.transportNumber}}</div>
       </td>
+      <td *ngFor="let phone of item.phoneNumbers">+{{ phone.code }} {{ phone.number }}</td>
       <td class="action-col" (click)="$event.stopPropagation()">
         <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
           <i nz-icon nzType="ellipsis" nzTheme="outline" style="cursor: pointer;"></i>
@@ -106,12 +108,12 @@
               </div>
             </li>
 
-            <li nz-menu-item (click)="remove(item.id)">
+            <!-- <li nz-menu-item (click)="remove(item.id)">
               <div class="dropdown-menu">
                 <span nz-icon nzType="delete" nzTheme="outline" class="delete-icon"></span>
                 <span>{{ 'remove' | translate }}</span>
               </div>
-            </li>
+            </li> -->
 
             <li nz-menu-item (click)="addTransport(item)">
               <div class="dropdown-menu">

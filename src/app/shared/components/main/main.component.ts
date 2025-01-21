@@ -10,6 +10,7 @@ import { ChatComponent } from '../chat/chat.component';
 import { SocketService } from '../../services/socket.service';
 import { ServicesService } from 'src/app/pages/services/services/services.service';
 import { PushService } from '../../services/push.service';
+import { generateQueryFilter } from '../../pipes/queryFIlter';
 
 @Component({
   selector: 'app-main',
@@ -97,7 +98,7 @@ export class MainComponent {
     };
   }
   getChats() {
-    this.serviceApi.getDriverServices().subscribe({
+    this.serviceApi.getDriverServices(generateQueryFilter({ servicesIds: [], excludedServicesIds: [15,16] })).subscribe({
       next: (res: any) => {
         if (res && res.data) {
           this.newMessageCount = res.data.content.reduce((total, item) => total + (item.unreadMessagesCount || 0), 0);
