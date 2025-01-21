@@ -4,7 +4,7 @@
       <form [formGroup]="form">
         <div *ngIf="!phoneVerified">
           <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown" style="width: 100%;">
-            <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask"
+            <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask" [readonly]="otpCode"
               required (ngModelChange)="onPhoneNumberChange($event)" />
             <div *ngIf="form.get('phoneNumbers').touched && form.get('phoneNumbers').hasError('required')"
               class="error-message">
