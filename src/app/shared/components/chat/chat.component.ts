@@ -88,7 +88,8 @@ export class ChatComponent implements OnInit {
     totalPagesCount: 1,
     sortBy: '',
     sortType: '',
-    serviceId: this.serviceId,
+    servicesIds: [],
+    excludedServicesIds:[15,16],
   };
   private messagesParams = {
     pageIndex: 1,
@@ -118,7 +119,6 @@ export class ChatComponent implements OnInit {
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((searchTerm) => {
-        this.pageParams.serviceId = searchTerm;
         this.getChats();
       });
     this.getChats();
