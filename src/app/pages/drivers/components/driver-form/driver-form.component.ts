@@ -149,6 +149,9 @@ export class DriverFormComponent implements OnInit {
   }
   updateMask(code: string) {
     switch (code) {
+      case '+99':
+        this.currentMask = '+000 00 000-00-00';
+        break;
       case '+998':
         this.currentMask = '+000 00 000-00-00';
         break;
@@ -182,7 +185,15 @@ export class DriverFormComponent implements OnInit {
       this.previewUrlLicense = this.data?.driverLicenseFilePath;
       this.edit = true;
       const mainPhoneNumber = this.data?.phoneNumbers?.find(phone => phone.isMain ? phone.isMain : this.data?.phoneNumbers[0]);
+
+      if (mainPhoneNumber) {
+        if (mainPhoneNumber.code === '99' && mainPhoneNumber.number.startsWith('8')) {
+          mainPhoneNumber.code = '998';
+          mainPhoneNumber.number = mainPhoneNumber.number.substring(1);
+        }
+      }
       const matchedCountry = this.countries.find(country => country.code === '+' + mainPhoneNumber.code);
+
       this.selectCountry(matchedCountry);
       const formattedPhoneNumber = mainPhoneNumber ? `+${mainPhoneNumber.code}${mainPhoneNumber.number}` : '';
       this.form.patchValue(this.data)
