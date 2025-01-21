@@ -26,6 +26,13 @@ export class AppComponent implements OnInit {
       this.connectToSSE(token);
     } else {
     }
+    setTimeout(() => {
+      const splashScreen = document.getElementById('splash-screen');
+      if (splashScreen) {
+        splashScreen.style.display = 'none';
+      }  
+    },100)
+    
   }
   
   private connectToSSE(token: string) {

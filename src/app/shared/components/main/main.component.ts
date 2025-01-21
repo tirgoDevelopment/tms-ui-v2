@@ -10,6 +10,8 @@ import { ChatComponent } from '../chat/chat.component';
 import { SocketService } from '../../services/socket.service';
 import { ServicesService } from 'src/app/pages/services/services/services.service';
 import { PushService } from '../../services/push.service';
+import { generateQueryFilter } from '../../pipes/queryFIlter';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-main',
@@ -20,7 +22,7 @@ import { PushService } from '../../services/push.service';
 })
 export class MainComponent {
   chatIconPosition = { x: 0, y: 0 };
-
+  currentUser: any;
   isLoading: boolean = false;
   theme: 'light' | 'dark';
   isCollapsed = true;
@@ -42,6 +44,8 @@ export class MainComponent {
     private socketService: SocketService) {
   }
   ngOnInit(): void {
+    this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
+    
     const lang = localStorage.getItem('lang') || 'ru';
     this.changeLanguage(lang.toLocaleLowerCase(), `../assets/images/flags/${lang}.svg`);
     this.themeService.initTheme();
@@ -97,7 +101,7 @@ export class MainComponent {
     };
   }
   getChats() {
-    this.serviceApi.getDriverServices().subscribe({
+    this.serviceApi.getDriverServices(generateQueryFilter({ servicesIds: [], excludedServicesIds: [15,16] })).subscribe({
       next: (res: any) => {
         if (res && res.data) {
           this.newMessageCount = res.data.content.reduce((total, item) => total + (item.unreadMessagesCount || 0), 0);

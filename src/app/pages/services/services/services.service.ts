@@ -87,4 +87,7 @@ export class ServicesService {
   tmsBalance(tmsId:any) {
     return this.http.get(`${env.apiUrl}/users/driver-merchants/${tmsId}/balance`)
   }
+  excelService(data) {
+    return this.http.get(`${this.baseUrl}/excel/file?`+data, {responseType: 'blob'});
+  }
 }

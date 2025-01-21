@@ -36,6 +36,7 @@
     "cargoLoadingMethodNotFound": "Метод погрузки груза не найден",
     "cargoPackageNotFound": "Грузовой пакет не найден",
     "duplicateError": "Этот номер телефона уже существует",
+    "phoneCodeInvalid": "Неправильный телефонный код",
     "driverNotFound": "Драйвер не найден",
     "userTypeRequired": "Требуется тип пользователя",
     "invalidUserType": "Неверный тип пользователя",
@@ -216,8 +217,14 @@
     "requests": "Запросы",
     "rejected": "Отклоненный",
     "request": "Запрос",
-    "type": "Тип",	
+    "type": "Тип",
     "topUp": "Пополнение",
+    "sendSms": "Отправить СМС",
+    "kzPaidWay": "QAJ",
+    "alreadyAssigned": "У водителя уже есть ТМС",
+    "date_creation_from": "Дата создания от",
+    "date_creation_to": "Дата создания по",
+    "excel": "Excel",
     "sidebar": {
         "orders": "Заказы",
         "drivers": "Перевозчики",
@@ -281,8 +288,9 @@
         "title": "Водители",
         "id": "Водитель ID",
         "status_subscription": "Статус подписки",
-        "take_orders": "Брать заказы",
-        "total_balance": "Общая баланс"
+        "take_orders": "Разрешить брать заказы самостоятельно",
+        "apply_service": "Разрешить подавать заявки на услуги самостоятельно",
+        "total_balance": "Оплачивать сервисы с собственного баланса"
     },
     "gsm": {
         "title": "ГСМ",

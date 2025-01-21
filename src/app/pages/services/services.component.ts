@@ -74,17 +74,20 @@ export class ServicesComponent implements OnInit, OnDestroy {
 
   showChat: boolean = false;
   selectedServiceId: string | null = null;
-
-
-  currentUser:any;
-  tirBalance:number = 0;
-  serviceBalance:number = 0;
+  filteredServiceId
+  currentUser: any;
+  tirBalance: number = 0;
+  serviceBalance: number = 0;
   public data: any[] = [];
   public loader = false;
   public isFilterVisible = false;
-  public filter: Record<string, string> = this.initializeFilter();
+  public filter: Record<any, any> = this.initializeFilter();
   statuses: any[] = [];
   services: any[] = [];
+  tabType = 0;
+  uniqueServices = [];
+  uniqueServices0: any[] = [];
+  uniqueServices1: any[] = [];
   pageParams = {
     pageIndex: 1,
     pageSize: 10,
@@ -233,47 +236,57 @@ export class ServicesComponent implements OnInit, OnDestroy {
   }
   getRefServices() {
     this.servicesService.getServiceList().subscribe((res: any) => {
-      this.services = res.data;
+      if (res.data && Array.isArray(res.data)) {
+        this.services = res.data;
+        this.filterServices();
+      }
     });
   }
+
   public onQueryParamsChange(params: NzTableQueryParams): void {
-    this.pageParams.pageIndex = params.pageIndex;
-    this.pageParams.pageSize = params.pageSize;
-    let { sort } = params;
-    let currentSort = sort.find((item) => item.value !== null);
-    let sortField = (currentSort && currentSort.key) || null;
-    let sortOrder = (currentSort && currentSort.value) || null;
-    sortOrder === 'ascend'
-      ? (sortOrder = 'asc')
-      : sortOrder === 'descend'
-        ? (sortOrder = 'desc')
-        : (sortOrder = '');
-    this.pageParams.sortBy = sortField;
-    this.pageParams.sortType = sortOrder;
+    const { pageIndex, pageSize, sort } = params;
+    this.pageParams.pageIndex = pageIndex;
+    this.pageParams.pageSize = pageSize;
+
+    const currentSort = sort.find(item => item.value !== null);
+    this.pageParams.sortBy = currentSort?.key || null;
+    this.pageParams.sortType = currentSort?.value === 'ascend' ? 'asc' : currentSort?.value === 'descend' ? 'desc' : '';
+
     this.getAll();
   }
   public toggleFilter(): void {
     this.isFilterVisible = !this.isFilterVisible;
   }
   public resetFilter(): void {
+    this.filteredServiceId = null;
     this.filter = this.initializeFilter();
+    if (this.tabType) {
+      this.filter['excludedServicesIds'] = [null];
+      this.filter['servicesIds'] = [15, 16];
+    }
+    else {
+      this.filter['excludedServicesIds'] = [15, 16];
+      this.filter['servicesIds'] = [''];
+    }
     this.getAll();
   }
-  private initializeFilter(): Record<string, string> {
+  private initializeFilter(): Record<any, any> {
     return {
       serviceId: '',
       driverId: '',
       statusId: '',
       createdAtFrom: '',
       createdAtTo: '',
+      excludedServicesIds: [16, 15]
     };
   }
   calculateSum(amountDetails: any[]): number {
     if (!Array.isArray(amountDetails)) return 0;
-    return amountDetails.reduce(
-      (sum, detail) => sum + parseFloat(detail.amount || 0),
+    const sum = amountDetails.reduce(
+      (sum, detail) => sum + detail.amount || 0,
       0
     );
+    return sum;
   }
   getServicePriceMessage(serviceName: string, totalPrice: number): string {
     return this.translate.instant('services.servicePriceMessage', {
@@ -303,5 +316,68 @@ export class ServicesComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+  onTabChange(selectedIndex: number): void {
+    this.filteredServiceId = null;
+    this.pageParams.pageIndex = 1;
+    this.tabType = selectedIndex;
+    this.filterServices();
+    if (this.tabType) {
+      this.filter['excludedServicesIds'] = [null];
+      this.filter['servicesIds'] = [15, 16];
+    }
+    else {
+      this.filter['excludedServicesIds'] = [15, 16];
+      this.filter['servicesIds'] = [''];
+    }
+    this.getAll();
+  }
+  onServiceSelect(filteredServiceId): void {
+    this.filter['servicesIds'] = [];
+    if (!filteredServiceId) {
+      this.filter['servicesIds'] = [];
+      return;
+    }
+    const selectedService = this.services.find(service => service.id === filteredServiceId);
+
+    if (selectedService) {
+      const duplicateIds = this.services
+        .filter(service => service.name === selectedService.name)
+        .map(service => service.id);
+
+      this.filter['servicesIds'] = Array.from(new Set([...this.filter['servicesIds'], ...duplicateIds]));
+    }
+  }
+  getExcel() {
+    this.filter['excludedServicesIds'] = []
+    const params = {
+      pageIndex: this.pageParams.pageIndex,
+      pageSize: this.pageParams.pageSize,
+      sortBy: this.pageParams.sortBy,
+      sortType: this.pageParams.sortType,
+      ...this.filter,
+    };
+    let query = generateQueryFilter(params)
+
+    this.servicesService.excelService(query).subscribe((res: any) => {
+      const url = window.URL.createObjectURL(res);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'services.xlsx';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    })
+  }
+  filterServices() {
+    this.uniqueServices = Array.from(new Set(this.services.map((service: any) => service.name)))
+      .map((name: any) => this.services.find((service: any) => service.name === name));
+    if (this.tabType === 0) {
+      this.uniqueServices0 = this.uniqueServices.filter((service: any) => service.id !== 15 && service.id !== 16);
+    }
+    else if (this.tabType === 1) {
+      this.uniqueServices1 = this.uniqueServices.filter((service: any) => service.id === 15 || service.id === 16);
+    }
   }
 }

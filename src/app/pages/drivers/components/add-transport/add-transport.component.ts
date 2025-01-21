@@ -109,11 +109,10 @@ export class AddTransportComponent implements OnInit {
     }else {
       this.transportKindIdsChange();
     }
+  this.getTransport();
   }
   getTransport() {
-    this.driversService.getTransport(this.driverId,this.data.id).subscribe((res:Response<any[]>) => {
-      
-    })
+    this.driversService.getTransport(this.driverId,this.data.id).subscribe((res:Response<any[]>) => {})
   }
   getTypes() {
     forkJoin({
@@ -137,8 +136,8 @@ export class AddTransportComponent implements OnInit {
       driverId: this.driverId,
       brand: this.data.brand,
       capacity: this.data.capacity,
-      transportKindId: this.data?.transportKind.id,
-      transportTypeId: this.data?.transportType.id,
+      transportKindId: this.data?.transportKind ? this.data?.transportKind?.id : null,
+      transportTypeId: this.data?.transportType ? this.data?.transportType.id : null,
       cargoLoadMethodIds: this.data.cargoLoadMethods.map((method: any) => method.id), 
       transportNumber: this.data.transportNumber,
       refrigeratorFromCount: this.data.refrigeratorFrom,

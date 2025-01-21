@@ -3,7 +3,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { DriverFormComponent } from './components/driver-form/driver-form.component';
 import { DriverModel } from './models/driver.model';
 import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
-import { catchError, debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, of, tap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -60,7 +60,6 @@ export class DriversComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms'));
-   
   }
 
   getAll(): void {
@@ -86,7 +85,6 @@ export class DriversComponent implements OnInit {
             'information'
       ),
       nzContent: DriverFormComponent,
-      nzMaskClosable: false,
       nzPlacement: 'right',
       nzWidth: '400px',
       nzContentParams: {
@@ -177,13 +175,14 @@ export class DriversComponent implements OnInit {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-    let { sort } = params;
-    let currentSort = sort.find(item => item.value !== null);
-    let sortField = (currentSort && currentSort.key) || null;
-    let sortOrder = (currentSort && currentSort.value) || null;
-    sortOrder === 'ascend' ? (sortOrder = 'asc') : sortOrder === 'descend' ? (sortOrder = 'desc') : sortOrder = '';
-    this.pageParams.sortBy = sortField;
-    this.pageParams.sortType = sortOrder;
+    const { pageIndex, pageSize, sort } = params;
+    this.pageParams.pageIndex = pageIndex;
+    this.pageParams.pageSize = pageSize;
+
+    const currentSort = sort.find(item => item.value !== null);
+    this.pageParams.sortBy = currentSort?.key || null;
+    this.pageParams.sortType = currentSort?.value === 'ascend' ? 'asc' : currentSort?.value === 'descend' ? 'desc' : '';
+
     this.getAll();
   }
 

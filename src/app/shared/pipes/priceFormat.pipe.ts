@@ -7,10 +7,11 @@ export class PriceFormatPipe implements PipeTransform {
 
   transform(value: number | string): string {
     if (value == null || value === '') return '';
-    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    const numValue = typeof value === 'string' ? Number(value) : value;
     if (isNaN(numValue)) return value.toString();
-    return numValue
-      .toFixed(0)
+    const truncatedValue = Math.floor(numValue * 100) / 100;
+    return truncatedValue
+      .toFixed(2)
       .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
   }
 }

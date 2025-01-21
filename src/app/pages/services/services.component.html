@@ -2,6 +2,10 @@
     <div class="header-page">
         <h2>{{ "services.title" | translate }}</h2>
         <div class="button-group">
+            <button nz-button class="success-button" (click)="getExcel()">
+                <span nz-icon nzType="file-excel" nzTheme="fill"></span>
+                {{ "excel" | translate }}
+            </button>
             <button nz-button class="secondary-button" (click)="toggleFilter()">
                 <span nz-icon nzType="filter" nzTheme="fill"></span>
                 {{ "filter" | translate }}
@@ -14,13 +18,13 @@
     </div>
 
     <div class="filter" [@showHideFilter]="isFilterVisible ? 'show' : 'hide'">
-        <div>
-            <nz-select nzAllowClear="true" [(ngModel)]="filter['serviceId']"
-                nzPlaceHolder="{{ 'services.serviceId' | translate }}">
-                <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of services">
-                </nz-option>
+        <div >
+            <nz-select style="width:250px" nzAllowClear="true" [(ngModel)]="filteredServiceId" (ngModelChange)="onServiceSelect($event)"
+              nzPlaceHolder="{{ 'services.title' | translate }}">
+              <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of tabType ? uniqueServices1 : uniqueServices0">
+              </nz-option>
             </nz-select>
-        </div>
+          </div>
 
         <div>
             <nz-input-group class="input-group">
@@ -30,7 +34,7 @@
         </div>
 
         <div>
-            <nz-select nzAllowClear="true" [(ngModel)]="filter['statusId']" nzPlaceHolder="{{ 'status' | translate }}">
+            <nz-select style="width:150px" nzAllowClear="true" [(ngModel)]="filter['statusId']" nzPlaceHolder="{{ 'status' | translate }}">
                 <nz-option [nzValue]="status.id" [nzLabel]="status.name.toLowerCase() | translate"
                     *ngFor="let status of statuses">
                 </nz-option>
@@ -39,16 +43,18 @@
 
         <div>
             <nz-input-group class="input-group">
-                <nz-date-picker style="min-width: 150px;" [(ngModel)]="filter['createdAtFrom']" type="date" nz-input [nzAllowClear]="false"
-                    nzPlaceHolder="{{ 'date_creation_from' | translate }}" class="custom-date-picker">
+                <nz-date-picker style="min-width: 150px;" [(ngModel)]="filter['createdAtFrom']" type="date" nz-input
+                    [nzAllowClear]="false" nzPlaceHolder="{{ 'date_creation_from' | translate }}"
+                    class="custom-date-picker">
                 </nz-date-picker>
             </nz-input-group>
         </div>
 
         <div>
             <nz-input-group class="input-group">
-                <nz-date-picker style="min-width: 150px;" [(ngModel)]="filter['createdAtTo']" type="date" nz-input [nzAllowClear]="false"
-                    nzPlaceHolder="{{ 'date_creation-to' | translate }}" class="custom-date-picker">
+                <nz-date-picker style="min-width: 150px;" [(ngModel)]="filter['createdAtTo']" type="date" nz-input
+                    [nzAllowClear]="false" nzPlaceHolder="{{ 'date_creation_to' | translate }}"
+                    class="custom-date-picker">
                 </nz-date-picker>
             </nz-input-group>
         </div>
@@ -82,6 +88,12 @@
         </nz-card>
     </div>
 
+    <nz-tabset (nzSelectedIndexChange)="onTabChange($event)">
+        <nz-tab nzTitle="{{'services.title' | translate}}"></nz-tab>
+        <nz-tab nzTitle="{{'kzPaidWay' | translate}}"></nz-tab>
+    </nz-tabset>
+
+
     <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzScroll]="{ x: 'max-content' }"
         [nzFrontPagination]="false" [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount"
         [nzShowSizeChanger]="true" [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
@@ -96,7 +108,7 @@
                 <th>{{ "services.processingTime" | translate }}</th>
                 <th>{{ "services.processingTimeEnd" | translate }}</th>
                 <th>{{ "total" | translate }}</th>
-                <th nzRight>{{ "status" | translate }}</th>
+                <th nzRight nzWidth="150px">{{ "status" | translate }}</th>
                 <th nzRight></th>
             </tr>
         </thead>
@@ -119,7 +131,7 @@
                         {{ "no_data" | translate }}
                     </ng-template>
                 </td>
-                <td>{{ item.createdAt | date : "dd.MM.yyyy" }}</td>
+                <td>{{ item.createdAt | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>{{ item.statusesHistory | createdAt : 3 | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>{{ item.statusesHistory | createdAt : 5 | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>
