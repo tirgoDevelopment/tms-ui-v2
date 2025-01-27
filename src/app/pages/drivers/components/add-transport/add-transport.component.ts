@@ -104,12 +104,10 @@ export class AddTransportComponent implements OnInit {
     this.getTypes();
     if (this.mode == 'edit') {
       this.edit = true;
-      // this.getTransport();
       this.patchForm();
     }else {
       this.transportKindIdsChange();
     }
-  this.getTransport();
   }
   getTransport() {
     this.driversService.getTransport(this.driverId,this.data.id).subscribe((res:Response<any[]>) => {})
