@@ -200,53 +200,58 @@ export class DriverFormComponent implements OnInit {
       });
     }
   }
+  private extractPhoneNumber(phoneNumber: string, countryCode: string): { number: string; code: string } | null {
+    const codeMappings: { [key: string]: { dialCode: string; sliceIndex: number } } = {
+      '+998': { dialCode: '998', sliceIndex: 3 },
+      '+992': { dialCode: '992', sliceIndex: 3 },
+      '+996': { dialCode: '996', sliceIndex: 3 },
+      '+7': { dialCode: '7', sliceIndex: 1 }
+    };
 
+    const mapping = codeMappings[countryCode];
+    if (!mapping) return null;
+
+    const numberWithoutCode = phoneNumber.replace(/[^0-9]/g, "").slice(mapping.sliceIndex);
+    return { number: numberWithoutCode, code: mapping.dialCode };
+  }
   sendSms() {
     const phoneNumbers = this.form.value.phoneNumbers;
-    let numberWithoutCode = phoneNumbers.replace(/[^0-9]/g, "");
-    let countryDialCode = "";
-    switch (this.selectedCountry.code) {
-      case 'UZ':
-        countryDialCode = "998";
-        numberWithoutCode = numberWithoutCode.slice(3);
-        break;
-      case 'KZ':
-        countryDialCode = "7";
-        numberWithoutCode = numberWithoutCode.slice(1);
-        break;
-      case 'RU':
-        countryDialCode = "7";
-        numberWithoutCode = numberWithoutCode.slice(1);
-        break;
-      default:
-        console.error("Noto'g'ri mamlakat kodi tanlandi.");
-        return;
-    }
+    const selectedCountryCode = this.selectedCountry.code;
 
-    let data = {
-      number: numberWithoutCode,
-      code: countryDialCode,
+    const extracted = this.extractPhoneNumber(phoneNumbers, selectedCountryCode);
+    if (!extracted) {
+      this.toastr.error('Noto‘g‘ri mamlakat kodi tanlandi.', 'Xatolik');
+      return;
+    }
+    const data = {
+      number: extracted.number,
+      code: extracted.code,
       userType: "driver",
       sendBy: "sms"
     };
-
     this.loading = true;
-    this.driversService.sendOtp(data).subscribe((res: any) => {
-      if (res && res.success && res.data.isRegistered) {
+    this.driversService.sendOtp(data).subscribe({
+      next: (res: any) => {
         this.loading = false;
-        this.toastr.error('Водитель уже зарегистрирован.', 'Пожалуйста, отправьте запрос на водтитель.');
-      }
-      else if (res && res.success && !res.data.isRegistered) {
-        this.toastr.success('Код отправлен успешно', '');
+
+        if (res?.success) {
+          if (res.data.isRegistered) {
+            this.toastr.error('Водитель уже зарегистрирован.', 'Пожалуйста, отправьте запрос на водтитель.');
+          } else {
+            this.toastr.success('Код отправлен успешно', '');
+            this.otpCode = res.data.otpCode;
+            this.isCodeExpired = false;
+            this.countdown = 119;
+            this.startCountdown();
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Error sending OTP:', err);
+        this.toastr.error('Xatolik yuz berdi. Iltimos, qaytadan urinib ko‘ring.', 'Xatolik');
         this.loading = false;
-        this.otpCode = res.data.otpCode;
-        this.isCodeExpired = false;
-        this.countdown = 119;
-        this.startCountdown();
       }
-    }, err => {
-      this.loading = false;
-    })
+    });
   }
   startCountdown() {
     this.countdown = 119;

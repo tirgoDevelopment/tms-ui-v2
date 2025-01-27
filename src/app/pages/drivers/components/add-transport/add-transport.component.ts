@@ -8,9 +8,6 @@ import { CommonModules } from 'src/app/shared/modules/common.module';
 import { NzModules } from 'src/app/shared/modules/nz-modules.module';
 import { PipeModule } from 'src/app/shared/pipes/pipes.module';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { CargoPackagesService } from 'src/app/shared/services/references/cargo-packages.service';
-import { CargoTypesService } from 'src/app/shared/services/references/cargo-type.service';
-import { CurrenciesService } from 'src/app/shared/services/references/currencies.service';
 import { LoadingMethodService } from 'src/app/shared/services/references/loading-method.service';
 import { TransportKindsService } from 'src/app/shared/services/references/transport-kinds.service';
 import { TransportTypesService } from 'src/app/shared/services/references/transport-type.service';
@@ -62,13 +59,9 @@ export class AddTransportComponent implements OnInit {
   previewUrlTransportationLicense: string | ArrayBuffer | null = null;
   selectedFileTransportationLicense: File | null = null;
 
-
   constructor(
     private driversService: DriversService,
-    private currencyService: CurrenciesService,
-    private cargoTypesService: CargoTypesService,
     private transportTypesService: TransportTypesService,
-    private packageService: CargoPackagesService,
     private loadingMethodService: LoadingMethodService,
     private transportKindsService: TransportKindsService,
     private toastr: NotificationService,
@@ -104,12 +97,10 @@ export class AddTransportComponent implements OnInit {
     this.getTypes();
     if (this.mode == 'edit') {
       this.edit = true;
-      // this.getTransport();
       this.patchForm();
     }else {
       this.transportKindIdsChange();
     }
-  this.getTransport();
   }
   getTransport() {
     this.driversService.getTransport(this.driverId,this.data.id).subscribe((res:Response<any[]>) => {})
