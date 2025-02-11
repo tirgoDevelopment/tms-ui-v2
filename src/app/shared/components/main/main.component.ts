@@ -45,33 +45,29 @@ export class MainComponent {
   }
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
-    
     const lang = localStorage.getItem('lang') || 'ru';
     this.changeLanguage(lang.toLocaleLowerCase(), `../assets/images/flags/${lang}.svg`);
     this.themeService.initTheme();
-    this.sseSubscription = this.socketService.getSSEEvents().subscribe((event) => {
-      if (event.event === 'newMessage') {
+    this.socketService.listen('newMessage').subscribe((event) => {
         this.newMessageCount = this.newMessageCount + 1;
         this.pushService.showPushNotification(`Новое сообщение поступило на услугу в id ${event.data.requestId}`, event.data.message.message, 'service');
         this.cdr.detectChanges();
-      }
-      else if (event.event === 'tmsBalanceTopup') {
-        this.pushService.showPushNotification(`ГСМ запрос на объем ${event.data.amount} литров ${event.data.isRejected ? 'отклонен' : 'принят'}`, '', 'gsm');
-      }
-      else if(event.event == 'serviceRequestPriced') {
-        this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} оценена`, '', 'service');
-      }
-      else if(event.event == 'serviceRequestToWorking') {
-        this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} в работе`, '', 'service');
-      }
-      else if(event.event == 'serviceRequestToCompleted') {
-        this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} выполнена`, '', 'service');
-      }
-      else if(event.event == 'serviceRequestCanceled') {
-        this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} отменена`, '', 'service');
-      }
+      // else if (event.event === 'tmsBalanceTopup') {
+      //   this.pushService.showPushNotification(`ГСМ запрос на объем ${event.data.amount} литров ${event.data.isRejected ? 'отклонен' : 'принят'}`, '', 'gsm');
+      // }
+      // else if(event.event == 'serviceRequestPriced') {
+      //   this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} оценена`, '', 'service');
+      // }
+      // else if(event.event == 'serviceRequestToWorking') {
+      //   this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} в работе`, '', 'service');
+      // }
+      // else if(event.event == 'serviceRequestToCompleted') {
+      //   this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} выполнена`, '', 'service');
+      // }
+      // else if(event.event == 'serviceRequestCanceled') {
+      //   this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} отменена`, '', 'service');
+      // }
     });
-    this.getChats();
   }
   changeLanguage(language: string, flag: string): void {
     this.selectedFlag = flag;

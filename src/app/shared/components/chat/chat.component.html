@@ -1,7 +1,7 @@
 <div class="chat-container" #chatContainerRef [ngStyle]="{
-    top: chatIconPosition.y + 'px',
-    left: chatIconPosition.x + 'px'
-  }">
+  top: chatIconPosition.y + 'px',
+  left: chatIconPosition.x + 'px'
+}">
   <div class="chat-card">
     <!-- Chat Header -->
     <div class="chat-header" (mousedown)="startDrag($event)">
@@ -12,8 +12,10 @@
         <div class="user-info">
           <div class="user-details">
             <h2 *ngIf="!selectedChat">{{ "chat.title" | translate }}</h2>
-            <h2 *ngIf="selectedChat" class="ellipsis">{{ selectedChat.id }} <span
-                *ngFor="let service of selectedChat.services">{{ service.name }} </span> </h2>
+            <h2 *ngIf="selectedChat && selectedChat.serviceRequests" class="ellipsis">{{ selectedChat.id }}. <span
+                *ngFor="let service of selectedChat.serviceRequests">{{
+                service.service.name }} </span> </h2>
+            <span *ngIf="selectedChat && !selectedChat.serviceRequests">{{ selectedChat.id }}.{{selectedChat.service.name}}</span>
           </div>
         </div>
         <div class="header-actions">
@@ -40,8 +42,8 @@
             <div class="chat-info">
               <div class="chat-name">
                 {{ chat.id }}
-                <span *ngFor="let service of chat.services">
-                  {{ service.name }}
+                <span *ngFor="let service of chat.serviceRequests">
+                  {{ service.service.name }}
                   <br />
                 </span>
               </div>
@@ -69,37 +71,38 @@
         <div *ngIf="loadingMore" class="loading-more" style="display: flex; justify-content: center;">
           <nz-spin nzSimple></nz-spin>
         </div>
-    
+
         <!-- Messages List -->
         <ng-container *ngIf="messages.length > 0; else noMessages">
           <ng-container *ngFor="let message of messages; let i = index">
             <!-- Date Header -->
             <div *ngIf="shouldShowDateHeader(message, messages[i-1])" class="message-date-header sticky-header"
-                 [attr.data-date]="formatMessageDate(message.createdAt)">
+              [attr.data-date]="formatMessageDate(message.createdAt)">
             </div>
-    
+
             <!-- Individual Message -->
             <div [id]="message.id" [ngClass]="{
-                  'message': true,
-                  'sent': message.senderUserType === 'driver' || message.senderUserType === 'driver_merchant_user',
-                  'received': message.senderUserType === 'staff',
-                  'selected': selectedMessages.has(message.id),
-                  'highlighted': highlightedMessageId === message.id
-                }">
+                'message': true,
+                'sent': message.senderUserType === 'driver' || message.senderUserType === 'tms_user' ,
+                'received':message.senderUserType === 'admin' ,
+                'selected': selectedMessages.has(message.id),
+                'highlighted': highlightedMessageId === message.id
+              }">
               <!-- Reply Preview -->
-              <div *ngIf="message.repliedTo" class="reply-preview" (click)="$event.stopPropagation(); scrollToMessage(message.repliedTo.id)">
+              <div *ngIf="message.repliedTo" class="reply-preview"
+                (click)="$event.stopPropagation(); scrollToMessage(message.repliedTo.id)">
                 <div class="reply-content ellipsis">
                   <i nz-icon nzType="rollback" nzTheme="outline"></i>
                   <span class="reply-text">{{ message.repliedTo.message }}</span>
                 </div>
               </div>
-    
+
               <!-- Message Content -->
               <div class="message-content" (click)="toggleMessageSelection(message)"
-                   (contextmenu)="$event.preventDefault(); enterSelectionMode(message)">
+                (contextmenu)="$event.preventDefault(); enterSelectionMode(message)">
                 <!-- Text Content -->
                 <div *ngIf="message.message" class="message-text" [innerHTML]="message.message"></div>
-    
+
                 <!-- File Attachment -->
                 <div *ngIf="message.messageType === 'file'" class="file-attachment">
                   <nz-space [nzSize]="8">
@@ -107,33 +110,35 @@
                     <div *ngIf="(message.message | fileFormat) === 'image'" class="image-preview" nz-space-item>
                       <nz-image-group>
                         <img width="100%" height="100%" nz-image
-                             [nzSrc]="message.message | fileFetch:'drivers/services-requests' | async" />
+                          [nzSrc]="message.message | fileFetch:'drivers/services-requests' | async" />
                       </nz-image-group>
                     </div>
-    
+
                     <!-- PDF Preview -->
                     <div *ngIf="(message.message | fileFormat) === 'pdf'" class="pdf-preview" nz-space-item>
                       <i nz-icon nzType="file-pdf" nzTheme="outline" style="font-size: 24px;"></i>
                     </div>
                   </nz-space>
                 </div>
-    
+
                 <!-- Message Footer -->
                 <div class="message-footer">
                   <span class="message-time">{{ message.createdAt | date : 'HH:mm' }}</span>
                   <span *ngIf="message.edited" class="edited-tag">{{ 'chat.edited' | translate }}</span>
-                  <div class="message-status" *ngIf="message.senderUserType === 'driver' || message.senderUserType === 'driver_merchant_user'">
+                  <div class="message-status"
+                    *ngIf="message.senderUserType === 'driver' || message.senderUserType === 'tms_user'">
                     <!-- Placeholder for message status -->
                   </div>
                   <div class="message-time">
-                    {{ message.senderUserType === 'driver' ? ('driver' | translate) : message.senderUserType === 'driver_merchant_user' ? 'TMS' : '' }}
+                    {{ message.senderUserType === 'driver' ? ('driver' | translate) : message.senderUserType === 'tms_user' ?
+                    'TMS' : '' }}
                   </div>
                 </div>
               </div>
-    
+
               <!-- Message Actions -->
-              <div class="message-actions" *ngIf="!isSelectionMode" (click)="$event.stopPropagation(); startReply(message)"
-                   title="{{ 'chat.reply' | translate }}">
+              <div class="message-actions" *ngIf="!isSelectionMode"
+                (click)="$event.stopPropagation(); startReply(message)" title="{{ 'chat.reply' | translate }}">
                 <div class="action-btn">
                   <i nz-icon nzType="rollback" nzTheme="outline"></i>
                 </div>
@@ -141,7 +146,7 @@
             </div>
           </ng-container>
         </ng-container>
-    
+
         <!-- No Messages Template -->
         <ng-template #noMessages>
           <div class="no-messages">
@@ -154,15 +159,6 @@
           </div>
         </ng-template>
       </div>
-      <!--Service Request Approve or Cancel Button -->
-      <div style="text-align: center; margin: 15px 0;"  *ngIf="selectedChat && selectedChat.status.code == 1">
-        Ваша заявка была оценена на сумму  <b>{{amountServiceTir}} TIR</b>
-      </div>
-      <div class="approve-cancel-buttons" *ngIf="selectedChat && selectedChat.status.code == 1">
-        <button nz-button class="danger-button" nzSize="small" (click)="onCancelService()">{{ 'services.cancelService' | translate }}</button>
-        <button nz-button class="success-button"  nzSize="small" (click)="onConfirmService()">{{ 'confirm' | translate }}</button>
-      </div>
-    
 
       <!-- Reply Bar -->
       <div *ngIf="replyingTo" class="reply-bar">
@@ -177,21 +173,22 @@
           <i nz-icon nzType="close" nzTheme="outline"></i>
         </button>
       </div>
-    
+
       <!-- Input Area -->
       <div class="chat-input-container">
         <div class="chat-input">
-          <input #messageInput type="text" [(ngModel)]="newMessage" (keyup.enter)="editingMessage ? saveEdit() : sendMessage()"
-                 [placeholder]="editingMessage ? ('chat.enterSms' | translate) : ('chat.enterSms' | translate)"
-                 class="message-input" />
-    
+          <input #messageInput type="text" [(ngModel)]="newMessage"
+            (keyup.enter)="editingMessage ? saveEdit() : sendMessage()"
+            [placeholder]="editingMessage ? ('chat.enterSms' | translate) : ('chat.enterSms' | translate)"
+            class="message-input" />
+
           <div class="input-actions">
             <!-- File Upload -->
             <label *ngIf="!editingMessage" class="file-upload-label">
               <input type="file" [accept]="allowedFileTypes" (change)="onFileSelected($event)" style="display: none;" />
               <i nz-icon nzType="paper-clip" nzTheme="outline"></i>
             </label>
-    
+
             <!-- Send/Save Button -->
             <button class="send-button" (click)="editingMessage ? saveEdit() : sendMessage()">
               <i nz-icon [nzType]="editingMessage ? 'check' : 'send'" [nzTheme]="'outline'"></i>

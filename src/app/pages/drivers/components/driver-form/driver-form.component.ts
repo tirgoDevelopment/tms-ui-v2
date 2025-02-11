@@ -13,11 +13,12 @@ import { removeDuplicateKeys } from 'src/app/shared/pipes/remove-dublicates-form
 import { DriverModel } from '../../models/driver.model';
 import { DriversService } from '../../services/drivers.service';
 import { jwtDecode } from 'jwt-decode';
-import { AddTransportComponent } from '../add-transport/add-transport.component';
+import { AddTransportComponent } from '../../../transports/components/add-transport/add-transport.component';
 import { Router } from '@angular/router';
 import { catchError, debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap } from 'rxjs';
 import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
 import { CodeInputModule } from 'angular-code-input';
+import { AuthService } from 'src/app/pages/auth/services/auth.service';
 
 @Component({
   selector: 'app-driver-form',
@@ -70,6 +71,7 @@ export class DriverFormComponent implements OnInit {
   debounceTimeout
   phoneCodeInvalid = false;
   constructor(
+    private authService: AuthService,
     private modal: NzModalService,
     private toastr: NotificationService,
     private drawerRef: NzDrawerRef,
@@ -83,11 +85,14 @@ export class DriverFormComponent implements OnInit {
     this.drivers$ = this.searchDriver$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap((searchTerm: string) => this.driversService.getAllAdmin(searchTerm).pipe(
-        catchError((err) => {
+      switchMap((searchTerm: string) => {
+        if (!searchTerm?.trim()) {
           return of({ data: { content: [] } });
-        })
-      )),
+        }
+        return this.driversService.getAllDrivers(searchTerm).pipe(
+          catchError(() => of({ data: { content: [] } }))
+        );
+      })
     );
 
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms'));
@@ -220,7 +225,7 @@ export class DriverFormComponent implements OnInit {
 
     const extracted = this.extractPhoneNumber(phoneNumbers, selectedCountryCode);
     if (!extracted) {
-      this.toastr.error('Noto‘g‘ri mamlakat kodi tanlandi.', 'Xatolik');
+      this.toastr.error('Неверный код номер телефона', '');
       return;
     }
     const data = {
@@ -230,16 +235,15 @@ export class DriverFormComponent implements OnInit {
       sendBy: "sms"
     };
     this.loading = true;
-    this.driversService.sendOtp(data).subscribe({
+    this.authService.verifyPhone(data).subscribe({
       next: (res: any) => {
         this.loading = false;
-
-        if (res?.success) {
+        if (res && res.success) {
           if (res.data.isRegistered) {
             this.toastr.error('Водитель уже зарегистрирован.', 'Пожалуйста, отправьте запрос на водтитель.');
           } else {
             this.toastr.success('Код отправлен успешно', '');
-            this.otpCode = res.data.otpCode;
+            this.otpCode = res.data.code;
             this.isCodeExpired = false;
             this.countdown = 119;
             this.startCountdown();
@@ -326,7 +330,7 @@ export class DriverFormComponent implements OnInit {
       const file = new File([this.selectedFileLicense], Date.now() + this.selectedFileLicense.name, { type: this.selectedFileLicense.type });
       formData.append('driverLicense', file);
     }
-    this.form.value.isKzPaidWay = this.data.isKzPaidWay
+    // this.form.value.isKzPaidWay = this.data.isKzPaidWay
     this.loading = true;
     const uniqueFormData = removeDuplicateKeys(formData);
 

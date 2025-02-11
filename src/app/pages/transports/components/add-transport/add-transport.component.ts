@@ -11,9 +11,10 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { LoadingMethodService } from 'src/app/shared/services/references/loading-method.service';
 import { TransportKindsService } from 'src/app/shared/services/references/transport-kinds.service';
 import { TransportTypesService } from 'src/app/shared/services/references/transport-type.service';
-import { DriversService } from '../../services/drivers.service';
+import { DriversService } from '../../../drivers/services/drivers.service';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { Response } from 'src/app/shared/models/reponse';
+import { TransportBrandService } from 'src/app/shared/services/references/transport-brand.service';
 @Component({
   selector: 'app-add-transport',
   templateUrl: './add-transport.component.html',
@@ -28,7 +29,7 @@ export class AddTransportComponent implements OnInit {
   @Input() mode: "add" | "edit";
   @Output() transportAdded = new EventEmitter<void>();
   confirmModal?: NzModalRef;
-
+  brandGroups
   form: FormGroup;
   edit: boolean = false;
   isAutotransport: boolean = false;
@@ -64,6 +65,7 @@ export class AddTransportComponent implements OnInit {
     private transportTypesService: TransportTypesService,
     private loadingMethodService: LoadingMethodService,
     private transportKindsService: TransportKindsService,
+    private brandService: TransportBrandService,
     private toastr: NotificationService,
     private drawerRef: NzDrawerRef,
     private translate: TranslateService,
@@ -74,7 +76,7 @@ export class AddTransportComponent implements OnInit {
     this.form = new FormGroup({
       id: new FormControl(''),
       driverId: new FormControl(''),
-      brand: new FormControl('', [Validators.required]),
+      transportBrandId: new FormControl('', [Validators.required]),
       capacity: new FormControl('', [Validators.required]),
       transportNumber: new FormControl('', [Validators.required]),
       transportKindId: new FormControl(),
@@ -94,6 +96,7 @@ export class AddTransportComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getBrands();
     this.getTypes();
     if (this.mode == 'edit') {
       this.edit = true;
@@ -104,6 +107,13 @@ export class AddTransportComponent implements OnInit {
   }
   getTransport() {
     this.driversService.getTransport(this.driverId,this.data.id).subscribe((res:Response<any[]>) => {})
+  }
+  getBrands() {
+    this.brandService.getBrandGroups().subscribe((res: any) => {
+      if (res && res.success) {
+        this.brandGroups = res.data;
+      }
+    })
   }
   getTypes() {
     forkJoin({

@@ -28,7 +28,6 @@ export class SignInComponent implements OnInit {
     this.form = this.formBuilder.group({
       username: ['', [Validators.required, Validators.maxLength(20), Validators.minLength(4)]],
       password: ['', [Validators.required, Validators.maxLength(8), Validators.minLength(4)]],
-      userType: ['driver_merchant_user']
     });
   }
   togglePasswordVisibility(): void {

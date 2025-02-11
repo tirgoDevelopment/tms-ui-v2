@@ -2,7 +2,7 @@
   <div class="detail-row">
     <div class="detail-item">
       <div class="detail-label">{{ "ID" | translate }}</div>
-      <div class="detail-value"> {{ item.id}} / {{ item.services[0].code}}
+      <div class="detail-value"> {{ item.id}} / {{ item.service.code}}
       </div>
     </div>
     <div class="detail-item">
@@ -18,9 +18,7 @@
   <div class="detail-row" *ngIf="item.amountDetails && item.amountDetails.length == 0">
     <div class="detail-item">
       <div class="detail-label">{{ "named" | translate }}</div>
-      <div class="detail-value">
-        <div *ngFor="let service of item.services">{{ service.name }}</div>
-      </div>
+      <div class="detail-value">>{{ item.service.name }}</div>
     </div>
   </div>
   <div class="detail-row">

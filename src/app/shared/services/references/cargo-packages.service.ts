@@ -12,15 +12,15 @@ export class CargoPackagesService {
   constructor(private http: HttpClient) { }
 
   getAll(params?: any) {
-    return this.http.get(env.references + `/references/cargo-packages/all?pageIndex=${params?.pageIndex}&pageSize=${params?.pageSize}&totalPagesCount=${params?.totalPagesCount}&sortBy=${params?.sortBy}&sortType=${params?.sortType}`)
+    return this.http.get(env.references + `/cargo-packages`)
   }
   create(data: any) {
-    return this.http.post(env.references + '/references/cargo-packages', data)
+    return this.http.post(env.references + '/cargo-packages', data)
   }
   update(data: any) {
-    return this.http.put(env.references + '/references/cargo-packages', data)
+    return this.http.put(env.references + '/cargo-packages', data)
   }
   delete(id: number | string) { 
-    return this.http.delete(env.references + `/references/cargo-packages?id=${id}`)
+    return this.http.delete(env.references + `/cargo-packages?id=${id}`)
   }
 }

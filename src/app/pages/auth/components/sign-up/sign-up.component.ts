@@ -25,16 +25,20 @@ export class SignUpComponent implements OnInit {
   isCodeExpired: boolean = false;
   codeEntered:boolean = false;
   verifyCode:string;
+  debounceTimeout
+  phoneCodeInvalid = false;
 
   passwordVisible = false;
   form: FormGroup;
   countries = [
-    { code: 'UZ', name: 'Узбекистан', flag: 'assets/images/flags/UZ.svg' },
-    { code: 'KZ', name: 'Казахстан', flag: 'assets/images/flags/KZ.svg' },
-    { code: 'RU', name: 'Россия', flag: 'assets/images/flags/RU.svg' },
+    { code: '+998', name: 'Uzbekistan', flag: 'assets/images/flags/UZ.svg' },
+    { code: '+7', name: 'Kazakhstan', flag: 'assets/images/flags/KZ.svg' },
+    { code: '+7', name: 'Russia', flag: 'assets/images/flags/RU.svg' },
+    { code: '+992', name: 'Tajikistan', flag: 'assets/images/flags/TJ.png' },
+    { code: '+996', name: 'Kyrgyzstan', flag: 'assets/images/flags/KG.png' },
   ];
   selectedCountry: { code: string; name: string; flag: string } = this.countries[0];
-  currentMask: string = '+000 (00) 000-00-00';
+  currentMask: string = '+000 00 000-00-00';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -47,14 +51,27 @@ export class SignUpComponent implements OnInit {
   }
   buildForm(): void {
     this.form = this.formBuilder.group({
-      phone: ['+998', [Validators.required]],
-      countryCode: [this.selectedCountry.code],
+      number: ['', [Validators.required]],
+      code: [this.selectedCountry.code],
+      sendBy: "sms"
     });
   }
   togglePasswordVisibility(): void {
     this.passwordVisible = !this.passwordVisible;
   }
   onVerifyPhone() {
+    if (this.selectedCountry.code === '+998' || this.selectedCountry.code === '+992' || this.selectedCountry.code === '+996') {
+      this.form.patchValue({
+        code: this.form.value.number.substring(0, 3),
+        number: this.form.value.number.substring(3),
+      });
+    }
+    else if (this.selectedCountry.code === '+7') {
+      this.form.patchValue({
+        code: this.form.value.number.substring(0, 1),
+        number: this.form.value.number.substring(1),
+      });
+    }    
     this.form.disable();
     this.authService.verifyPhone(this.form.value).subscribe((res: any) => {
       if (res && res.success) {
@@ -68,29 +85,37 @@ export class SignUpComponent implements OnInit {
       this.form.enable();
     })
   }
-  selectCountry(country: { code: string; name: string; flag: string }) {
-    this.selectedCountry = country;
-    this.form.get('countryCode')?.setValue(country.code);
-    this.updateMask();
-  }
-  updateMask() {
-    switch (this.selectedCountry.code) {
-      case 'UZ':
+  updateMask(code: string) {
+    switch (code) {
+      case '+998':
         this.currentMask = '+000 00 000-00-00';
         break;
-      case 'KZ':
+      case '+7':
         this.currentMask = '+0 000 000-00-00';
         break;
-      case 'RU':
+      case '+7':
         this.currentMask = '+0 000 000-00-00';
+        break;
+      case '+992':
+        this.currentMask = '+000 00 000-00-00';
+        break;
+      case '+996':
+        this.currentMask = '+000 000 000-000';
         break;
       default:
         this.currentMask = '';
     }
-    this.form.get('phone')?.updateValueAndValidity();
+    this.form.get('phoneNumbers')?.updateValueAndValidity();
+  }
+  selectCountry(country: { code: string; name: string; flag: string }) {
+    this.selectedCountry = country;
+    this.updateMask(country.code);
+    this.form.patchValue({
+      phoneNumbers: this.selectedCountry.code
+    });
   }
   onCodeChanged(code: string) {
-    code.length == 6 ? (this.codeEntered = true) : (this.codeEntered = false);
+    code.length == 5 ? (this.codeEntered = true) : (this.codeEntered = false);
     this.verifyCode = code;
   }
   sendVerifyedCode() {
@@ -104,10 +129,33 @@ export class SignUpComponent implements OnInit {
       this.toastr.error('Пароль не совпадает','');
     }
     else if (this.otpCode == this.verifyCode) {
-      this.router.navigate(['auth/register'], { queryParams: { phone: this.form.value.phone } });
+      this.router.navigate(['auth/register'], { queryParams: { phone: this.form.value.code + this.form.value.number } });
     }
   }
-
+  onPhoneNumberChange(inputValue: string): void {
+    clearTimeout(this.debounceTimeout);
+    this.debounceTimeout = setTimeout(() => {
+      let inputCode: string;
+      if (inputValue.startsWith('7')) {
+        inputCode = inputValue.startsWith('+')
+          ? inputValue.split(' ')[0]
+          : '+' + inputValue.substring(0, 1);
+      } else {
+        inputCode = inputValue.startsWith('+')
+          ? inputValue.split(' ')[0]
+          : '+' + inputValue.substring(0, 3);
+      }
+      const matchedCountry = this.countries.find(country => country.code === inputCode);
+      this.phoneCodeInvalid = false;
+      if (matchedCountry) {
+        if (matchedCountry.code !== this.selectedCountry.code) {
+          this.selectCountry(matchedCountry);
+        }
+      } else {
+        this.phoneCodeInvalid = true;
+      }
+    }, 300);
+  }
   startCountdown() {
     this.countdown = 119;
     this.intervalId = setInterval(() => {

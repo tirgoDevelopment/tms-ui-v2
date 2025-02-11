@@ -40,7 +40,7 @@ export class ServiceFormComponent implements OnInit {
     this.drivers$ = this.searchDriver$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap((searchTerm: string) => this.driverService.getAll(this.currentUser.merchantId, {}, searchTerm).pipe(
+      switchMap((searchTerm: string) => this.driverService.getAllTmsDrivers(this.currentUser.merchantId, {}, searchTerm).pipe(
         catchError((err) => {
           return of({ data: { content: [] } });
         })

@@ -8,20 +8,7 @@
       <form [formGroup]="form">
         <div class="flex input-select" style="gap: 0 !important">
           <nz-select formControlName="companyType" style="background-color: #fff !important">
-            <nz-option nzLabel="ООО" nzValue="ООО"></nz-option>
-            <nz-option nzLabel="ИП" nzValue="ИП"></nz-option>
-            <nz-option nzLabel="АО" nzValue="АО"></nz-option>
-            <nz-option nzLabel="ОАО" nzValue="ОАО"></nz-option>
-            <nz-option nzLabel="ЗАО" nzValue="ЗАО"></nz-option>
-            <nz-option nzLabel="АК" nzValue="АК"></nz-option>
-            <nz-option nzLabel="ПК" nzValue="ПК"></nz-option>
-            <nz-option nzLabel="НКО" nzValue="НКО"></nz-option>
-            <nz-option nzLabel="ПК" nzValue="ПК"></nz-option>
-            <nz-option nzLabel="ГП" nzValue="ГП"></nz-option>
-            <nz-option nzLabel="МП" nzValue="МП"></nz-option>
-            <nz-option nzLabel="УП" nzValue="УП"></nz-option>
-            <nz-option nzLabel="ГУП" nzValue="ГУП"></nz-option>
-            <nz-option nzLabel="Другой" nzValue=""></nz-option>
+            <nz-option [nzLabel]="item.name" [nzValue]="item.name" *ngFor="let item of companyTypes"></nz-option>
           </nz-select>
           <input formControlName="companyName" type="text" nz-input placeholder="Наименование фирмы" />
         </div>
@@ -56,7 +43,7 @@
           <a class="underline font-bold">пользовательское соглашение</a>
         </div>
         <button type="submit" nz-button nzType="primary" class="login-button"
-          [disabled]="form.invalid || !form.value.agreement" [nzLoading]="form.disabled" (click)="onSubmit()">
+          [disabled]="!form.value.agreement" [nzLoading]="form.disabled" (click)="onSubmit()">
           Сохранить
         </button>
       </form>

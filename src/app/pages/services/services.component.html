@@ -18,13 +18,22 @@
     </div>
 
     <div class="filter" [@showHideFilter]="isFilterVisible ? 'show' : 'hide'">
-        <div >
-            <nz-select style="width:250px" nzAllowClear="true" [(ngModel)]="filteredServiceId" (ngModelChange)="onServiceSelect($event)"
-              nzPlaceHolder="{{ 'services.title' | translate }}">
-              <nz-option [nzValue]="item.id" [nzLabel]="item.name" *ngFor="let item of tabType ? uniqueServices1 : uniqueServices0">
-              </nz-option>
+        <div>
+            <nz-select style="width:250px" nzAllowClear="true" [(ngModel)]="filteredServiceId"
+                (ngModelChange)="onServiceSelect($event)" nzPlaceHolder="{{ 'services.title' | translate }}">
+                <nz-option [nzValue]="item.id" [nzLabel]="item.name"
+                    *ngFor="let item of tabType ? uniqueServices1 : uniqueServices0">
+                </nz-option>
             </nz-select>
-          </div>
+        </div>
+
+        <div>
+            <nz-input-group class="input-group">
+                <input [(ngModel)]="filter['id']" type="text" nz-input
+                    placeholder="{{ 'services.serviceId' | translate }}" />
+            </nz-input-group>
+        </div>
+
 
         <div>
             <nz-input-group class="input-group">
@@ -34,7 +43,8 @@
         </div>
 
         <div>
-            <nz-select style="width:150px" nzAllowClear="true" [(ngModel)]="filter['statusId']" nzPlaceHolder="{{ 'status' | translate }}">
+            <nz-select style="width:150px" nzAllowClear="true" [(ngModel)]="filter['statusId']"
+                nzPlaceHolder="{{ 'status' | translate }}">
                 <nz-option [nzValue]="status.id" [nzLabel]="status.name.toLowerCase() | translate"
                     *ngFor="let status of statuses">
                 </nz-option>
@@ -116,10 +126,8 @@
         <tbody>
             <tr *ngFor="let item of data; let i = index" (click)="showChatForService(item.id)">
                 <td>{{ i + 1 }}</td>
-                <td>{{ item.id}} / {{ item.services[0].code}}</td>
-                <td class="ellipsis">
-                    <div *ngFor="let service of item.services">{{ service.name }}</div>
-                </td>
+                <td>{{ item.id}} / {{ item.service.code}}</td>
+                <td class="ellipsis">{{ item.service.name }}</td>
                 <td>{{ item.driver.id }}</td>
                 <td class="ellipsis">
                     <ng-container *ngIf="item.driver.driverTransports?.length; else noTransports">
