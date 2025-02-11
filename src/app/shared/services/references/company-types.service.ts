@@ -1,17 +1,14 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { Response } from "../../models/reponse";
 import { env } from "src/environmens/environment";
 
 @Injectable({
     providedIn: 'root'
 })
-export class CurrenciesService {
-
+export class CompanyTypesService {
     constructor(private http: HttpClient) { }
 
-    getAll(params?: any) {
-        return this.http.get(env.references + '/currencies')
+    getAll(params?) {
+        return this.http.get(env.references + `/company-types`)
     }
-} 
+}

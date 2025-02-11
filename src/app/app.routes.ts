@@ -11,6 +11,7 @@ export const appRoutes: Route[] = [
     canActivate: [AuthGuard],
     children: [
       { path: 'drivers', loadChildren: () => import('./pages/drivers/drivers.routes').then(m => m.default), canActivate: [AuthGuard] },
+      { path: 'transports', loadChildren: () => import('./pages/transports/transports.routes').then(m => m.default), canActivate: [AuthGuard] },
       { path: 'services', loadChildren: () => import('./pages/services/services.routes').then(m => m.default), canActivate: [AuthGuard] },
       { path: 'gsm', loadChildren: () => import('./pages/gsm/gsm.routes').then(m => m.default), canActivate: [AuthGuard] },
       { path: 'support', loadChildren: () => import('./pages/support/support.routes').then(m => m.default), canActivate: [AuthGuard] },

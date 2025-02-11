@@ -21,7 +21,7 @@ import { jwtDecode } from 'jwt-decode';
 
 })
 export class TopUpGsmBalanceComponent implements OnInit {
-  form:FormGroup;
+  form: FormGroup;
   loading: boolean = false;
   drivers$
   currentUser
@@ -33,24 +33,27 @@ export class TopUpGsmBalanceComponent implements OnInit {
     private translate: TranslateService,
     private driverService: DriversService
   ) { }
-  ngOnInit(): void { 
+  ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
     this.initForm();
     this.listenToDriverChange();
   }
   findDriver(searchTerm: string) {
-    this.driverService.findDrivers(this.currentUser.merchantId , searchTerm, this.form.value.searchAs).subscribe((response:any) => {
-      if(response && response.data) {
-        this.drivers$ = of(response.data.content);
-      }else {
-        this.drivers$ = of([]);
-      }
-    });
+    if (searchTerm) {
+      this.driverService.findDrivers(this.currentUser.merchantId, searchTerm, this.form.value.searchAs).subscribe((response: any) => {
+        if (response && response.data) {
+          this.drivers$ = of(response.data.content);
+        } else {
+          this.drivers$ = of([]);
+        }
+      });
+    }
+
   }
   initForm() {
     this.form = new FormGroup({
       searchAs: new FormControl('driverId'),
-      tmsId: new FormControl(this.currentUser.merchantId),
+      tmsId: new FormControl(this.currentUser.tmsId),
       driverId: new FormControl(null, Validators.required),
       amount: new FormControl(null, Validators.required),
       gsmCardNumber: new FormControl(null, Validators.required)
@@ -60,7 +63,7 @@ export class TopUpGsmBalanceComponent implements OnInit {
     this.form.get('driverId')?.valueChanges.subscribe((driverId) => {
       if (driverId) {
         const selectedDriver = this.drivers$.pipe(
-          map((drivers:any) => drivers.find((driver: any) => driver.id === driverId))
+          map((drivers: any) => drivers.find((driver: any) => driver.id === driverId))
         );
         selectedDriver.subscribe((driver: any) => {
           if (driver) {
@@ -74,14 +77,14 @@ export class TopUpGsmBalanceComponent implements OnInit {
   }
   onSubmit() {
     this.loading = true;
-    this.form.value.amount = this.form.value.amount.toString(); 
-    this.gsmService.topUpTmsGSMBalance(this.form.value).subscribe((res:any) => {
-      if(res && res.success) {
+    this.form.value.amount = this.form.value.amount.toString();
+    this.gsmService.topUpTmsGSMBalance(this.form.value).subscribe((res: any) => {
+      if (res && res.success) {
         this.loading = false;
         this.toastr.success(this.translate.instant('successfullUpdated'));
-        this.drawerRef.close({success: true});
+        this.drawerRef.close({ success: true });
       }
-    },err => {
+    }, err => {
       this.loading = false;
     })
   }

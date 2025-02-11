@@ -4,8 +4,8 @@
       <form [formGroup]="form">
         <div *ngIf="!phoneVerified">
           <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown" style="width: 100%;">
-            <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask" [readonly]="otpCode"
-              required (ngModelChange)="onPhoneNumberChange($event)" />
+            <input nz-input formControlName="phoneNumbers" placeholder="{{ 'phone' | translate }}" [mask]="currentMask"
+              [readonly]="otpCode" required (ngModelChange)="onPhoneNumberChange($event)" />
             <div *ngIf="form.get('phoneNumbers').touched && form.get('phoneNumbers').hasError('required')"
               class="error-message">
               {{ 'is_empty' | translate }}
@@ -97,8 +97,8 @@
         <nz-form-label nzRequired>{{ 'drivers.id' | translate }}</nz-form-label>
         <nz-select [(ngModel)]="selectedDriver" style="width: 100%;" nzShowSearch nzServerSearch
           nzPlaceHolder="{{ 'drivers.id' | translate }}" [nzShowArrow]="false" (nzOnSearch)="findDriver($event)">
-          <nz-option *ngFor="let o of (drivers$ | async)?.data.content" [nzLabel]="o.firstName + ' ' + o.lastName"
-            [nzValue]="o.id">
+          <nz-option *ngFor="let o of (drivers$ | async)?.data.content"
+            [nzLabel]="(o.id) + ' ' + o.firstName + ' ' + o.lastName" [nzValue]="o.id">
           </nz-option>
         </nz-select>
       </nz-input-group>
@@ -231,7 +231,7 @@
 
     </form>
   </nz-tab>
-  <nz-tab nzTitle="{{ 'transport' | translate }}">
+  <!-- <nz-tab nzTitle="{{ 'transport' | translate }}">
     <button nz-button nzBlock="true" style="margin: 5px 0;" *ngFor="let item of data.driverTransports"
       (click)="editTransport(item)">{{item.brand}}</button>
 
@@ -240,7 +240,7 @@
           nzTheme="outline"></i> {{ 'add'
         | translate }} </button>
     </div>
-  </nz-tab>
+  </nz-tab> -->
 </nz-tabset>
 
 <div *ngIf="mode == 'view' && data && !loadingPage">

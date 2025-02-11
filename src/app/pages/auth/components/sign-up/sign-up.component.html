@@ -11,8 +11,8 @@
           <div>
             <nz-input-group class="input-group" [nzAddOnBefore]="countryDropdown"
               style="width: 100%; margin-bottom: 20px;">
-              <input formControlName="phone" nz-input placeholder="Номер телефона" [mask]="currentMask"
-                style="padding: 10px;" required />
+              <input formControlName="number" nz-input placeholder="Номер телефона" [mask]="currentMask"
+                style="padding: 10px;" required (ngModelChange)="onPhoneNumberChange($event)" />
             </nz-input-group>
 
             <ng-template #countryDropdown>
@@ -39,9 +39,9 @@
       <!-- OTP CODE -->
       <div *ngIf="otpCode">
         <h2 class="title">Подтверждение</h2>
-        <div>Введите 6 значный код отправлен на номер </div>
-        <b> +{{form.value.phone}}</b>
-        <code-input [disabled]="loading" [isCodeHidden]="false" [codeLength]="6" (codeChanged)="onCodeChanged($event)"
+        <div>Введите 5 значный код отправлен на номер </div>
+        <b> +{{form.value.code}} {{form.value.number}}</b>
+        <code-input [disabled]="loading" [isCodeHidden]="false" [codeLength]="5" (codeChanged)="onCodeChanged($event)"
           (codeCompleted)="sendVerifyedCode()"></code-input>
 
           <div>{{timerOtp ? timerOtp : '01:59'}}</div>
@@ -50,10 +50,8 @@
               [nzLoading]="form.disabled">Отправить</button>
       </div>
       <!-- OTP CODE -->
-
     </div>
     <button *ngIf="otpCode" nz-button nzType="link" (click)="retrySms()">Отправить еще раз</button>
-    
     <div style="display: flex; align-items: center;">
       <span>У вас есть учетной запись ?</span>
       <button nz-button nzType="link" style="color: blue;" routerLink="/auth/sign-in">Авторизоваться</button>

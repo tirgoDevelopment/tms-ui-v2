@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, forwardRef,Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { NgxPermissionsService } from 'ngx-permissions';
@@ -25,18 +25,16 @@ export class AuthService {
     return localStorage.getItem('accessTokenTms') ?? '';
   }
 
-  signIn(credentials: { username: string; password: string,userType:string }): Observable<any> {
+  signIn(credentials: { username: string; password: string }): Observable<any> {
     if (this.isAuthenticated) {
       return throwError('User is already logged in.');
     }
-    return this.http.post(`${env.apiUrl}/users/login`, credentials).pipe(
+    return this.http.post(`${env.authUrl}/tmses/login`, credentials).pipe(
       switchMap((response: any) => {
-        this.accessToken = response.data.token;
+        this.accessToken = response.data.accessToken;
         let user: any;
         user = this.accessToken ? jwtDecode(this.accessToken) : null;
         this.isAuthenticated = true;
-        // let allPermission = user?.role?.permission ? this.checkPermissions(user?.role?.permission) : [];
-        // this.permissionService.loadPermissions(allPermission);
         this.isAuthenticated = true;
         return of(response);
       }),
@@ -46,7 +44,6 @@ export class AuthService {
   logout(): void {
     this.isAuthenticated = false;
     localStorage.clear();
-    // this.router.navigate(['/auth/sign-in']);
   }
 
   checkPermissions(permissions: any) {
@@ -102,7 +99,7 @@ export class AuthService {
     if (this.accessToken) {
       return of(true);
     }
-    if  (this.isAuthenticated) {
+    if (this.isAuthenticated) {
       return of(true);
     }
     else {
@@ -110,19 +107,19 @@ export class AuthService {
     }
   }
 
-  verifyPhone(data:any) {
-    return this.http.post(env.apiUrl + '/users/driver-merchant-user/phone-verify', data);
+  verifyPhone(data: any) {
+    return this.http.post(env.authUrl + '/otp', data);
   }
-  merchantCreate(data:any) {
-    return this.http.post(env.apiUrl + '/users/driver-merchants/register', data);
+  merchantCreate(data: any) {
+    return this.http.post(env.apiUrl+ '/', data);
   }
-  getMerchantById(id:string | number) {
+  getMerchantById(id: string | number) {
     return this.http.get(env.apiUrl + '/users/driver-merchants/driver-merchant-by?id=' + id);
   }
-  merchantUpdate(data:any) {
-    return this.http.post(env.apiUrl + '/users/driver-merchants/register/step', data);
+  merchantUpdate(data: any) {
+    return this.http.post(env.apiUrl + '/step', data);
   }
-  merchantComplete(data:any) {
-    return this.http.post(env.apiUrl + '/users/driver-merchants/register/complete', data);
+  merchantComplete(data: any) {
+    return this.http.post(env.apiUrl + '/complete', data);
   }
 }

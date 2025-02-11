@@ -3,7 +3,7 @@
         <nz-form-label nzRequired>{{ 'services.driverId' | translate }}</nz-form-label>
         <nz-select formControlName="driverId" style="width: 100%;" nzShowSearch nzServerSearch
           nzPlaceHolder="{{ 'services.driverId' | translate }}" [nzShowArrow]="false" (nzOnSearch)="findDriver($event)">
-          <nz-option *ngFor="let o of (drivers$ | async)?.data.content" [nzLabel]="o.id + ' ' + '(' + o.firstName + ' ' + o.lastName.slice(0,1) + ')'"
+          <nz-option *ngFor="let o of (drivers$ | async)" [nzLabel]="o.id + ' ' + '(' + o.firstName + ' ' + o.lastName.slice(0,1) + ')'"
             [nzValue]="o.id">
           </nz-option>
         </nz-select>

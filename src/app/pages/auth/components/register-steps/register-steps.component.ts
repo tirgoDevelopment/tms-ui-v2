@@ -11,6 +11,8 @@ import { jwtDecode } from 'jwt-decode';
 import { PipeModule } from 'src/app/shared/pipes/pipes.module';
 import { removeDuplicateKeys } from 'src/app/shared/pipes/remove-dublicates-formData';
 import { CurrenciesService } from 'src/app/shared/services/references/currencies.service';
+import { CompanyTypesService } from 'src/app/shared/services/references/company-types.service';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-register-steps',
@@ -36,6 +38,7 @@ export class RegisterStepsComponent implements OnInit {
   passport: string | ArrayBuffer | null = null;
   transportationCertificate: string | ArrayBuffer | null = null;
   currencies: any;
+  companyTypes: any;
   showBankAccount2: boolean = false;
 
   constructor(
@@ -44,6 +47,7 @@ export class RegisterStepsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private toastr: NotificationService,
     private currenciesApi: CurrenciesService,
+    private companyTypesApi: CompanyTypesService,
     private router: Router,
     private translate: TranslateService
   ) {
@@ -53,6 +57,7 @@ export class RegisterStepsComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getCurrency();
+    this.getCompanyTypes();
     this.initForms();
     if (this.authService.accessToken) {
       let user: any = jwtDecode(this.authService.accessToken);
@@ -64,7 +69,7 @@ export class RegisterStepsComponent implements OnInit {
 
   private initForms(): void {
     this.form = this.formBuilder.group({
-      companyType: ['ООО', Validators.required],
+      companyType: ['', Validators.required],
       companyName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -110,6 +115,14 @@ export class RegisterStepsComponent implements OnInit {
       }
     })
   }
+  getCompanyTypes() {
+    this.companyTypesApi.getAll().subscribe((res: any) => {
+      if (res && res.success) {
+        this.companyTypes = res.data;
+        this.form.patchValue({ companyType: this.companyTypes[0].name });
+      }
+    })
+  }
   onSubmit() {
     if(this.form.value.confirmPassword !=  this.form.value.password) {
       this.toastr.error('Пароли не совпадают');
@@ -118,12 +131,12 @@ export class RegisterStepsComponent implements OnInit {
       this.authService.merchantCreate(this.form.value).subscribe((res: any) => {
         if (res.success) {
           this.form.enable();
-          this.authService.signIn({ username: this.form.value.email, password: this.form.value.password, userType: 'driver_merchant_user' }).subscribe((res: any) => {
+          this.authService.signIn({ username: this.form.value.email, password: this.form.value.password }).subscribe((res: any) => {
             this.authService.accessToken = res.data.token;
             let user: any = jwtDecode(res.data.token);
             this.getMerchant(user.merchantId);
           })
-          this.toastr.success("Мерчант успешно добавлен");
+          this.toastr.success("Успешно добавлен");
         }
       }, error => {
         if (error.error.message == "email must be an email") {
@@ -342,7 +355,6 @@ export class RegisterStepsComponent implements OnInit {
       }
     }
   }
-    
   toggleShowBankAccount2() {
     this.showBankAccount2 = !this.showBankAccount2;
   }
