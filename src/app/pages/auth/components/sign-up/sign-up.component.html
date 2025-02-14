@@ -54,7 +54,7 @@
     <button *ngIf="otpCode" nz-button nzType="link" (click)="retrySms()">Отправить еще раз</button>
     <div style="display: flex; align-items: center;">
       <span>У вас есть учетной запись ?</span>
-      <button nz-button nzType="link" style="color: blue;" routerLink="/auth/sign-in">Авторизоваться</button>
+      <button nz-button nzType="link" style="color: blue;" (click)="authService.logout()">Авторизоваться</button>
     </div>
 
   </div>

@@ -59,8 +59,8 @@ export class DriversService {
   }
 
 
-  getTransport(driverId: number | string, transportId: number | string): Observable<Response<any[]>> {
-    return this.http.get<Response<any[]>>(env.apiUrl + `/drivers/${driverId}/transports/${transportId}`)
+  getTransport( transportId: number | string): Observable<Response<any[]>> {
+    return this.http.get<Response<any[]>>(env.apiUrl + `/drivers/transports/${transportId}`)
   }
   updateTransport(data: any) {
     return this.http.put<Response<any[]>>(env.apiUrl + `/drivers/${data.driverId}/transports/${data.id}`, data)

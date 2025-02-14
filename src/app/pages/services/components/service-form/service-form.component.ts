@@ -89,6 +89,8 @@ export class ServiceFormComponent implements OnInit {
         this.loading = false;
         this.drawerRef.close({ success: true });
       }
+    },err => {
+      this.loading = false;
     });
   }
 }

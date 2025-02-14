@@ -12,45 +12,61 @@
           </nz-select>
           <input formControlName="companyName" type="text" nz-input placeholder="Наименование фирмы" />
         </div>
+        <span class="error-message"
+          *ngIf="form.get('companyName')?.invalid && (form.get('companyName')?.dirty || form.get('companyName')?.touched)">
+          Введите наименование фирмы.
+        </span>
         <div style="margin-top: 10px !important">
           <nz-input-group class="input-group" style="padding: 0 !important">
             <input formControlName="email" type="email" nz-input placeholder="Электронная почта" style="height: 40px"
               autocomplete="username" />
           </nz-input-group>
         </div>
+        <span class="error-message"
+          *ngIf="form.get('email')?.invalid && (form.get('email')?.dirty || form.get('email')?.touched)">
+          Не корректная почта.
+        </span>
         <div>
           <nz-input-group class="input-group" [nzSuffix]="suffixTemplateEye">
             <input formControlName="password" [type]="passwordVisible ? 'text' : 'password'" nz-input
-              placeholder="Пароль" autocomplete="new-password" />
+              placeholder="Пароль" autocomplete="password" />
           </nz-input-group>
           <ng-template #suffixTemplateEye>
             <span nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" style="cursor: pointer"
               (click)="togglePasswordVisibility()"></span>
           </ng-template>
         </div>
+        <span class="error-message"
+          *ngIf="form.get('password')?.invalid && (form.get('password')?.dirty || form.get('password')?.touched)">
+          Пароль должен быть длиннее 8 и меньше 16 символов.
+        </span>
+
+
         <div>
           <nz-input-group class="input-group" [nzSuffix]="suffixTemplateEye">
             <input formControlName="confirmPassword" [type]="passwordVisible ? 'text' : 'password'" nz-input
               placeholder="Подтвердите пароль" autocomplete="new-password" />
           </nz-input-group>
-          <ng-template #suffixTemplateEye>
-            <span nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'" style="cursor: pointer"
-              (click)="togglePasswordVisibility()"></span>
+          <ng-template #suffixTemplateEye (click)="togglePasswordVisibility()">
           </ng-template>
         </div>
+        <span class="error-message"
+          *ngIf="form.get('confirmPassword')?.invalid && (form.get('confirmPassword')?.dirty || form.get('confirmPassword')?.touched)">
+          Пароль должен быть длиннее 8 и меньше 16 символов.
+        </span>
         <div class="my-4">
           <label nz-checkbox formControlName="agreement">Я принимаю</label>
           <a class="underline font-bold">пользовательское соглашение</a>
         </div>
-        <button type="submit" nz-button nzType="primary" class="login-button"
-          [disabled]="!form.value.agreement" [nzLoading]="form.disabled" (click)="onSubmit()">
+        <button type="submit" nz-button nzType="primary" class="login-button" [disabled]="!form.value.agreement || form.invalid"
+          [nzLoading]="form.disabled || loading" (click)="onSubmit()">
           Сохранить
         </button>
       </form>
       <div class="text-center">
-        <span>У вас нет учетной запись ?</span>
-        <button nz-button nzType="link" style="color: blue" routerLink="/auth/sign-up">
-          Зарегистрировать
+        <span>У вас уже есть учетная запись ?</span>
+        <button nz-button nzType="link" style="color: blue" (click)="authService.logout()">
+          Авторизоваться
         </button>
       </div>
     </div>
@@ -192,7 +208,7 @@
               <img class="file-image" *ngIf="transportationCertificate" [src]="transportationCertificate" />
             </div>
           </div>
-          
+
         </div>
       </ng-container>
       <!-- STEP 2 -->
@@ -217,14 +233,14 @@
             <input formControlName="inn" type="text" nz-input placeholder="ИНН" mask="999999999" style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
-            <nz-form-label nzRequired>Код плательщика НДС</nz-form-label>
+            <nz-form-label>Код плательщика НДС</nz-form-label>
             <input formControlName="taxPayerCode" type="text" nz-input placeholder="Код плательщика НДС"
               mask="999999999999" style="height: 40px" />
           </nz-input-group>
         </div>
         <div class="flex">
           <nz-input-group class="input-group">
-            <nz-form-label nzRequired>ОКЭД</nz-form-label>
+            <nz-form-label>ОКЭД</nz-form-label>
             <input formControlName="oked" type="text" nz-input placeholder="ОКЭД" mask="99999" style="height: 40px" />
           </nz-input-group>
           <nz-input-group class="input-group">
@@ -287,6 +303,12 @@
         {{ step == 2 ? "Продолжить" : "Сохранить" }}
       </button>
     </form>
+    <div class="text-center">
+      <span>У вас уже есть учетная запись ?</span>
+      <button nz-button nzType="link" style="color: blue" (click)="authService.logout()">
+        Авторизоваться
+      </button>
+    </div>
   </div>
 </div>
 <div *ngIf="registerCompleted" class="container-completed">

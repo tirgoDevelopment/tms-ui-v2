@@ -105,8 +105,9 @@
 
 
     <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzScroll]="{ x: 'max-content' }"
-        [nzFrontPagination]="false" [nzPageSize]="pageParams.pageSize" [nzTotal]="totalItemsCount"
-        [nzShowSizeChanger]="true" [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
+        [nzPaginationPosition]="'both'" [nzFrontPagination]="false" [nzPageSize]="pageParams.pageSize"
+        [nzTotal]="totalItemsCount" [nzShowSizeChanger]="true" [nzShowPagination]="true"
+        (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
             <tr>
                 <th>No</th>
@@ -124,7 +125,7 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of data; let i = index" (click)="showChatForService(item.id)">
+            <tr *ngFor="let item of data; let i = index" (click)="showChatForService(item.chat.id)">
                 <td>{{ i + 1 }}</td>
                 <td>{{ item.id}} / {{ item.service.code}}</td>
                 <td class="ellipsis">{{ item.service.name }}</td>
@@ -188,6 +189,12 @@
                 </td>
             </tr>
         </tbody>
+        <tfoot nzSummary style="position: absolute; top:-50px;" *ngIf="data && data.length">
+            <tr>
+              <td class="p-0"> <b> {{'amountService' | translate}} :</b></td>
+              <td>{{completedServicesTotalTirAmount | priceFormat}} TIR</td>
+            </tr>
+          </tfoot>
     </nz-table>
 </div>
 

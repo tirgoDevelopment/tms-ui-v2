@@ -11,7 +11,7 @@ import { env } from 'src/environmens/environment';
 })
 export class AuthService {
   isAuthenticated = false;
-
+  refreshToken
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -32,6 +32,7 @@ export class AuthService {
     return this.http.post(`${env.authUrl}/tmses/login`, credentials).pipe(
       switchMap((response: any) => {
         this.accessToken = response.data.accessToken;
+        this.refreshToken = response.data.refreshToken;
         let user: any;
         user = this.accessToken ? jwtDecode(this.accessToken) : null;
         this.isAuthenticated = true;
@@ -40,10 +41,30 @@ export class AuthService {
       }),
     );
   }
+  onRefreshToken() {
+    return this.http.post(`${env.authUrl}/refresh-token`, {refreshToken: localStorage.getItem('refreshTokenTms')}).pipe(
+      switchMap((response: any) => {
+        if(response && response.success) {
+          this.accessToken = response.data.accessToken;
+          this.refreshToken = response.data.refreshToken;
+          localStorage.setItem('accessTokenTms', this.accessToken);
+          localStorage.setItem('refreshTokenTms', this.refreshToken);
+          }
+        else {
+          this.logout();
+        }
+        return of(response);
+      })
+    );
+  }
+
 
   logout(): void {
     this.isAuthenticated = false;
     localStorage.clear();
+    localStorage.removeItem('accessTokenTms');
+    localStorage.removeItem('refreshTokenTms');
+    this.router.navigate(['/auth/sign-in']);
   }
 
   checkPermissions(permissions: any) {
@@ -114,7 +135,7 @@ export class AuthService {
     return this.http.post(env.apiUrl+ '/', data);
   }
   getMerchantById(id: string | number) {
-    return this.http.get(env.apiUrl + '/users/driver-merchants/driver-merchant-by?id=' + id);
+    return this.http.get(env.adminUrl + '/tmses/' + id);
   }
   merchantUpdate(data: any) {
     return this.http.post(env.apiUrl + '/step', data);

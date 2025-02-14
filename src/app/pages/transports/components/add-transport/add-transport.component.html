@@ -1,12 +1,4 @@
 <form [formGroup]="form">
-
-  <!-- <nz-input-group class="input-group">
-    <nz-form-label nzRequired>{{ 'brand' | translate }}</nz-form-label>
-    <input formControlName="brand" type="text" nz-input placeholder="{{ 'brand' | translate }}" required />
-    <div *ngIf="form.get('brand').touched && form.get('brand').hasError('required')" class="error-message">
-      {{ 'is_required' | translate }}
-    </div>
-  </nz-input-group> -->
   <nz-input-group class="input-group">
     <nz-form-label nzRequired>{{'modelTransport' | translate}}</nz-form-label>
     <nz-select formControlName="transportBrandId" nzAllowClear nzPlaceHolder="{{'modelTransport' | translate}}" nzShowSearch style="width: 100% !important;">
