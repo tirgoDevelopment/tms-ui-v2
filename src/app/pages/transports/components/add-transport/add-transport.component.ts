@@ -72,7 +72,6 @@ export class AddTransportComponent implements OnInit {
     private modal: NzModalService,
 
   ) {
-
     this.form = new FormGroup({
       id: new FormControl(''),
       driverId: new FormControl(''),
@@ -99,14 +98,19 @@ export class AddTransportComponent implements OnInit {
     this.getBrands();
     this.getTypes();
     if (this.mode == 'edit') {
+      this.getTransport();
       this.edit = true;
-      this.patchForm();
-    }else {
+    } else {
       this.transportKindIdsChange();
     }
   }
   getTransport() {
-    this.driversService.getTransport(this.driverId,this.data.id).subscribe((res:Response<any[]>) => {})
+    this.driversService.getTransport(this.data).subscribe((res: Response<any[]>) => {
+      if (res) {
+        this.data = res.data;
+        this.patchForm();
+      }
+    })
   }
   getBrands() {
     this.brandService.getBrandGroups().subscribe((res: any) => {
@@ -139,7 +143,7 @@ export class AddTransportComponent implements OnInit {
       capacity: this.data.capacity,
       transportKindId: this.data?.transportKind ? this.data?.transportKind?.id : null,
       transportTypeId: this.data?.transportType ? this.data?.transportType.id : null,
-      cargoLoadMethodIds: this.data.cargoLoadMethods.map((method: any) => method.id), 
+      cargoLoadMethodIds: this.data.cargoLoadMethods.map((method: any) => method.id),
       transportNumber: this.data.transportNumber,
       refrigeratorFromCount: this.data.refrigeratorFrom,
       refrigeratorToCount: this.data.refrigeratorTo,
@@ -280,7 +284,7 @@ export class AddTransportComponent implements OnInit {
       nzCancelText: this.translate.instant('cancel'),
       nzOkDanger: true,
       nzOnOk: () => {
-        this.driversService.deleteTransport(this.driverId,this.data.id).subscribe((res: any) => {
+        this.driversService.deleteTransport(this.driverId, this.data.id).subscribe((res: any) => {
           if (res?.success) {
             this.toastr.success(this.translate.instant('successfullDeleted'), '');
             this.drawerRef.close({ success: true });

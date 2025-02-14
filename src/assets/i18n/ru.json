@@ -32,6 +32,7 @@
     "currencyNotFound": "Валюта не найдена",
     "cargoTypeNotFound": "Тип груза не найден",
     "cargoStatusNotFound": "Статус груза не найден",
+    "passwordShouldContainerNumStr": "Пароль должен содержать строку с номером",
     "transportKindNotfound": "Транспортный вид не найден",
     "cargoLoadingMethodNotFound": "Метод погрузки груза не найден",
     "cargoPackageNotFound": "Грузовой пакет не найден",
@@ -236,6 +237,7 @@
     "modelTransport": "Модель транспорта",
     "assign": "Прикрепить",
     "unAssign": "Открепить",
+    "amountService": "Сумма выполненных услуг",
     "sidebar": {
         "orders": "Заказы",
         "drivers": "Перевозчики",

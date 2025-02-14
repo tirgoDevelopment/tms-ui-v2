@@ -43,7 +43,7 @@ export class SignUpComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private authService: AuthService,
+    public authService: AuthService,
     private toastr: NotificationService) { }
 
   ngOnInit(): void {

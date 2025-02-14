@@ -96,6 +96,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
     sortType: '',
   };
   totalItemsCount
+  completedServicesTotalTirAmount
   private sseSubscription: Subscription | null = null;
   constructor(
     private servicesService: ServicesService,
@@ -183,6 +184,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
         tap((res: any) => {
           if (res && res?.success) {
             this.loader = false;
+            this.completedServicesTotalTirAmount = res.data.completedServicesTotalTirAmount
             this.data = res.data.content;
             this.pageParams.totalPagesCount = res.data.totalPagesCount;
             this.totalItemsCount = this.pageParams.pageSize * this.pageParams.totalPagesCount;
