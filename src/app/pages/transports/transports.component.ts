@@ -101,7 +101,9 @@ export class TransportsComponent implements OnInit {
       }
     });
     drawerRef.afterClose.subscribe((res: any) => {
-      this.getAll()
+      if(res && res.success) {
+        this.getAll()
+      }
     });
   }
   transportManagment() {
@@ -117,23 +119,28 @@ export class TransportsComponent implements OnInit {
     })
   }
   remove(id) {
-    this.confirmModal = this.modal.confirm({
-      nzTitle: this.translate.instant('are_you_sure'),
-      nzContent: this.translate.instant('delete_sure'),
-      nzOkText: this.translate.instant('yes'),
+    this.confirmModal = this.modal.warning({ 
+      nzTitle: this.translate.instant('attention'),
+      nzContent: this.translate.instant('deleteWarning'),
       nzOkType: 'primary',
-      nzOkDanger: true,
-      nzOnOk: () => {
-        this.transportsService.deleteTransport(id).subscribe({
-          next: (res: any) => {
-            if (res?.success) {
-              this.toastr.success(this.translate.instant('successfullDeleted'), '');
-              this.getAll()
-            }
-          }
-        })
-      }
     })
+    // this.confirmModal = this.modal.confirm({
+    //   nzTitle: this.translate.instant('are_you_sure'),
+    //   nzContent: this.translate.instant('delete_sure'),
+    //   nzOkText: this.translate.instant('yes'),
+    //   nzOkType: 'primary',
+    //   nzOkDanger: true,
+    //   nzOnOk: () => {
+    //     this.transportsService.deleteTransport(id).subscribe({
+    //       next: (res: any) => {
+    //         if (res?.success) {
+    //           this.toastr.success(this.translate.instant('successfullDeleted'), '');
+    //           this.getAll()
+    //         }
+    //       }
+    //     })
+    //   }
+    // })
   }
   getTransportBrands() {
     this.brandsService.getBrandGroups().subscribe((res: any) => {
