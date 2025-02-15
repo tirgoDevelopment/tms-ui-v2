@@ -149,6 +149,9 @@
   <nz-input-group class="input-group">
     <label nz-checkbox formControlName="isAdr">{{ 'isAdr' | translate }}</label>
   </nz-input-group>
+  <nz-input-group class="input-group">
+    <label [nzDisabled]="true" nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
+  </nz-input-group>
 
   <div *ngIf="data && data.isVerified">
     <ul class="gallery">

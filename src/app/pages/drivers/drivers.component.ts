@@ -64,7 +64,6 @@ export class DriversComponent implements OnInit {
 
   getAll(): void {
     this.loader = true;
-    this.filter['tmsId'] = this.currentUser.tmsId;
     const queryString = generateQueryFilter(this.filter);
     this.driversService.getAllTmsDrivers(this.currentUser.merchantId,this.pageParams, queryString).pipe(
       tap((res: any) => {

@@ -63,7 +63,7 @@ export class DriversService {
     return this.http.get<Response<any[]>>(env.apiUrl + `/drivers/transports/${transportId}`)
   }
   updateTransport(data: any) {
-    return this.http.put<Response<any[]>>(env.apiUrl + `/drivers/${data.driverId}/transports/${data.id}`, data)
+    return this.http.put<Response<any[]>>(env.apiUrl + `/drivers/transports/${data.id}`, data)
   }
   createTransport(data: any) {
     return this.http.post<Response<any[]>>(env.apiUrl + `/drivers/transports`, data)

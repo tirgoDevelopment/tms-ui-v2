@@ -90,7 +90,8 @@ export class AddTransportComponent implements OnInit {
       isAdr: new FormControl(false),
       isHighCube: new FormControl(false),
       volume: new FormControl(''),
-      isMain: new FormControl(false)
+      isMain: new FormControl(false),
+      isKzPaidWay: new FormControl(false)
     })
   }
 
@@ -139,7 +140,7 @@ export class AddTransportComponent implements OnInit {
     this.form.patchValue({
       id: this.data.id,
       driverId: this.driverId,
-      brand: this.data.brand,
+      transportBrandId: this.data.brand.id,
       capacity: this.data.capacity,
       transportKindId: this.data?.transportKind ? this.data?.transportKind?.id : null,
       transportTypeId: this.data?.transportType ? this.data?.transportType.id : null,
@@ -278,19 +279,24 @@ export class AddTransportComponent implements OnInit {
     })
   }
   remove(): void {
-    this.confirmModal = this.modal.confirm({
-      nzTitle: this.translate.instant('are_you_sure'),
-      nzOkText: this.translate.instant('remove'),
-      nzCancelText: this.translate.instant('cancel'),
-      nzOkDanger: true,
-      nzOnOk: () => {
-        this.driversService.deleteTransport(this.driverId, this.data.id).subscribe((res: any) => {
-          if (res?.success) {
-            this.toastr.success(this.translate.instant('successfullDeleted'), '');
-            this.drawerRef.close({ success: true });
-          }
-        });
-      }
-    });
+    this.confirmModal = this.modal.warning({ 
+      nzTitle: this.translate.instant('attention'),
+      nzContent: this.translate.instant('deleteWarning'),
+      nzOkType: 'primary',
+    })
+    // this.confirmModal = this.modal.confirm({
+    //   nzTitle: this.translate.instant('are_you_sure'),
+    //   nzOkText: this.translate.instant('remove'),
+    //   nzCancelText: this.translate.instant('cancel'),
+    //   nzOkDanger: true,
+    //   nzOnOk: () => {
+    //     this.driversService.deleteTransport(this.driverId, this.data.id).subscribe((res: any) => {
+    //       if (res?.success) {
+    //         this.toastr.success(this.translate.instant('successfullDeleted'), '');
+    //         this.drawerRef.close({ success: true });
+    //       }
+    //     });
+    //   }
+    // });
   }
 }
