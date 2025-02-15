@@ -33,6 +33,8 @@ export class AuthService {
       switchMap((response: any) => {
         this.accessToken = response.data.accessToken;
         this.refreshToken = response.data.refreshToken;
+        localStorage.setItem('accessTokenTms', this.accessToken);
+        localStorage.setItem('refreshTokenTms', this.refreshToken);
         let user: any;
         user = this.accessToken ? jwtDecode(this.accessToken) : null;
         this.isAuthenticated = true;
