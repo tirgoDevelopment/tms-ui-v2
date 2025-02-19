@@ -105,6 +105,7 @@ export class RegisterStepsComponent implements OnInit {
       phoneNumber: [null, Validators.required],
       responsiblePersonFistName: [null],
       legalAddress: [null],
+      factAddress: [null],
       passport: [null],
     });
   }
