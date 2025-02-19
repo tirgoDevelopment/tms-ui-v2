@@ -58,7 +58,7 @@
           <label nz-checkbox formControlName="agreement">Я принимаю</label>
           <a class="underline font-bold">пользовательское соглашение</a>
         </div>
-        <button type="submit" nz-button nzType="primary" class="login-button" [disabled]="!form.value.agreement || form.invalid"
+        <button type="submit" nz-button nzType="primary" class="login-button" [disabled]="!form.value.agreement || form.invalid || loading"
           [nzLoading]="form.disabled || loading" (click)="onSubmit()">
           Сохранить
         </button>
