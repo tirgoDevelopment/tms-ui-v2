@@ -8,15 +8,13 @@ import { CommonModules } from 'src/app/shared/modules/common.module';
 import { NzModules } from 'src/app/shared/modules/nz-modules.module';
 import { PipeModule } from 'src/app/shared/pipes/pipes.module';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { CargoPackagesService } from 'src/app/shared/services/references/cargo-packages.service';
-import { CargoTypesService } from 'src/app/shared/services/references/cargo-type.service';
-import { CurrenciesService } from 'src/app/shared/services/references/currencies.service';
 import { LoadingMethodService } from 'src/app/shared/services/references/loading-method.service';
 import { TransportKindsService } from 'src/app/shared/services/references/transport-kinds.service';
 import { TransportTypesService } from 'src/app/shared/services/references/transport-type.service';
-import { DriversService } from '../../services/drivers.service';
+import { DriversService } from '../../../drivers/services/drivers.service';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { Response } from 'src/app/shared/models/reponse';
+import { TransportBrandService } from 'src/app/shared/services/references/transport-brand.service';
 @Component({
   selector: 'app-add-transport',
   templateUrl: './add-transport.component.html',
@@ -31,7 +29,7 @@ export class AddTransportComponent implements OnInit {
   @Input() mode: "add" | "edit";
   @Output() transportAdded = new EventEmitter<void>();
   confirmModal?: NzModalRef;
-
+  brandGroups
   form: FormGroup;
   edit: boolean = false;
   isAutotransport: boolean = false;
@@ -62,26 +60,22 @@ export class AddTransportComponent implements OnInit {
   previewUrlTransportationLicense: string | ArrayBuffer | null = null;
   selectedFileTransportationLicense: File | null = null;
 
-
   constructor(
     private driversService: DriversService,
-    private currencyService: CurrenciesService,
-    private cargoTypesService: CargoTypesService,
     private transportTypesService: TransportTypesService,
-    private packageService: CargoPackagesService,
     private loadingMethodService: LoadingMethodService,
     private transportKindsService: TransportKindsService,
+    private brandService: TransportBrandService,
     private toastr: NotificationService,
     private drawerRef: NzDrawerRef,
     private translate: TranslateService,
     private modal: NzModalService,
 
   ) {
-
     this.form = new FormGroup({
       id: new FormControl(''),
       driverId: new FormControl(''),
-      brand: new FormControl('', [Validators.required]),
+      transportBrandId: new FormControl('', [Validators.required]),
       capacity: new FormControl('', [Validators.required]),
       transportNumber: new FormControl('', [Validators.required]),
       transportKindId: new FormControl(),
@@ -96,21 +90,35 @@ export class AddTransportComponent implements OnInit {
       isAdr: new FormControl(false),
       isHighCube: new FormControl(false),
       volume: new FormControl(''),
-      isMain: new FormControl(false)
+      isMain: new FormControl(false),
+      isKzPaidWay: new FormControl(false)
     })
   }
 
   ngOnInit(): void {
+    this.getBrands();
     this.getTypes();
     if (this.mode == 'edit') {
+      this.getTransport();
       this.edit = true;
-      this.patchForm();
-    }else {
+    } else {
       this.transportKindIdsChange();
     }
   }
   getTransport() {
-    this.driversService.getTransport(this.driverId,this.data.id).subscribe((res:Response<any[]>) => {})
+    this.driversService.getTransport(this.data).subscribe((res: Response<any[]>) => {
+      if (res) {
+        this.data = res.data;
+        this.patchForm();
+      }
+    })
+  }
+  getBrands() {
+    this.brandService.getBrandGroups().subscribe((res: any) => {
+      if (res && res.success) {
+        this.brandGroups = res.data;
+      }
+    })
   }
   getTypes() {
     forkJoin({
@@ -132,11 +140,11 @@ export class AddTransportComponent implements OnInit {
     this.form.patchValue({
       id: this.data.id,
       driverId: this.driverId,
-      brand: this.data.brand,
+      transportBrandId: this.data.brand.id,
       capacity: this.data.capacity,
       transportKindId: this.data?.transportKind ? this.data?.transportKind?.id : null,
       transportTypeId: this.data?.transportType ? this.data?.transportType.id : null,
-      cargoLoadMethodIds: this.data.cargoLoadMethods.map((method: any) => method.id), 
+      cargoLoadMethodIds: this.data.cargoLoadMethods.map((method: any) => method.id),
       transportNumber: this.data.transportNumber,
       refrigeratorFromCount: this.data.refrigeratorFrom,
       refrigeratorToCount: this.data.refrigeratorTo,
@@ -271,19 +279,24 @@ export class AddTransportComponent implements OnInit {
     })
   }
   remove(): void {
-    this.confirmModal = this.modal.confirm({
-      nzTitle: this.translate.instant('are_you_sure'),
-      nzOkText: this.translate.instant('remove'),
-      nzCancelText: this.translate.instant('cancel'),
-      nzOkDanger: true,
-      nzOnOk: () => {
-        this.driversService.deleteTransport(this.driverId,this.data.id).subscribe((res: any) => {
-          if (res?.success) {
-            this.toastr.success(this.translate.instant('successfullDeleted'), '');
-            this.drawerRef.close({ success: true });
-          }
-        });
-      }
-    });
+    this.confirmModal = this.modal.warning({ 
+      nzTitle: this.translate.instant('attention'),
+      nzContent: this.translate.instant('deleteWarning'),
+      nzOkType: 'primary',
+    })
+    // this.confirmModal = this.modal.confirm({
+    //   nzTitle: this.translate.instant('are_you_sure'),
+    //   nzOkText: this.translate.instant('remove'),
+    //   nzCancelText: this.translate.instant('cancel'),
+    //   nzOkDanger: true,
+    //   nzOnOk: () => {
+    //     this.driversService.deleteTransport(this.driverId, this.data.id).subscribe((res: any) => {
+    //       if (res?.success) {
+    //         this.toastr.success(this.translate.instant('successfullDeleted'), '');
+    //         this.drawerRef.close({ success: true });
+    //       }
+    //     });
+    //   }
+    // });
   }
 }

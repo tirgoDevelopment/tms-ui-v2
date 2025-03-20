@@ -14,7 +14,7 @@ import { CommonModules } from 'src/app/shared/modules/common.module';
 import { IconsProviderModule } from 'src/app/shared/modules/icons-provider.module';
 import { NzModules } from 'src/app/shared/modules/nz-modules.module';
 import { PipeModule } from 'src/app/shared/pipes/pipes.module';
-import { AddTransportComponent } from './components/add-transport/add-transport.component';
+import { AddTransportComponent } from '../transports/components/add-transport/add-transport.component';
 import { SendPushComponent } from './components/send-push/send-push.component';
 import { AssignTmcComponent } from './components/assign-tmc/assign-tmc.component';
 import { jwtDecode } from 'jwt-decode';
@@ -65,7 +65,7 @@ export class DriversComponent implements OnInit {
   getAll(): void {
     this.loader = true;
     const queryString = generateQueryFilter(this.filter);
-    this.driversService.getAll(this.currentUser.merchantId,this.pageParams, queryString).pipe(
+    this.driversService.getAllTmsDrivers(this.currentUser.merchantId,this.pageParams, queryString).pipe(
       tap((res: any) => {
         this.data = res?.success ? res.data.content : [];
         this.pageParams.totalPagesCount = res.data.pageSize * res?.data?.totalPagesCount;
@@ -148,17 +148,6 @@ export class DriversComponent implements OnInit {
         });
       }
     });
-  }
-
-  onPageIndexChange(pageIndex: number): void {
-    this.pageParams.pageIndex = pageIndex;
-    this.getAll();
-  }
-
-  onPageSizeChange(pageSize: number): void {
-    this.pageParams.pageSize = pageSize;
-    this.pageParams.pageIndex = 0;
-    this.getAll();
   }
 
   toggleFilter(): void {

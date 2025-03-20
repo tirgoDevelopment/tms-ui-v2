@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
     this.translate.setDefaultLang('ru');
     const token = localStorage.getItem('accessTokenTms') || '';
     if (token) {
-      this.connectToSSE(token);
+      this.socketService.connect();
     } else {
     }
     setTimeout(() => {
@@ -35,7 +35,4 @@ export class AppComponent implements OnInit {
     
   }
   
-  private connectToSSE(token: string) {
-    this.socketService.connectToSSE(token);
-  }
 }

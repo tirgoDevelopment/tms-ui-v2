@@ -39,19 +39,6 @@ export class TopupBalanceDriverComponent {
   ngOnInit(): void {
     this.initializeForm();
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms'));
-
-    this.getDrivers();
-  }
-  getDrivers() {
-    this.drivers$ = this.searchDriver$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap((searchTerm: string) => this.driverApi.getAll(this.currentUser.merchantId, { driverId: searchTerm }).pipe(
-        catchError((err) => {
-          return of({ data: { content: [] } });
-        })
-      )),
-    );
   }
   initializeForm(): void {
     this.form = new FormGroup({
@@ -73,7 +60,16 @@ export class TopupBalanceDriverComponent {
       this.loading = false;
     });
   }
-  findDriver(ev: string) {
-    this.searchDriver$.next(ev);
+  findDriver(searchTerm: string) {
+    if (searchTerm) {
+      this.driverApi.findDrivers(this.currentUser.tmsId, searchTerm, 'driverId').subscribe((response: any) => {
+        if (response && response.data) {
+          this.drivers$ = of(response.data.content);
+        } else {
+          this.drivers$ = of([]);
+        }
+      });
+    }
+
   }
 }

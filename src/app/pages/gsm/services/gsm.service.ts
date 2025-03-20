@@ -10,16 +10,12 @@ export class GSMService {
     constructor(private http: HttpClient) { }
 
     postGSMCardNumber(data) {
-        return this.http.post(`${env.apiUrl}/users/drivers/${data.id}/gsm-card-number`, data);
+        return this.http.post(`${env.apiUrl}/${data.id}/gcm/set-card-number`, data);
     }
     topUpTmsGSMBalance(data) {
-        return this.http.post(`${env.apiUrl}/users/driver-merchants/${data.tmsId}/drivers/${data.driverId}/gsm-balance-request`, data);
+        return this.http.post(`${env.apiUrl}/drivers/${data.driverId}/gcm-balances/assign-request`, data);
     }
     getTmsGSMTransactions(filter) {
-        return this.http.get(`${env.apiUrl}/users/driver-merchants/gsm-transactions?` + filter);
+        return this.http.get(`${env.apiUrl}/finances/gcm-transactions?` + filter);
     }
-    getTmsGSMBalance(tmsId) {
-        return this.http.get(`${env.apiUrl}/users/driver-merchants/${tmsId}/gsm-balance`)
-    }
-
 }

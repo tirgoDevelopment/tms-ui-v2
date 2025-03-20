@@ -1,0 +1,100 @@
+<div>
+  <div class="container-page">
+    <div class="header-page">
+      <h2>{{ 'transports' | translate }}</h2>
+      <div class="button-group">
+        <button nz-button class="success-button" (click)="transportManagment()">
+          <!-- <span nz-icon nzType="plus" nzTheme="outline"></span> -->
+          {{ 'transportManagment' | translate }}
+        </button>
+
+        <button nz-button class="secondary-button" (click)="toggleFilter()">
+          <span nz-icon nzType="filter" nzTheme="fill"></span>
+          {{ 'filter' | translate }}
+        </button>
+        <button nz-button class="success-button" (click)="add()">
+          <span nz-icon nzType="plus" nzTheme="outline"></span>
+          {{ 'add' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter" [@showHideFilter]="isFilterVisible ? 'show' : 'hide'">
+    <div>
+      <nz-input-group class="input-group w-full">
+        <nz-select style="width: 250px" [(ngModel)]="filter['transportBrandId']" nzAllowClear nzPlaceHolder="{{'modelTransport' | translate}}" nzShowSearch>
+          <nz-option-group [nzLabel]="group.name" *ngFor="let group of brandGroups">
+            <nz-option *ngFor="let brand of group.brands" [nzValue]="brand.id" [nzLabel]="brand.name"></nz-option>
+          </nz-option-group>
+        </nz-select>
+      </nz-input-group>
+    </div>
+    <div>
+      <nz-input-group class="input-group">
+        <input [(ngModel)]="filter['transportNumber']" type="text" nz-input
+          placeholder="{{ 'state_number' | translate }}" trimSpaces />
+      </nz-input-group>
+    </div>
+
+    <button nz-button nzType="primary" class="search-button" (click)="fiterApply()">
+      <span nz-icon nzType="search" nzTheme="outline"></span>
+    </button>
+    <button nz-button class="reset-button" (click)="resetFilter()">
+      <span nz-icon nzType="reload" nzTheme="outline"></span>
+    </button>
+  </div>
+
+  <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzFrontPagination]="false"
+    [nzPaginationPosition]="'both'" [nzScroll]="data.length > 0 ? { y: '60vh' } : { y: '' }"
+    [nzPageSize]="pageParams.pageSize" [nzTotal]="pageParams.totalPagesCount" [nzShowSizeChanger]="true"
+    [nzShowPagination]="true" (nzQueryParams)="onQueryParamsChange($event)">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>{{ 'driver' | translate }}</th>
+        <th>{{ 'state_number' | translate }}</th>
+        <th>{{ 'register_date' | translate }}</th>
+        <th nzWidth="50px"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let item of data; let i = index">
+        <td> {{ item.id }} </td>
+        <td> {{item.driver ? (item.driver?.id + '. ' + item.driver?.firstName + ' ' + item.driver?.lastName) : ('no_data' | translate) }} </td>
+        <td>{{item.transportNumber}}</td>
+        <td>{{item.createdAt | date:'dd.MM.yyyy'}}</td>
+        <td class="action-col" (click)="$event.stopPropagation()">
+          <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
+            <i nz-icon nzType="ellipsis" nzTheme="outline" style="cursor: pointer;"></i>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu nzSelectable>
+              <li nz-menu-item (click)="editTransport(item)">
+                <div class="dropdown-menu">
+                  <span nz-icon nzType="edit" nzTheme="outline" class="edit-icon"></span>
+                  <span>{{ 'edit' | translate }}</span>
+                </div>
+              </li>
+              <li nz-menu-item (click)="remove(item.id)">
+                <div class="dropdown-menu">
+                  <span nz-icon nzType="delete" nzTheme="outline" class="delete-icon"></span>
+                  <span>{{ 'remove' | translate }}</span>
+                </div>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <ng-template #empty>
+    <nz-empty></nz-empty>
+  </ng-template>
+</div>
+
+<!-- <div *ngIf="!perService.hasPermission(Permission.DriversPage)" class="no-access-container">
+    <nz-result nzStatus="error" nzTitle="403" nzSubTitle="{{'accessDeniedPage' | translate}}">
+    </nz-result>
+  </div> -->

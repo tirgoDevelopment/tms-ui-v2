@@ -96,6 +96,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
     sortType: '',
   };
   totalItemsCount
+  completedServicesTotalTirAmount
   private sseSubscription: Subscription | null = null;
   constructor(
     private servicesService: ServicesService,
@@ -111,9 +112,9 @@ export class ServicesComponent implements OnInit, OnDestroy {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
     this.getStatuses();
     this.getRefServices();
-    this.sseSubscription = this.socketService.getSSEEvents().subscribe((event) => {
-      this.handleSocketEvent(event);
-    });
+    // this.sseSubscription = this.socketService.getSSEEvents().subscribe((event) => {
+    //   this.handleSocketEvent(event);
+    // });
     this.getBalance();
   }
   handleSocketEvent(event: any): void {
@@ -182,6 +183,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
       .pipe(
         tap((res: any) => {
           if (res && res?.success) {
+            this.loader = false;
+            this.completedServicesTotalTirAmount = res.data.completedServicesTotalTirAmount
             this.data = res.data.content;
             this.pageParams.totalPagesCount = res.data.totalPagesCount;
             this.totalItemsCount = this.pageParams.pageSize * this.pageParams.totalPagesCount;
@@ -197,6 +200,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
       .subscribe();
   }
   private handleError(): Observable<never> {
+    this.loader = false;
     this.data = [];
     return throwError(new Error('Error fetching orders'));
   }
