@@ -34,8 +34,11 @@ export interface DriverModel extends BaseModel {
     isOwnBalance: boolean;
     isOwnOrder: boolean;
     isOwnService: boolean;
+    isOwnTirgoBalance: boolean;
     serviceBalance: number;
     tirgoBalance: number;
+    isSubscribed: boolean;
+    subscribedTill
     user: {
         id: number;
         lastLogin: Date;
