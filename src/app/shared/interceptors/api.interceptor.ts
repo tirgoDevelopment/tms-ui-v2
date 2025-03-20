@@ -1,33 +1,3 @@
-// import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
-// import { inject } from '@angular/core';
-// import { catchError, Observable, throwError } from 'rxjs';
-// import { AuthService } from 'src/app/pages/auth/services/auth.service';
-
-// export const authInterceptor = (
-//     req: HttpRequest<unknown>, 
-//     next: HttpHandlerFn
-// ): Observable<HttpEvent<unknown>> => {
-//     const authService = inject(AuthService);
-
-//     let newReq = req.clone();
-
-//     if (authService.accessToken) {
-//         newReq = req.clone({
-//             headers: req.headers.set('Authorization', 'Bearer ' + authService.accessToken),
-//         });
-//     }
-//     return next(newReq).pipe(
-//         catchError((error) => {
-//             if (error instanceof HttpErrorResponse && error.status === 401) {
-//                 authService.signOut();
-//                 // location.reload();
-//             }
-//             return throwError(error);
-//         }),
-//     );
-//  };
-
-
 import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, Observable, switchMap, throwError, timeout } from 'rxjs';
@@ -69,7 +39,13 @@ export const authInterceptor = (
                                         headers: req.headers.set('Authorization', 'Bearer ' + authService.accessToken),
                                     })
                                 );
-                            } else {
+                            }
+                            if(response.error == "Token verification failed") {
+                                console.log(response);
+                                authService.logout();
+                                return null;
+                              } 
+                            else {
                                 authService.logout();
                                 return throwError(() => new Error('Failed to refresh token'));
                             }
