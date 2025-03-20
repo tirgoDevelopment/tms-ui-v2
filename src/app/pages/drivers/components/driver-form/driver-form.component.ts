@@ -109,6 +109,7 @@ export class DriverFormComponent implements OnInit {
       isOwnService: new FormControl(false),
       isOwnOrder: new FormControl(false),
       isKzPaidWay: new FormControl(false),
+      isOwnTirgoBalance: new FormControl(false),
     });
     this.selectCountry(this.countries[0]);
 

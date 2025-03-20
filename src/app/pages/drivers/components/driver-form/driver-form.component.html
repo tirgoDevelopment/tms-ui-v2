@@ -69,13 +69,15 @@
             </div>
           </nz-input-group>
 
-          <!-- <label nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label> -->
-          <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
+          <div>
+            <label nz-checkbox formControlName="isOwnTirgoBalance" class="m-0">{{'pay_driver' | translate}}</label>
+          </div>
+          <label nz-checkbox formControlName="isOwnOrder" class="m-0">{{'take_orders' |
             translate}}</label>
-          <label nz-checkbox formControlName="isOwnBalance" class="m-0" style="margin: 0 !important;">{{'total_balance'
+          <label nz-checkbox formControlName="isOwnBalance" class="m-0">{{'total_balance'
             |
             translate}}</label>
-          <label nz-checkbox formControlName="isOwnService" class="m-0" style="margin: 0 !important;">{{'apply_service'
+          <label nz-checkbox formControlName="isOwnService" class="m-0">{{'apply_service'
             |
             translate}}</label>
 
@@ -171,13 +173,15 @@
           </li>
         </ul>
       </nz-dropdown-menu>
-
-      <!-- <label [nzDisabled]="true" nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label> -->
-      <label nz-checkbox formControlName="isOwnOrder" class="m-0" style="margin: 0 !important;">{{'take_orders' |
+      <div>
+        <label nz-checkbox [nzDisabled]="true" formControlName="isOwnTirgoBalance" class="m-0">{{'pay_driver' |
+          translate}}</label>
+      </div>
+      <label nz-checkbox formControlName="isOwnOrder" class="m-0">{{'take_orders' |
         translate}}</label>
-      <label nz-checkbox formControlName="isOwnBalance" class="m-0" style="margin: 0 !important;">{{'total_balance' |
+      <label nz-checkbox formControlName="isOwnBalance" class="m-0">{{'total_balance' |
         translate}}</label>
-      <label nz-checkbox formControlName="isOwnService" class="m-0" style="margin: 0 !important;">{{'apply_service' |
+      <label nz-checkbox formControlName="isOwnService" class="m-0">{{'apply_service' |
         translate}}</label>
       <ul class="gallery" *ngIf="data && data?.isVerified">
         <li *ngIf="previewUrlPassport">
@@ -317,6 +321,28 @@
         </div>
 
         <div class="info-row">
+          <div class="info-column" *ngIf="!data?.isSubscribed">
+            <div class="info-label">{{ 'subscription' | translate }}</div>
+            <div class="info-value">
+              <span ngClass="{{data.isSubscribed ? 'edit-icon' : 'delete-icon'}}">{{data.isSubscribed ? ('yes' |
+                translate) : ('no' | translate)}}</span>
+            </div>
+          </div>
+          <div class="info-column" *ngIf="data?.isSubscribed">
+            <div class="info-label">{{ 'subscribe_from' | translate }}</div>
+            <div class="info-value">
+              <span>{{data.subscribedAt | date : 'dd.MM.yyyy'}}</span>
+            </div>
+          </div>
+          <div class="info-column" *ngIf="data?.isSubscribed">
+            <div class="info-label">{{ 'subscribe_to' | translate }}</div>
+            <div class="info-value">
+              <span>{{data.subscribedTill | date : 'dd.MM.yyyy'}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-row">
           <div class="info-column" *ngIf="data?.phoneNumbers">
             <div class="info-label">{{ 'phone' | translate }}</div>
             <p class="info-value">{{ data?.phoneNumbers[0].code + data?.phoneNumbers[0].number | phoneFormat }}</p>
@@ -363,6 +389,13 @@
             <div class="info-value">
               {{ data?.isOwnOrder ? ('on' | translate) : ('off' | translate) }}
             </div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-column">
+            <div class="info-label">{{ 'pay_driver' | translate }}</div>
+            <p class="info-value">{{ data?.isOwnTirgoBalance ? ('on' | translate) : ('off' | translate) }}</p>
           </div>
         </div>
 
