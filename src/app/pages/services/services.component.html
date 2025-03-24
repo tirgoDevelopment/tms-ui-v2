@@ -103,7 +103,6 @@
         <nz-tab nzTitle="{{'kzPaidWay' | translate}}"></nz-tab>
     </nz-tabset>
 
-
     <nz-table #sortTable [nzData]="data" [nzLoading]="loader" [nzNoResult]="empty" [nzScroll]="{ x: 'max-content' }"
         [nzPaginationPosition]="'both'" [nzFrontPagination]="false" [nzPageSize]="pageParams.pageSize"
         [nzTotal]="totalItemsCount" [nzShowSizeChanger]="true" [nzShowPagination]="true"
@@ -189,12 +188,6 @@
                 </td>
             </tr>
         </tbody>
-        <tfoot nzSummary style="position: absolute; top:-50px;" *ngIf="data && data.length">
-            <tr>
-              <td class="p-0"> <b> {{'amountService' | translate}} :</b></td>
-              <td>{{completedServicesTotalTirAmount | priceFormat}} TIR</td>
-            </tr>
-          </tfoot>
     </nz-table>
 </div>
 
