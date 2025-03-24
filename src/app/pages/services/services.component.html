@@ -117,7 +117,7 @@
                 <th>{{ "date_creation" | translate }}</th>
                 <th>{{ "services.processingTime" | translate }}</th>
                 <th>{{ "services.processingTimeEnd" | translate }}</th>
-                <th>{{ "total" | translate }}</th>
+                <th>{{ "total" | translate }} (TIR) </th>
                 <th nzRight nzWidth="150px">{{ "status" | translate }}</th>
                 <th nzRight></th>
             </tr>
@@ -143,10 +143,10 @@
                 <td>{{ item.statusesHistory | createdAt : 3 | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>{{ item.statusesHistory | createdAt : 5 | date : "dd.MM.yyyy HH:mm" }}</td>
                 <td>
-                    <div *ngIf="item.amountDetails && item.amountDetails.length > 0">
-                        {{ calculateSum(item.amountDetails) | priceFormat }}
+                    <div *ngIf="item.tirAmount">
+                        {{ item.tirAmount| priceFormat }}
                     </div>
-                    <div *ngIf="!item.amountDetails || item.amountDetails.length === 0">
+                    <div *ngIf="!item.tirAmount">
                         {{ 'no_data' | translate }}
                     </div>
                 </td>
