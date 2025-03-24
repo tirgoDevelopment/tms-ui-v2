@@ -20,20 +20,16 @@ export const errorInterceptor: HttpInterceptorFn = (
         toastr.error('Интернет-связь отсутствует', 'Проверьте ваше подключение к интернету');
         return throwError(() => new Error('Интернет-связь отсутствует'));
       }
-
+      if (error.error.error === 'Token verification failed') {
+        authService.logout();
+      }
       if (error.error?.error === 'Not Found') {
         toastr.error('Not found', '');
         return throwError(() => new Error('Not found'));
       }
-
       const errorMessage = translate.instant(error.error?.message || '');
-      // if (error.error?.message === 'tokenExpired') {
-      //   authService.logout();
-      // }
-
       const finalMessage = errorMessage || 'Извините, произошла ошибка';
       toastr.error( translate.instant(finalMessage), errorMessage ? '' : 'Попробуйте позже');
-      
       return throwError(() => new Error(finalMessage));
     })
   );

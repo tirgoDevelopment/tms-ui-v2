@@ -44,7 +44,7 @@ export class AuthService {
     );
   }
   onRefreshToken() {
-    return this.http.post(`${env.authUrl}/refresh-token`, {refreshToken: localStorage.getItem('refreshTokenTms')}).pipe(
+    return this.http.post(`${env.authUrl}/tmses/refresh-token`, {refreshToken: localStorage.getItem('refreshTokenTms')}).pipe(
       switchMap((response: any) => {
         if(response && response.success) {
           this.accessToken = response.data.accessToken;
