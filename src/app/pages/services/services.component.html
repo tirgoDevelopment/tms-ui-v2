@@ -2,13 +2,13 @@
     <div class="header-page">
         <h2>{{ "services.title" | translate }}</h2>
         <div class="button-group">
-            <button nz-button class="success-button" (click)="getExcel()">
-                <span nz-icon nzType="file-excel" nzTheme="fill"></span>
-                {{ "excel" | translate }}
-            </button>
             <button nz-button class="secondary-button" (click)="toggleFilter()">
                 <span nz-icon nzType="filter" nzTheme="fill"></span>
                 {{ "filter" | translate }}
+            </button>
+            <button nz-button class="success-button" (click)="getExcel()">
+                <span nz-icon nzType="file-excel" nzTheme="fill"></span>
+                {{ "excel" | translate }}
             </button>
             <button nz-button class="success-button" (click)="addService()">
                 <span nz-icon nzType="plus"></span>
@@ -34,6 +34,12 @@
             </nz-input-group>
         </div>
 
+        <div>
+            <nz-input-group class="input-group">
+                <input [(ngModel)]="filter['transportNumber']" type="text" nz-input
+                    placeholder="{{ 'transport_number' | translate }}" />
+            </nz-input-group>
+        </div>
 
         <div>
             <nz-input-group class="input-group">
@@ -68,6 +74,21 @@
                 </nz-date-picker>
             </nz-input-group>
         </div>
+        <div *ngIf="tabType == 1">
+            <nz-input-group class="input-group">
+                <nz-date-picker style="min-width: 170px;" [(ngModel)]="filter['issuedAtFrom']" type="date" nz-input
+                    [nzAllowClear]="false" nzPlaceHolder="{{ 'issuedAtFrom' | translate }}" class="custom-date-picker">
+                </nz-date-picker>
+            </nz-input-group>
+        </div>
+        <div *ngIf="tabType == 1">
+            <nz-input-group class="input-group">
+                <nz-date-picker style="min-width: 170px;" [(ngModel)]="filter['issuedAtTo']" type="date" nz-input
+                    [nzAllowClear]="false" nzPlaceHolder="{{ 'issuedAtTo' | translate }}" class="custom-date-picker">
+                </nz-date-picker>
+            </nz-input-group>
+        </div>
+
 
         <button nz-button nzType="primary" class="search-button" (click)="getAll()">
             <span nz-icon nzType="search" nzTheme="outline"></span>
