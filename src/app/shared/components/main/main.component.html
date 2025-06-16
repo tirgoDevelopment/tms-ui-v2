@@ -9,16 +9,6 @@
     </div>
 
     <ul nz-menu nzTheme="light" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      <!-- <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
-        [nzTooltipTitle]="isCollapsed ? ('sidebar.orders' | translate) : ''" routerLink="/orders">
-        <span class="sidebar-icon" nz-icon>
-          <img *ngIf="themeService.colorTheme == 'light-mode'" src="./assets/images/sidebar/tracking.svg"
-            alt="" width="15">
-          <img *ngIf="themeService.colorTheme == 'dark-mode'" src="./assets/images/sidebar/tracking-w.svg"
-            alt="" width="15">
-        </span>
-        <span>{{'sidebar.orders' | translate}}</span>
-      </li> -->
       <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
         [nzTooltipTitle]="isCollapsed ? ('drivers.title' | translate) : ''" routerLink="/drivers">
         <span class="sidebar-icon" nz-icon>
@@ -29,15 +19,28 @@
         </span>
         <span>{{'drivers.title' | translate}}</span>
       </li>
-
+      <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
+        [nzTooltipTitle]="isCollapsed ? ('transports' | translate) : ''" routerLink="/transports">
+        <span class="sidebar-icon" nz-icon>
+          <img *ngIf="themeService.colorTheme == 'light-mode'" src="../../../../assets/images/sidebar/tracking.svg"
+            alt="" width="15px" height="15px" />
+          <img *ngIf="themeService.colorTheme == 'dark-mode'" src="../../../../assets/images/sidebar/tracking-w.svg"
+            alt="" width="15px" height="15px" />
+        </span>
+        <span>{{'transports' | translate}}</span>
+      </li>
+      <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
+        [nzTooltipTitle]="isCollapsed ? ('documents.title' | translate) : ''" routerLink="/documents">
+        <span class="sidebar-icon" nz-icon>
+          <img *ngIf="themeService.colorTheme == 'light-mode'" src="../../../../assets/images/sidebar/tracking.svg"
+            alt="" width="15px" height="15px" />
+          <img *ngIf="themeService.colorTheme == 'dark-mode'" src="../../../../assets/images/sidebar/tracking-w.svg"
+            alt="" width="15px" height="15px" />
+        </span>
+        <span>{{'documents.title' | translate}}</span>
+      </li>
       <li nzMatchRouter nz-menu-item nz-tooltip nzTooltipPlacement="right"
         [nzTooltipTitle]="isCollapsed ? ('services.title' | translate) : ''" routerLink="/services">
-        <!-- <span class="sidebar-icon" nz-icon>
-          <img *ngIf="themeService.colorTheme == 'light-mode'" src="./assets/images/sidebar/finance.svg"
-            alt="" width="15">
-          <img *ngIf="themeService.colorTheme == 'dark-mode'" src="./assets/images/sidebar/finance-d.svg"
-            alt="" width="15">
-        </span> -->
         <span nz-icon nzType="file-text"></span>
         <span>{{'services.title' | translate}}</span>
       </li>
@@ -108,8 +111,11 @@
           </button>
 
           <div nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click">
-            <nz-avatar [nzSize]="38" [nzText]="this.userName.slice(0, 1).toUpperCase()"
+            <nz-avatar [nzSize]="38"
+              [nzText]=" currentUser && currentUser.username ? currentUser.username.slice(0, 1).toUpperCase() : ''"
               style="margin-bottom: 3px; color:#f56a00; background-color:#fde3cf;cursor: pointer;font-size: 16px; font-weight: bold;"></nz-avatar>
+            <span class="main-username">{{ currentUser.companyName }}</span>
+            <i class="down-icon" nz-icon nzType="down"></i>
           </div>
 
           <nz-dropdown-menu #menu="nzDropdownMenu">

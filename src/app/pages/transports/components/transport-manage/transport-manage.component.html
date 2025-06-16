@@ -1,0 +1,35 @@
+<nz-tabset (nzSelectedIndexChange)="onTabChange($event)">
+    <nz-tab nzTitle="{{ 'assignTransport' | translate }}"></nz-tab>
+    <nz-tab nzTitle="{{ 'unAssignTransport' | translate }}"></nz-tab>
+</nz-tabset>
+
+<form [formGroup]="form">
+    <nz-input-group class="input-group w-full">
+        <nz-form-label>{{ 'driver' | translate }}</nz-form-label>
+        <nz-select style="width: 100%;" nzShowSearch nzServerSearch nzPlaceHolder="{{ 'driver' | translate }}"
+            [nzShowArrow]="false" formControlName="driverId" (nzOnSearch)="findDriver($event)"
+            (ngModelChange)="onDriverChange($event)">
+            <nz-option *ngFor="let o of drivers$ | async" [nzLabel]="'(' + o.id + ')' + ' ' + o.firstName + ' ' + o.lastName"
+                [nzValue]="o.id">
+            </nz-option>
+        </nz-select>
+    </nz-input-group>
+
+    <nz-input-group class="input-group w-full">
+        <nz-form-label>{{ 'transport' | translate }}</nz-form-label>
+        <nz-select style="width: 100%;" nzShowSearch nzServerSearch nzPlaceHolder="{{ 'transport' | translate }}"
+            [nzShowArrow]="false" formControlName="transportId" (nzOnSearch)="findTransport($event)">
+            <nz-option *ngFor="let o of (transports$ | async)" [nzLabel]="o.transportNumber" [nzValue]="o.id">
+            </nz-option>
+        </nz-select>
+    </nz-input-group>
+
+    <div class="button-wrapper">
+        <button [nzLoading]="loading" nz-button
+            [ngClass]="{'success-button': type == 'assign' ,'danger-button': type == 'unAssign' }" (click)="onSubmit()"
+            [disabled]="form.invalid || loading">
+            {{ type | translate }}
+        </button>
+    </div>
+
+</form>

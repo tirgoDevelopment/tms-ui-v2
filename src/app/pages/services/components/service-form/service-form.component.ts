@@ -40,7 +40,7 @@ export class ServiceFormComponent implements OnInit {
     this.drivers$ = this.searchDriver$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap((searchTerm: string) => this.driverService.getAll(this.currentUser.merchantId, {}, searchTerm).pipe(
+      switchMap((searchTerm: string) => this.driverService.getAllTmsDrivers(this.currentUser.merchantId, {}, searchTerm).pipe(
         catchError((err) => {
           return of({ data: { content: [] } });
         })
@@ -56,9 +56,14 @@ export class ServiceFormComponent implements OnInit {
     this.searchDriver$.next(filter);
   }
   getServices() {
-    this.serviceApi.getServiceList().subscribe((res: Response<ServiceModel[]>) => {
-      if (res) {
-        this.services = res.data;
+    this.serviceApi.getServiceList().subscribe((res: any) => {
+      if (res.data && Array.isArray(res.data)) {
+        const uniqueServices = Array.from(new Set(res.data.map((service: any) => service.name)))
+          .map((name: any) => res.data.find((service: any) => service.name === name));
+
+        this.services = uniqueServices;
+      } else {
+        this.services = [];
       }
     });
   }
@@ -84,6 +89,8 @@ export class ServiceFormComponent implements OnInit {
         this.loading = false;
         this.drawerRef.close({ success: true });
       }
+    },err => {
+      this.loading = false;
     });
   }
 }

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { env } from 'src/environmens/environment';
+import { env } from 'src/environments/environment';
 import { Response } from '../../models/reponse';
 
 @Injectable({
@@ -12,15 +12,15 @@ export class LoadingMethodService {
   constructor(private http: HttpClient) { }
 
   getAll(params?: any) {
-    return this.http.get(env.references + `/references/cargo-loading-method/all?pageIndex=${params?.pageIndex}&pageSize=${params?.pageSize}&totalPagesCount=${params?.totalPagesCount}&sortBy=${params?.sortBy}&sortType=${params?.sortType}`)
+    return this.http.get(env.references + `/cargo-loading-methodes`)
   }
   create(data: any) {
-    return this.http.post(env.references + '/references/cargo-loading-method', data)
+    return this.http.post(env.references + '/cargo-loading-methodes', data)
   }
   update(data: any) {
-    return this.http.put(env.references + '/references/cargo-loading-method', data)
+    return this.http.put(env.references + '/cargo-loading-methodes', data)
   }
   delete(id: number | string) { 
-    return this.http.delete(env.references + `/references/cargo-loading-method?id=${id}`)
+    return this.http.delete(env.references + `/cargo-loading-methodes?id=${id}`)
   }
 }

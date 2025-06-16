@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
         }
         else {
           let user:any = jwtDecode(localStorage.getItem('accessTokenTms'));
-          if (!user.completed || (!user.verified && !user.rejected)) {
+          if (!user.isCompleted || (!user.isVerified && !user.isRejected)) {
             this.router.navigate(['/auth/register']);
             return of(false);
           }        

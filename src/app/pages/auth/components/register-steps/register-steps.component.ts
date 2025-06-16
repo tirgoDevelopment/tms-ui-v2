@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NzModules } from 'src/app/shared/modules/nz-modules.module';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -11,6 +11,8 @@ import { jwtDecode } from 'jwt-decode';
 import { PipeModule } from 'src/app/shared/pipes/pipes.module';
 import { removeDuplicateKeys } from 'src/app/shared/pipes/remove-dublicates-formData';
 import { CurrenciesService } from 'src/app/shared/services/references/currencies.service';
+import { CompanyTypesService } from 'src/app/shared/services/references/company-types.service';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-register-steps',
@@ -20,6 +22,7 @@ import { CurrenciesService } from 'src/app/shared/services/references/currencies
   imports: [CommonModule, NzModules, FormsModule, ReactiveFormsModule, RouterModule, TranslateModule, NgxMaskDirective, PipeModule]
 })
 export class RegisterStepsComponent implements OnInit {
+  loading: boolean = false;
   phone: string;
   form: FormGroup;
   formStep2: FormGroup;
@@ -28,7 +31,7 @@ export class RegisterStepsComponent implements OnInit {
   merchant: any;
   formData = new FormData()
   registerCompleted: boolean;
-  registerRejected:boolean;
+  registerRejected: boolean;
   edit: boolean = false;
 
   logo: string | ArrayBuffer | null = null;
@@ -36,14 +39,16 @@ export class RegisterStepsComponent implements OnInit {
   passport: string | ArrayBuffer | null = null;
   transportationCertificate: string | ArrayBuffer | null = null;
   currencies: any;
+  companyTypes: any;
   showBankAccount2: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService,
+    public authService: AuthService,
     private formBuilder: FormBuilder,
     private toastr: NotificationService,
     private currenciesApi: CurrenciesService,
+    private companyTypesApi: CompanyTypesService,
     private router: Router,
     private translate: TranslateService
   ) {
@@ -53,24 +58,25 @@ export class RegisterStepsComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getCurrency();
+    this.getCompanyTypes();
     this.initForms();
     if (this.authService.accessToken) {
       let user: any = jwtDecode(this.authService.accessToken);
-      this.getMerchant(user.merchantId);
-    }else {
-      this.authService.logout();
+      this.getMerchant(user.tmsId);
+    } else {
+      // this.authService.logout();
     }
   }
 
   private initForms(): void {
-    this.form = this.formBuilder.group({
-      companyType: ['ООО', Validators.required],
-      companyName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required],
-      agreement: [false, Validators.requiredTrue],
-      phoneNumber: [this.phone, Validators.required],
+    this.form = new FormGroup({
+      companyType: new FormControl('', Validators.required),
+      companyName: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(16)]),
+      confirmPassword: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(16)]),
+      agreement: new FormControl(false, Validators.requiredTrue),
+      phoneNumber: new FormControl(this.phone, Validators.required),
     });
 
     this.formStep2 = this.formBuilder.group({
@@ -99,7 +105,8 @@ export class RegisterStepsComponent implements OnInit {
       phoneNumber: [null, Validators.required],
       responsiblePersonFistName: [null],
       legalAddress: [null],
-      passport:[null],
+      factAddress: [null],
+      passport: [null],
     });
   }
   getCurrency() {
@@ -110,30 +117,48 @@ export class RegisterStepsComponent implements OnInit {
       }
     })
   }
+  getCompanyTypes() {
+    this.companyTypesApi.getAll().subscribe((res: any) => {
+      if (res && res.success) {
+        this.companyTypes = res.data;
+        this.form.patchValue({ companyType: this.companyTypes[0].name });
+      }
+    })
+  }
   onSubmit() {
-    if(this.form.value.confirmPassword !=  this.form.value.password) {
+    if (!this.form.value.companyName) {
+      this.toastr.error('Введите наименование компании.');
+    }
+    else if (!this.form.value.email || !this.form.value.email.includes('@')) {
+      this.toastr.error('Введите действительный email-адрес.');
+    }
+    else if (!this.form.value.password) {
+      this.toastr.error('Введите пароль.');
+    }
+    else if (this.form.value.confirmPassword != this.form.value.password) {
       this.toastr.error('Пароли не совпадают');
-    }else {
+    }
+    else {
+      this.loading = true;
       this.form.enable();
       this.authService.merchantCreate(this.form.value).subscribe((res: any) => {
         if (res.success) {
           this.form.enable();
-          this.authService.signIn({ username: this.form.value.email, password: this.form.value.password, userType: 'driver_merchant_user' }).subscribe((res: any) => {
-            this.authService.accessToken = res.data.token;
-            let user: any = jwtDecode(res.data.token);
-            this.getMerchant(user.merchantId);
+          this.loading = false;
+          this.authService.signIn({ username: this.form.value.email, password: this.form.value.password }).subscribe((res: any) => {
+            this.authService.accessToken = res.data.accessToken;
+            let user: any = jwtDecode(res.data.accessToken);
+            this.getMerchant(user.tmsId);
           })
-          this.toastr.success("Мерчант успешно добавлен");
+          this.toastr.success("Успешно добавлен");
         }
       }, error => {
-        if (error.error.message == "email must be an email") {
-          this.form.enable();
-          this.toastr.error('Неверный формат электронной почты');
-        }
+        this.loading = false;
       })
     }
   }
   onSubmit2() {
+    this.loading = true;
     this.formStep2.disable();
     if (this.step == 2) {
       if (this.formStep2.value.supervisorFirstName === null) {
@@ -160,9 +185,25 @@ export class RegisterStepsComponent implements OnInit {
         this.formStep2.enable();
         this.toastr.error('Требуется указать Телефон ответственного лица');
       }
-      else if (this.formStep2.value.address === null) {
+      else if (this.formStep2.value.legalAddress === null) {
         this.formStep2.enable();
         this.toastr.error('Требуется указать Юридический адрес');
+      }
+      else if (this.passport === null) {
+        this.formStep2.enable();
+        this.toastr.error('Требуется указать Паспорт руководителя');
+      }
+      else if (this.registrationCertificate === null) {
+        this.formStep2.enable();
+        this.toastr.error('Требуется указать Регистрация сертификата');
+      }
+      else if (this.logo === null) {
+        this.formStep2.enable();
+        this.toastr.error('Требуется указать Логотип');
+      }
+      else if (this.transportationCertificate === null) {
+        this.formStep2.enable();
+        this.toastr.error('Требуется указать Лицензия для перевозки груза');
       }
       else {
         this.formData.append('merchantId', this.merchant.id)
@@ -176,11 +217,11 @@ export class RegisterStepsComponent implements OnInit {
         this.formData.append('garageAddress', this.formStep2.value.garageAddress)
         this.formData.append('postalCode', this.formStep2.value.postalCode)
         let unique = removeDuplicateKeys(this.formData);
+        
         this.authService.merchantUpdate(unique).subscribe((res: any) => {
           if (res && res.success) {
             this.formStep2.enable();
             this.step = 3;
-            // this.router.navigate(['register/step3']);
           }
         }, (error: any) => {
           this.formStep2.enable();
@@ -205,14 +246,6 @@ export class RegisterStepsComponent implements OnInit {
       else if (this.formStep2.value.inn === '' || this.formStep2.value.inn === null) {
         this.formStep2.enable();
         this.toastr.error('Требуется указать ИНН');
-      }
-      else if (this.formStep2.value.taxPayerCode === '' || this.formStep2.value.taxPayerCode === null) {
-        this.formStep2.enable();
-        this.toastr.error('Требуется указать Код плательщика НДС');
-      }
-      else if (this.formStep2.value.oked === '' || this.formStep2.value.oked === null) {
-        this.formStep2.enable();
-        this.toastr.error('Требуется указать Код плательщика ОКЭД');
       }
       else if (this.formStep2.value.mfo === '' || this.formStep2.value.mfo === null) {
         this.formStep2.enable();
@@ -302,17 +335,17 @@ export class RegisterStepsComponent implements OnInit {
       if (!this.merchant.rejected && !this.merchant.verified) {
         this.registerCompleted = true;
         this.registerRejected = false;
-        return; 
+        return;
       }
     }
     this.registerCompleted = false;
     this.registerRejected = false;
-  
+
     if (!this.merchant.companyName || !this.merchant.email) {
       this.step = 1;
       return;
     }
-  
+
     if (!this.merchant.supervisorFirstName || !this.merchant.supervisorLastName) {
       this.step = 2;
       return;
@@ -342,7 +375,6 @@ export class RegisterStepsComponent implements OnInit {
       }
     }
   }
-    
   toggleShowBankAccount2() {
     this.showBankAccount2 = !this.showBankAccount2;
   }

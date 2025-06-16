@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CargoTypesModel } from 'src/app/pages/references/cargo-types/models/cargo-type.model';
-import { env } from 'src/environmens/environment';
+import { env } from 'src/environments/environment';
 import { Response } from '../../models/reponse';
 import { SubscriptionModel } from 'src/app/pages/references/subscription-type/models/subscription.model';
 

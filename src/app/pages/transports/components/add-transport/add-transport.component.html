@@ -1,12 +1,13 @@
 <form [formGroup]="form">
-
   <nz-input-group class="input-group">
-    <nz-form-label nzRequired>{{ 'named' | translate }}</nz-form-label>
-    <input formControlName="brand" type="text" nz-input placeholder="{{ 'named' | translate }}" required />
-    <div *ngIf="form.get('brand').touched && form.get('brand').hasError('required')" class="error-message">
-      {{ 'is_required' | translate }}
-    </div>
+    <nz-form-label nzRequired>{{'modelTransport' | translate}}</nz-form-label>
+    <nz-select formControlName="transportBrandId" nzAllowClear nzPlaceHolder="{{'modelTransport' | translate}}" nzShowSearch style="width: 100% !important;">
+      <nz-option-group [nzLabel]="group.name" *ngFor="let group of brandGroups">
+        <nz-option *ngFor="let brand of group.brands" [nzValue]="brand.id" [nzLabel]="brand.name"></nz-option>
+      </nz-option-group>
+    </nz-select>
   </nz-input-group>
+
 
   <nz-input-group class="input-group">
     <nz-form-label nzRequired>{{'transport_kind' | translate}}</nz-form-label>
@@ -122,7 +123,7 @@
 
   <nz-input-group class="input-group">
     <nz-form-label nzRequired>{{'state_number' | translate}}</nz-form-label>
-    <input formControlName="transportNumber" type="text" nz-input placeholder="{{ 'state_number' | translate }}" appUppercaseValidation/>
+    <input formControlName="transportNumber" type="text" nz-input placeholder="{{ 'state_number' | translate }}" appUppercaseValidation [readonly]="form.value?.id"/>
     <div *ngIf="form.get('transportNumber').touched && form.get('transportNumber').hasError('required')"
       class="error-message">
       {{ 'is_required' | translate }}
@@ -147,6 +148,9 @@
 
   <nz-input-group class="input-group">
     <label nz-checkbox formControlName="isAdr">{{ 'isAdr' | translate }}</label>
+  </nz-input-group>
+  <nz-input-group class="input-group">
+    <label [nzDisabled]="true" nz-checkbox formControlName="isKzPaidWay">{{'paid_way' | translate}}</label>
   </nz-input-group>
 
   <div *ngIf="data && data.isVerified">
@@ -217,9 +221,9 @@
   </div>
 
   <div class="button-wrapper">
-    <button nz-button class="danger-button" (click)="remove()">
+    <!-- <button nz-button class="danger-button" (click)="remove()">
       {{ 'remove' | translate }}
-    </button>
+    </button> -->
     <button [nzLoading]="loading" nz-button class="success-button" (click)="onSubmit()"
       [disabled]="form.invalid || loading">
       {{ 'save' | translate }}

@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { FileUrlService } from '../services/file.service';
 import { HttpClient } from '@angular/common/http';
-import { env } from 'src/environmens/environment';
+import { env } from 'src/environments/environment';
 
 @Pipe({
   name: 'fileFetch'

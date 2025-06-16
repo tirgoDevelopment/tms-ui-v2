@@ -19,6 +19,7 @@ import { AssignDriverCardComponent } from './components/assign-driver-card/assig
 import { TopUpGsmBalanceComponent } from './components/top-up-gsm-balance/top-up-gsm-balance.component';
 import { GSMService } from './services/gsm.service';
 import { DriversService } from '../drivers/services/drivers.service';
+import { ServicesService } from '../services/services/services.service';
 
 @Component({
   selector: 'app-gsm',
@@ -58,6 +59,7 @@ export class GSMComponent implements OnInit {
   sseSubscription
   constructor(
     private gsmService: GSMService,
+    private tmsService: ServicesService,
     private modal: NzModalService,
     private drawer: NzDrawerService,
     private translate: TranslateService,
@@ -71,13 +73,11 @@ export class GSMComponent implements OnInit {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
     this.getGsmBalance();
 
-    this.sseSubscription = this.socketService.getSSEEvents().subscribe((event) => {
-      if (event.event === 'tmsBalanceTopup') {
-        this.getGsmBalance();
-        const index = this.data.findIndex(item => item.id === event.data.id);
-        if (index !== -1) {
-          this.data[index] = event.data;
-        }
+    this.sseSubscription = this.socketService.listen('tmsBalanceTopup').subscribe((event) => {
+      this.getGsmBalance();
+      const index = this.data.findIndex(item => item.id === event.data.id);
+      if (index !== -1) {
+        this.data[index] = event.data;
       }
     });
   }
@@ -86,8 +86,7 @@ export class GSMComponent implements OnInit {
     this.searchTms$.next(filter);
   }
   getAll() {
-
-    this.filter['tmsId'] = this.currentUser.merchantId;
+    // this.filter['tmsId'] = this.currentUser.tmsId;
     const params = {
       ...this.filter,
       pageIndex: this.pageParams.pageIndex,
@@ -107,10 +106,10 @@ export class GSMComponent implements OnInit {
   }
   getGsmBalance() {
     this.loaderBalance = true
-    this.gsmService.getTmsGSMBalance(this.currentUser.merchantId).subscribe((res: any) => {
+    this.tmsService.tmsBalance(this.currentUser.tmsId).subscribe((res: any) => {
       if (res && res.success) {
         this.loaderBalance = false;
-        this.gsmBalance = res.data.balance;
+        this.gsmBalance = res.data.gsmBalance;
       }
     }, err => {
       this.loaderBalance = false;

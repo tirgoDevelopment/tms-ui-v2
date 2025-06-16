@@ -3,7 +3,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { DriverFormComponent } from './components/driver-form/driver-form.component';
 import { DriverModel } from './models/driver.model';
 import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
-import { catchError, debounceTime, distinctUntilChanged, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, of, tap } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -14,7 +14,7 @@ import { CommonModules } from 'src/app/shared/modules/common.module';
 import { IconsProviderModule } from 'src/app/shared/modules/icons-provider.module';
 import { NzModules } from 'src/app/shared/modules/nz-modules.module';
 import { PipeModule } from 'src/app/shared/pipes/pipes.module';
-import { AddTransportComponent } from './components/add-transport/add-transport.component';
+import { AddTransportComponent } from '../transports/components/add-transport/add-transport.component';
 import { SendPushComponent } from './components/send-push/send-push.component';
 import { AssignTmcComponent } from './components/assign-tmc/assign-tmc.component';
 import { jwtDecode } from 'jwt-decode';
@@ -60,13 +60,12 @@ export class DriversComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms'));
-   
   }
 
   getAll(): void {
     this.loader = true;
     const queryString = generateQueryFilter(this.filter);
-    this.driversService.getAll(this.currentUser.merchantId,this.pageParams, queryString).pipe(
+    this.driversService.getAllTmsDrivers(this.currentUser.merchantId,this.pageParams, queryString).pipe(
       tap((res: any) => {
         this.data = res?.success ? res.data.content : [];
         this.pageParams.totalPagesCount = res.data.pageSize * res?.data?.totalPagesCount;
@@ -86,7 +85,6 @@ export class DriversComponent implements OnInit {
             'information'
       ),
       nzContent: DriverFormComponent,
-      nzMaskClosable: false,
       nzPlacement: 'right',
       nzWidth: '400px',
       nzContentParams: {
@@ -152,17 +150,6 @@ export class DriversComponent implements OnInit {
     });
   }
 
-  onPageIndexChange(pageIndex: number): void {
-    this.pageParams.pageIndex = pageIndex;
-    this.getAll();
-  }
-
-  onPageSizeChange(pageSize: number): void {
-    this.pageParams.pageSize = pageSize;
-    this.pageParams.pageIndex = 0;
-    this.getAll();
-  }
-
   toggleFilter(): void {
     this.isFilterVisible = !this.isFilterVisible;
   }
@@ -177,13 +164,14 @@ export class DriversComponent implements OnInit {
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {
-    let { sort } = params;
-    let currentSort = sort.find(item => item.value !== null);
-    let sortField = (currentSort && currentSort.key) || null;
-    let sortOrder = (currentSort && currentSort.value) || null;
-    sortOrder === 'ascend' ? (sortOrder = 'asc') : sortOrder === 'descend' ? (sortOrder = 'desc') : sortOrder = '';
-    this.pageParams.sortBy = sortField;
-    this.pageParams.sortType = sortOrder;
+    const { pageIndex, pageSize, sort } = params;
+    this.pageParams.pageIndex = pageIndex;
+    this.pageParams.pageSize = pageSize;
+
+    const currentSort = sort.find(item => item.value !== null);
+    this.pageParams.sortBy = currentSort?.key || null;
+    this.pageParams.sortType = currentSort?.value === 'ascend' ? 'asc' : currentSort?.value === 'descend' ? 'desc' : '';
+
     this.getAll();
   }
 
