@@ -281,6 +281,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
       statusId: '',
       createdAtFrom: '',
       createdAtTo: '',
+      completedAtFrom: '',
+      completedAtTo: '',
       excludedServicesIds: [16, 15]
     };
   }
