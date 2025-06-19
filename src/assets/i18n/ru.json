@@ -229,6 +229,8 @@
     "alreadyAssigned": "У водителя уже есть ТМС",
     "date_creation_from": "Дата создания от",
     "date_creation_to": "Дата создания по",
+    "date_completed_from": "Дата выполнено от",
+    "date_completed_to": "Дата выполнено до",
     "excel": "Excel",
     "transports": "Транспорты",
     "transportManagment": "Управление транспортом",
@@ -318,5 +320,16 @@
         "assignCard": "Привязывать карты",
         "cardNumber": "Номер карта ГСМ",
         "balance": "ГСМ баланс"
+    },
+    "documents": {
+        "title": "Документы",
+        "drivers_documents": "Документы водителя",
+        "transports_documents": "Документы транспорта",
+        "type": "Тип документа",
+        "number": "Номер документа",
+        "series": "Серия документа",
+        "date": "Дата выдачи",
+        "issuedBy": "Кем выдан",
+        "issuedAt": "Дата выдачи"
     }
 }

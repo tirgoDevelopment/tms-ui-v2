@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { NgxPermissionsService } from 'ngx-permissions';
 import { Observable, of, switchMap, throwError } from 'rxjs';
-import { env } from 'src/environmens/environment';
+import { env } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'

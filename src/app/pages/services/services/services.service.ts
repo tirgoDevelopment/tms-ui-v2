@@ -1,4 +1,4 @@
-import { env } from 'src/environmens/environment';
+import { env } from 'src/environments/environment';
 import { ServiceModel } from '../models/service.model';
 import { Observable } from 'rxjs';
 import { Response } from 'src/app/shared/models/reponse';

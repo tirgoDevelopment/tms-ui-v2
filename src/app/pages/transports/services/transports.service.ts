@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, of } from "rxjs";
 import { generateQueryFilter } from "src/app/shared/pipes/queryFIlter";
-import { env } from "src/environmens/environment";
+import { env } from "src/environments/environment";
 
 @Injectable({
     providedIn: 'root',

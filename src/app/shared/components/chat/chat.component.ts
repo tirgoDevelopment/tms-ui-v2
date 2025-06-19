@@ -47,6 +47,7 @@ export class ChatComponent implements OnInit {
   @Output() closeChatEvent = new EventEmitter<void>();
   @Output() newMessageCountChange = new EventEmitter<number>();
   @Input() outputServiceId: string;
+  @Input() outputChatId: string;
 
   chatIconPosition = { x: 50, y: 50 };
   chatSize = { width: 400, height: 500 };
@@ -170,7 +171,7 @@ export class ChatComponent implements OnInit {
   }
   getChatMessages() {
     this.loading = true;
-    this.serviceApi.getChatMessages(this.selectedChat.id, generateQueryFilter(this.messagesParams)).subscribe({
+    this.serviceApi.getChatMessages(this.outputChatId ? this.outputChatId : this.selectedChat.id, generateQueryFilter(this.messagesParams)).subscribe({
       next: (res: any) => {
         if (res?.data?.content) {
           this.messages = res.data.content.sort((a, b) => a.id - b.id);

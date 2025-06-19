@@ -74,6 +74,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
 
   showChat: boolean = false;
   selectedServiceId: string | null = null;
+  chatId: string | null = null;
   filteredServiceId
   currentUser: any;
   tirBalance: number = 0;
@@ -212,8 +213,9 @@ export class ServicesComponent implements OnInit, OnDestroy {
       nzContentParams: { item },
     });
   }
-  showChatForService(id) {
-    this.selectedServiceId = id;
+  showChatForService(item) {
+    this.selectedServiceId = item.id;
+    this.chatId = item.chat.id;
     this.showChat = true;
   }
   onChatClose() {
@@ -281,6 +283,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
       statusId: '',
       createdAtFrom: '',
       createdAtTo: '',
+      completedAtFrom: '',
+      completedAtTo: '',
       excludedServicesIds: [16, 15]
     };
   }

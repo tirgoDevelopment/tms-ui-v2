@@ -36,10 +36,11 @@ import {
   SettingOutline,
   CameraOutline,
   FireOutline,
-  FileExcelFill
+  FileExcelFill,
+  FileFill
 } from '@ant-design/icons-angular/icons';
 
-const icons = [FileExcelFill,FireOutline, CameraOutline,CustomerServiceOutline, SettingOutline, FilePdfOutline,RollbackOutline,ArrowLeftOutline,WechatOutline,SendOutline,FileTextOutline,UnlockOutline,HistoryOutline,PaperClipOutline,StarFill,InfoCircleOutline,PictureTwoTone,ReloadOutline,FrownFill,TeamOutline,FileSearchOutline,SyncOutline,FilterFill,EllipsisOutline,MenuFoldOutline, MenuUnfoldOutline, DashboardOutline, FormOutline, LogoutOutline,UserOutline,LockOutline,EyeOutline,EyeInvisibleOutline,MailOutline,PlusOutline];
+const icons = [FileFill, FileExcelFill,FireOutline, CameraOutline,CustomerServiceOutline, SettingOutline, FilePdfOutline,RollbackOutline,ArrowLeftOutline,WechatOutline,SendOutline,FileTextOutline,UnlockOutline,HistoryOutline,PaperClipOutline,StarFill,InfoCircleOutline,PictureTwoTone,ReloadOutline,FrownFill,TeamOutline,FileSearchOutline,SyncOutline,FilterFill,EllipsisOutline,MenuFoldOutline, MenuUnfoldOutline, DashboardOutline, FormOutline, LogoutOutline,UserOutline,LockOutline,EyeOutline,EyeInvisibleOutline,MailOutline,PlusOutline];
 
 @NgModule({
   imports: [NzIconModule],
