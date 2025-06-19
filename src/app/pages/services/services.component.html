@@ -162,7 +162,7 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of data; let i = index" (click)="showChatForService(item.chat.id)">
+            <tr *ngFor="let item of data; let i = index" (click)="showChatForService(item)">
                 <td>{{ i + 1 }}</td>
                 <td>{{ item.id}} / {{ item.service.code}}</td>
                 <td class="ellipsis">{{ item.service.name }}</td>
@@ -234,5 +234,5 @@
 </ng-template>
 
 
-<app-chat *ngIf="showChat" [outputServiceId]="selectedServiceId" (closeChatEvent)="onChatClose()">
+<app-chat *ngIf="showChat" [outputServiceId]="selectedServiceId" [outputChatId]="chatId" (closeChatEvent)="onChatClose()">
 </app-chat>
