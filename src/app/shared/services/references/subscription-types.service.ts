@@ -14,15 +14,15 @@ export class SubscriptionTypesService {
   constructor(private http: HttpClient) { }
 
   getAll() {
-    return this.http.get<Response<SubscriptionModel[]>>(env.references + '/references/subscriptions/all')
+    return this.http.get<Response<SubscriptionModel[]>>(env.references + '/subscriptions/all')
   }
   create(data: SubscriptionModel) {
-    return this.http.post<Response<SubscriptionModel[]>>(env.references + '/references/subscriptions', data)
+    return this.http.post<Response<SubscriptionModel[]>>(env.references + '/subscriptions', data)
   }
   update(data: SubscriptionModel) {
-    return this.http.put<Response<SubscriptionModel[]>>(env.references + '/references/subscriptions', data)
+    return this.http.put<Response<SubscriptionModel[]>>(env.references + '/subscriptions', data)
   }
-  delete(id: number | string) { 
-    return this.http.delete(env.references + `/references/subscriptions?id=${id}`)
+  delete(id: number | string) {
+    return this.http.delete(env.references + `/subscriptions?id=${id}`)
   }
 }

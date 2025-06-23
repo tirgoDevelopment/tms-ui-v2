@@ -15,7 +15,7 @@ export class FileFetchPipe implements PipeTransform {
     if (!fileName || typeof fileName === 'object') {
       return null;
     }
-    return this.http.get(env.references + `/references/files?keyName=${keyName}&fileName=${fileName}`, { responseType: 'blob' })
+    return this.http.get(env.references + `/files?keyName=${keyName}&fileName=${fileName}`, { responseType: 'blob' })
       .pipe(
         map((blob: Blob) => URL.createObjectURL(blob))
       );

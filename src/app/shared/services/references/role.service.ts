@@ -13,15 +13,15 @@ export class RolesService {
   constructor(private http: HttpClient) { }
 
   getAll() {
-    return this.http.get<Response<RoleModel[]>>(env.references + '/references/roles/all-roles')
+    return this.http.get<Response<RoleModel[]>>(env.references + '/roles/all-roles')
   }
   create(data: RoleModel) {
-    return this.http.post<Response<RoleModel[]>>(env.references + '/references/roles', data)
+    return this.http.post<Response<RoleModel[]>>(env.references + '/roles', data)
   }
   update(data: RoleModel) {
-    return this.http.put<Response<RoleModel[]>>(env.references + '/references/roles', data)
+    return this.http.put<Response<RoleModel[]>>(env.references + '/roles', data)
   }
   delete(id: number | string) { 
-    return this.http.delete(env.references + `/references/roles?id=${id}`)
+    return this.http.delete(env.references + `/roles?id=${id}`)
   }
 }

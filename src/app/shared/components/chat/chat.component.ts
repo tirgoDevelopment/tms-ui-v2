@@ -25,6 +25,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { PipeModule } from '../../pipes/pipes.module';
+import { FileUrlService } from '../../services/file.service';
 
 @Component({
   selector: 'app-chat',
@@ -100,7 +101,8 @@ export class ChatComponent implements OnInit {
     private translate: TranslateService,
     private socketService: SocketService,
     private pushService: PushService,
-    private el: ElementRef
+    private el: ElementRef,
+    private fileService: FileUrlService
   ) {
     const currentLang = localStorage.getItem('lang') || 'us';
     this.translate.use(currentLang.toLowerCase());
@@ -489,6 +491,14 @@ export class ChatComponent implements OnInit {
       }
     });
   }
+
+  onOpenFile(file: any) {
+    this.fileService.getFileBlob(file.bucket, file.name).subscribe((res: Blob) => {
+      const url = window.URL.createObjectURL(new Blob([res], { type: file.mimeType }));
+      window.open(url, '_blank'); // ✅ This will open the file in a new tab
+    });
+  }
+
   loadMoreMessages() {
     if (this.loadingMore) return;
     this.loadingMore = true;
