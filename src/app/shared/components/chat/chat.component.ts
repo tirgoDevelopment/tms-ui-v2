@@ -73,7 +73,7 @@ export class ChatComponent implements OnInit {
   selectedMessages: Set<string> = new Set();
   isSelectionMode: boolean = false;
   allowedFileTypes = '.png,.jpg,.jpeg,.pdf';
-  maxFileSize = 10 * 1024 * 1024;
+  maxFileSize = 5 * 1024 * 1024;
   highlightedMessageId: string | null = null;
   selectedFile: File | null = null;
   serviceId: string = '';
@@ -366,7 +366,7 @@ export class ChatComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       if (file.size > this.maxFileSize) {
-        alert('File size should not exceed 10MB');
+        alert('File size should not exceed 5MB');
         return;
       }
 
