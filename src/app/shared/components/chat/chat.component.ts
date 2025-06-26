@@ -94,7 +94,7 @@ export class ChatComponent implements OnInit {
     pageIndex: 1,
     pageSize: 10,
   }
-  
+
 
   constructor(
     private serviceApi: ServicesService,
@@ -107,7 +107,7 @@ export class ChatComponent implements OnInit {
     const currentLang = localStorage.getItem('lang') || 'us';
     this.translate.use(currentLang.toLowerCase());
 
-   
+
 
   }
 
@@ -142,7 +142,7 @@ export class ChatComponent implements OnInit {
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((searchTerm) => {
-        this.pageParams.chatId = Number(searchTerm) ;
+        this.pageParams.chatId = Number(searchTerm);
         this.getChats();
       });
     this.getChats();
@@ -560,12 +560,20 @@ export class ChatComponent implements OnInit {
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
     if (this.isDragging) {
-      const deltaX =
+      let deltaX =
         (event.clientX - this.dragOffset.x - this.chatIconPosition.x) *
         this.dragSpeedFactor;
-      const deltaY =
+      let deltaY =
         (event.clientY - this.dragOffset.y - this.chatIconPosition.y) *
         this.dragSpeedFactor;
+
+      if (deltaX < 0) {
+        deltaX = 0
+      }
+      if (deltaY < 0) {
+        deltaY = 0
+      }
+
       this.chatIconPosition.x += deltaX;
       this.chatIconPosition.y += deltaY;
       localStorage.setItem('chatPosition', JSON.stringify(this.chatIconPosition));
