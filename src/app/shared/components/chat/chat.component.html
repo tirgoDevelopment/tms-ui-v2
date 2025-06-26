@@ -12,10 +12,13 @@
         <div class="user-info">
           <div class="user-details">
             <h2 *ngIf="!selectedChat">{{ "chat.title" | translate }}</h2>
-            <h2 *ngIf="selectedChat && selectedChat.serviceRequests" class="ellipsis">{{ selectedChat.id }}. <span
+            <h2 *ngIf="selectedChat && selectedChat.serviceRequests" class="ellipsis">
+              {{ selectedChat.serviceRequests[0].id }}/{{
+              selectedChat.serviceRequests[0].service.code }}. <span
                 *ngFor="let service of selectedChat.serviceRequests">{{
                 service.service.name }} </span> </h2>
-            <span *ngIf="selectedChat && !selectedChat.serviceRequests">{{ selectedChat.id }}.{{selectedChat.service.name}}</span>
+            <span *ngIf="selectedChat && !selectedChat.serviceRequests">{{ selectedChat.id
+              }}.{{selectedChat.service.name}}</span>
           </div>
         </div>
         <div class="header-actions">
@@ -41,8 +44,8 @@
           <div class="chat-item" (click)="selectChat(chat)">
             <div class="chat-info">
               <div class="chat-name">
-                {{ chat.id }}
                 <span *ngFor="let service of chat.serviceRequests">
+                  <b>{{ service.id }}/{{ service.service.code }}.</b>
                   {{ service.service.name }}
                   <br />
                 </span>
@@ -109,13 +112,14 @@
                     <!-- Image Preview -->
                     <div *ngIf="(message.message | fileFormat) === 'image'" class="image-preview" nz-space-item>
                       <nz-image-group>
-                        <img width="100%" height="100%" nz-image
+                        <img width="100%" height="100%" nz-image style="width: 100px;"
                           [nzSrc]="message.message | fileFetch:'drivers/services-requests' | async" />
                       </nz-image-group>
                     </div>
 
                     <!-- PDF Preview -->
-                    <div *ngIf="(message.message | fileFormat) === 'pdf'" class="pdf-preview" nz-space-item>
+                    <div *ngIf="(message.message | fileFormat) === 'pdf'" class="pdf-preview" nz-space-item
+                      (click)="onOpenFile(message.file)">
                       <i nz-icon nzType="file-pdf" nzTheme="outline" style="font-size: 24px;"></i>
                     </div>
                   </nz-space>
@@ -130,7 +134,8 @@
                     <!-- Placeholder for message status -->
                   </div>
                   <div class="message-time">
-                    {{ message.senderUserType === 'driver' ? ('driver' | translate) : message.senderUserType === 'tms_user' ?
+                    {{ message.senderUserType === 'driver' ? ('driver' | translate) : message.senderUserType ===
+                    'tms_user' ?
                     'TMS' : '' }}
                   </div>
                 </div>

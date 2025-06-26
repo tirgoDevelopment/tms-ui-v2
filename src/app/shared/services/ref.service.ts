@@ -12,7 +12,7 @@ export class RefService {
   ) { }
 
   getCities(city:string,lang:string) {
-    return this.http.get(env.references + '/references/cities?city='+city+'&lang='+lang);
+    return this.http.get(env.references + '/cities?city='+city+'&lang='+lang);
   }
 
 
