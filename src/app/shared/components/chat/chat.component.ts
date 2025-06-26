@@ -25,6 +25,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { PipeModule } from '../../pipes/pipes.module';
+import { FileUrlService } from '../../services/file.service';
 
 @Component({
   selector: 'app-chat',
@@ -72,7 +73,7 @@ export class ChatComponent implements OnInit {
   selectedMessages: Set<string> = new Set();
   isSelectionMode: boolean = false;
   allowedFileTypes = '.png,.jpg,.jpeg,.pdf';
-  maxFileSize = 10 * 1024 * 1024;
+  maxFileSize = 5 * 1024 * 1024;
   highlightedMessageId: string | null = null;
   selectedFile: File | null = null;
   serviceId: string = '';
@@ -93,19 +94,20 @@ export class ChatComponent implements OnInit {
     pageIndex: 1,
     pageSize: 10,
   }
-  
+
 
   constructor(
     private serviceApi: ServicesService,
     private translate: TranslateService,
     private socketService: SocketService,
     private pushService: PushService,
-    private el: ElementRef
+    private el: ElementRef,
+    private fileService: FileUrlService
   ) {
     const currentLang = localStorage.getItem('lang') || 'us';
     this.translate.use(currentLang.toLowerCase());
 
-   
+
 
   }
 
@@ -140,7 +142,7 @@ export class ChatComponent implements OnInit {
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((searchTerm) => {
-        this.pageParams.chatId = Number(searchTerm) ;
+        this.pageParams.chatId = Number(searchTerm);
         this.getChats();
       });
     this.getChats();
@@ -364,7 +366,7 @@ export class ChatComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       if (file.size > this.maxFileSize) {
-        alert('File size should not exceed 10MB');
+        alert('File size should not exceed 5MB');
         return;
       }
 
@@ -489,6 +491,14 @@ export class ChatComponent implements OnInit {
       }
     });
   }
+
+  onOpenFile(file: any) {
+    this.fileService.getFileBlob(file.bucket, file.name).subscribe((res: Blob) => {
+      const url = window.URL.createObjectURL(new Blob([res], { type: file.mimeType }));
+      window.open(url, '_blank'); // ✅ This will open the file in a new tab
+    });
+  }
+
   loadMoreMessages() {
     if (this.loadingMore) return;
     this.loadingMore = true;
@@ -550,12 +560,20 @@ export class ChatComponent implements OnInit {
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
     if (this.isDragging) {
-      const deltaX =
+      let deltaX =
         (event.clientX - this.dragOffset.x - this.chatIconPosition.x) *
         this.dragSpeedFactor;
-      const deltaY =
+      let deltaY =
         (event.clientY - this.dragOffset.y - this.chatIconPosition.y) *
         this.dragSpeedFactor;
+
+      if (deltaX < 0) {
+        deltaX = 0
+      }
+      if (deltaY < 0) {
+        deltaY = 0
+      }
+
       this.chatIconPosition.x += deltaX;
       this.chatIconPosition.y += deltaY;
       localStorage.setItem('chatPosition', JSON.stringify(this.chatIconPosition));
