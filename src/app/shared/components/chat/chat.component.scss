@@ -341,11 +341,15 @@
 }
 
 .reply-content {
-  background: rgba(0, 0, 0, 0.05);
+  background: #fff;
   padding: 8px;
   border-radius: 8px;
   margin-bottom: 4px;
   cursor: pointer;
+
+  i {
+    color: black;
+  }
 
   .reply-sender {
     font-weight: 500;
