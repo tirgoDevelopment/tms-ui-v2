@@ -171,12 +171,51 @@ export class ChatComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['outputServiceId'] && !changes['outputServiceId'].firstChange) {
+    const serviceIdChanged = !!changes['outputServiceId'] && !changes['outputServiceId'].firstChange;
+    const chatIdChanged = !!changes['outputChatId'] && !changes['outputChatId'].firstChange;
+
+    if ((serviceIdChanged || chatIdChanged) && this.shouldOpenSelectedServiceChat()) {
       this.openSelectedServiceChat();
     }
   }
 
+  private shouldOpenSelectedServiceChat(): boolean {
+    if (!this.outputServiceId && !this.outputChatId) {
+      return false;
+    }
+
+    if (!this.selectedChat) {
+      return true;
+    }
+
+    const selectedChatId = this.resolveChatId(this.selectedChat);
+    const selectedServiceId = this.resolveServiceId(this.selectedChat);
+
+    return selectedChatId !== this.outputChatId || selectedServiceId !== this.outputServiceId;
+  }
+
   private openSelectedServiceChat(): void {
+    if (this.outputChatId) {
+      this.showChatList = false;
+      const existingChat = this.chats.find((chat: any) => String(chat?.id) === String(this.outputChatId));
+
+      if (existingChat) {
+        this.chat = existingChat;
+        this.selectedChat = existingChat;
+      } else {
+        const fallbackChat = {
+          id: this.outputChatId,
+          unreadMessagesCount: 0,
+          serviceRequests: this.outputServiceId ? [{ id: this.outputServiceId }] : [],
+        };
+        this.chat = fallbackChat;
+        this.selectedChat = fallbackChat;
+      }
+
+      this.getChatMessages(this.outputChatId);
+      return;
+    }
+
     if (this.outputServiceId) {
       this.showChatList = false;
       this.loading = true;
@@ -211,9 +250,14 @@ export class ChatComponent implements OnInit, OnChanges, OnDestroy {
       },
     });
   }
-  getChatMessages() {
+  getChatMessages(chatId?: string | null) {
+    const targetChatId = chatId || this.outputChatId || this.selectedChat?.id;
+    if (!targetChatId) {
+      return;
+    }
+
     this.loading = true;
-    this.serviceApi.getChatMessages(this.outputChatId ? this.outputChatId : this.selectedChat.id, generateQueryFilter(this.messagesParams)).subscribe({
+    this.serviceApi.getChatMessages(targetChatId, generateQueryFilter(this.messagesParams)).subscribe({
       next: (res: any) => {
         if (res?.data?.content) {
           this.messages = res.data.content.sort((a, b) => a.id - b.id);
@@ -239,10 +283,16 @@ export class ChatComponent implements OnInit, OnChanges, OnDestroy {
   }
   selectChat(chat: any): void {
     if (!chat) return;
+
+    const serviceId = this.resolveServiceId(chat);
+    const chatId = this.resolveChatId(chat);
+    if (!chatId) return;
+
     this.chat = chat;
     this.selectedChat = chat;
-    this.chatPanelService.open(this.resolveServiceId(chat), this.resolveChatId(chat));
-    this.getChatMessages();
+    this.chatPanelService.open(serviceId, chatId);
+    this.getChatMessages(chatId);
+
     if (chat.unreadMessagesCount) {
       this.patchUnreadCount();
     }

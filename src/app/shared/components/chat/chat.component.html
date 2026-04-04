@@ -12,13 +12,13 @@
         <div class="user-info">
           <div class="user-details">
             <h2 *ngIf="!selectedChat">{{ "chat.title" | translate }}</h2>
-            <h2 *ngIf="selectedChat && selectedChat.serviceRequests" class="ellipsis">
-              {{ selectedChat.serviceRequests[0].id }}/{{
-              selectedChat.serviceRequests[0].service.code }}. <span
-                *ngFor="let service of selectedChat.serviceRequests">{{
-                service.service.name }} </span> </h2>
-            <span *ngIf="selectedChat && !selectedChat.serviceRequests">{{ selectedChat.id
-              }}.{{selectedChat.service.name}}</span>
+            <h2 *ngIf="selectedChat?.serviceRequests?.length" class="ellipsis">
+              {{ selectedChat.serviceRequests[0]?.id }}/{{
+              selectedChat.serviceRequests[0]?.service?.code }}.
+              <span *ngFor="let service of selectedChat.serviceRequests">{{ service?.service?.name }} </span>
+            </h2>
+            <span *ngIf="selectedChat && !selectedChat?.serviceRequests?.length">{{ selectedChat.id
+              }}.{{ selectedChat?.service?.name }}</span>
           </div>
         </div>
         <div class="header-actions">
@@ -44,9 +44,9 @@
           <div class="chat-item" (click)="selectChat(chat)">
             <div class="chat-info">
               <div class="chat-name">
-                <span *ngFor="let service of chat.serviceRequests">
-                  <b>{{ service.id }}/{{ service.service.code }}.</b>
-                  {{ service.service.name }}
+                <span *ngFor="let service of chat?.serviceRequests || []">
+                  <b>{{ service?.id }}/{{ service?.service?.code }}.</b>
+                  {{ service?.service?.name }}
                   <br />
                 </span>
               </div>
