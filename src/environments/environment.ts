@@ -9,11 +9,12 @@
 // };
 // export const env = {
 //   production: false,
-//   apiUrl: 'http://192.168.1.218:3009/api/v2',
-//   adminUrl: 'http://192.168.1.218:3000/api/v2',
-//   references: 'http://192.168.1.218:3002/api/v2',
-//   merchantUrl: 'http://192.168.1.218:3003/api/v2',
-//   orderApiUrl: 'http://192.168.1.218:3001/api/v2',
+//   authUrl: 'http://localhost:3001/api/v2/auth',
+//   apiUrl: 'http://localhost:3004/api/v2/tmses',
+//   adminUrl: 'http://localhost:3000/api/v2/admins',
+//   references: 'http://localhost:3002/api/v2/admins/references',
+//   merchantUrl: 'http://localhost:3003/api/v2',
+//   orderApiUrl: 'http://localhost:3001/api/v2',
 // };
 
 export const env = {

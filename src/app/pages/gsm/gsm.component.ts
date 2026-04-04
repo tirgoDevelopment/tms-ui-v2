@@ -1,5 +1,5 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
@@ -12,7 +12,7 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { SocketService } from 'src/app/shared/services/socket.service';
 import { DriverFormComponent } from '../drivers/components/driver-form/driver-form.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
 import { AssignDriverCardComponent } from './components/assign-driver-card/assign-driver-card.component';
@@ -36,7 +36,7 @@ import { ServicesService } from '../services/services/services.service';
     ]),
   ],
 })
-export class GSMComponent implements OnInit {
+export class GSMComponent implements OnInit, OnDestroy {
   public data: any[] = [];
   public loader = false;
   public isFilterVisible = false;
@@ -57,6 +57,7 @@ export class GSMComponent implements OnInit {
   gsmBalance = 0;
   loaderBalance = false;
   sseSubscription
+  private readonly destroy$ = new Subject<void>();
   constructor(
     private gsmService: GSMService,
     private tmsService: ServicesService,
@@ -73,7 +74,7 @@ export class GSMComponent implements OnInit {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
     this.getGsmBalance();
 
-    this.sseSubscription = this.socketService.listen('tmsBalanceTopup').subscribe((event) => {
+    this.socketService.listen('tmsBalanceTopup').pipe(takeUntil(this.destroy$)).subscribe((event) => {
       this.getGsmBalance();
       const index = this.data.findIndex(item => item.id === event.data.id);
       if (index !== -1) {
@@ -180,6 +181,11 @@ export class GSMComponent implements OnInit {
   onTabChange(index: number): void {
     this.filter['transactionType'] = index === 0 ? 'request' : 'topup';
     this.getAll();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }

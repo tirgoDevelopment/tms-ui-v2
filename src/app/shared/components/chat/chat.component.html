@@ -1,10 +1,10 @@
-<div class="chat-container" #chatContainerRef [ngStyle]="{
+<div class="chat-container" [class.docked]="docked" #chatContainerRef [ngStyle]="docked ? null : {
   top: chatIconPosition.y + 'px',
   left: chatIconPosition.x + 'px'
 }">
   <div class="chat-card">
     <!-- Chat Header -->
-    <div class="chat-header" (mousedown)="startDrag($event)">
+    <div class="chat-header" (mousedown)="!docked && startDrag($event)">
       <div class="header-info">
         <button *ngIf="selectedChat" class="back-button" (click)="backToList()">
           <i nz-icon nzType="arrow-left" nzTheme="outline"></i>

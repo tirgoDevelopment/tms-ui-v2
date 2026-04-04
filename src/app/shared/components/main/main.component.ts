@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +12,8 @@ import { ServicesService } from 'src/app/pages/services/services/services.servic
 import { PushService } from '../../services/push.service';
 import { generateQueryFilter } from '../../pipes/queryFIlter';
 import { jwtDecode } from 'jwt-decode';
+import { ChatPanelService } from '../../services/chat-panel.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-main',
@@ -20,7 +22,7 @@ import { jwtDecode } from 'jwt-decode';
   styleUrls: ['./main.component.scss'],
   standalone: true,
 })
-export class MainComponent {
+export class MainComponent implements OnInit, OnDestroy {
   chatIconPosition = { x: 0, y: 0 };
   currentUser: any;
   isLoading: boolean = false;
@@ -31,8 +33,11 @@ export class MainComponent {
   userName: string = 'Super Admin';
   isDarkMode: boolean = false;
   isChatVisible: boolean = false;
+  selectedServiceId: string | null = null;
+  selectedChatId: string | null = null;
   sseSubscription
   newMessageCount = 0
+  private readonly destroy$ = new Subject<void>();
   constructor(
     private cdr: ChangeDetectorRef,
     public themeService: ThemeService,
@@ -41,33 +46,32 @@ export class MainComponent {
     private router: Router,
     private serviceApi: ServicesService,
     private pushService: PushService,
-    private socketService: SocketService) {
+    private socketService: SocketService,
+    private chatPanelService: ChatPanelService) {
   }
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
     const lang = localStorage.getItem('lang') || 'ru';
     this.changeLanguage(lang.toLocaleLowerCase(), `../assets/images/flags/${lang}.svg`);
     this.themeService.initTheme();
-    this.socketService.listen('newMessage').subscribe((event) => {
-        this.newMessageCount = this.newMessageCount + 1;
-        this.pushService.showPushNotification(`Новое сообщение поступило на услугу в id ${event.data.requestId}`, event.data.message.message, 'service');
-        this.cdr.detectChanges();
-      // else if (event.event === 'tmsBalanceTopup') {
-      //   this.pushService.showPushNotification(`ГСМ запрос на объем ${event.data.amount} литров ${event.data.isRejected ? 'отклонен' : 'принят'}`, '', 'gsm');
-      // }
-      // else if(event.event == 'serviceRequestPriced') {
-      //   this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} оценена`, '', 'service');
-      // }
-      // else if(event.event == 'serviceRequestToWorking') {
-      //   this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} в работе`, '', 'service');
-      // }
-      // else if(event.event == 'serviceRequestToCompleted') {
-      //   this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} выполнена`, '', 'service');
-      // }
-      // else if(event.event == 'serviceRequestCanceled') {
-      //   this.pushService.showPushNotification(`Услуга в id ${event.data.requestId} отменена`, '', 'service');
-      // }
+    this.getChats();
+    this.chatPanelService.state$.pipe(takeUntil(this.destroy$)).subscribe((state) => {
+      this.selectedServiceId = state.serviceId;
+      this.selectedChatId = state.chatId;
+      this.isChatVisible = state.isOpen;
+      this.cdr.detectChanges();
     });
+
+    this.socketService.listen('newMessage').pipe(takeUntil(this.destroy$)).subscribe((event) => {
+      this.newMessageCount = this.newMessageCount + 1;
+      this.pushService.showPushNotification(`Новое сообщение поступило на услугу в id ${event.data.requestId}`, event.data.message.message, 'service');
+      this.cdr.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
   changeLanguage(language: string, flag: string): void {
     this.selectedFlag = flag;
@@ -84,10 +88,14 @@ export class MainComponent {
     // this.router.navigate(['/auth/sign-in']);
   }
   toggleChat() {
-    this.isChatVisible = !this.isChatVisible;
+    if (this.isChatVisible) {
+      this.chatPanelService.close();
+    } else {
+      this.chatPanelService.open();
+    }
   }
   closeChat() {
-    this.isChatVisible = false;
+    this.chatPanelService.close();
   }
   setInitialChatIconPosition() {
     const padding = 16;

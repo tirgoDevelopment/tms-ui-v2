@@ -190,6 +190,22 @@ nz-header {
   gap: 15px
 }
 
+.header-chat-trigger {
+  cursor: pointer;
+}
+
+.header-chat-trigger-content {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: $secondary-color;
+  color: var(--bgColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
 .flag-icon {
   width: 20px;
   height: 20px;
@@ -242,6 +258,16 @@ nz-content {
 .ant-layout {
   background-color: var(--ant-layout-bgcolor);
   overflow: auto;
+}
+
+.content-with-chat {
+  height: calc(100vh - 55px);
+}
+
+.chat-sidebar {
+  background: var(--bgColor);
+  box-shadow: var(--sidebar-box-shadow);
+  overflow: hidden;
 }
 
 /* width */

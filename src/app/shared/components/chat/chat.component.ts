@@ -4,9 +4,12 @@ import {
   EventEmitter,
   HostListener,
   OnInit,
+  OnDestroy,
   Output,
   ViewChild,
   Input,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,7 +17,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { ServicesService } from 'src/app/pages/services/services/services.service';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { generateQueryFilter } from '../../pipes/queryFIlter';
 import { SocketService } from '../../services/socket.service';
 import { PushService } from '../../services/push.service';
@@ -26,6 +29,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { PipeModule } from '../../pipes/pipes.module';
 import { FileUrlService } from '../../services/file.service';
+import { ChatPanelService } from '../../services/chat-panel.service';
 
 @Component({
   selector: 'app-chat',
@@ -40,9 +44,10 @@ import { FileUrlService } from '../../services/file.service';
     ReactiveFormsModule
   ],
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnChanges, OnDestroy {
   searchControl = new FormControl();
   @Input() chat: any;
+  @Input() docked: boolean = false;
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   @ViewChild('messageInput') private messageInput!: ElementRef;
   @Output() closeChatEvent = new EventEmitter<void>();
@@ -81,20 +86,21 @@ export class ChatComponent implements OnInit {
   totalPagesCount
   private pageParams = {
     pageIndex: 1,
-    pageSize: 10,
+    pageSize: 30,
     totalPagesCount: 1,
     sortBy: '',
     sortType: '',
     servicesIds: [],
     chatId: null,
     excludedServicesIds: [15, 16],
-    serviceId: this.serviceId,
     serviceRequestId: null
   };
   private messagesParams = {
     pageIndex: 1,
     pageSize: 10,
   }
+
+  private readonly destroy$ = new Subject<void>();
 
 
   constructor(
@@ -103,7 +109,8 @@ export class ChatComponent implements OnInit {
     private socketService: SocketService,
     private pushService: PushService,
     private el: ElementRef,
-    private fileService: FileUrlService
+    private fileService: FileUrlService,
+    private chatPanelService: ChatPanelService
   ) {
     const currentLang = localStorage.getItem('lang') || 'us';
     this.translate.use(currentLang.toLowerCase());
@@ -133,18 +140,12 @@ export class ChatComponent implements OnInit {
     if (savedPosition) {
       this.chatIconPosition = JSON.parse(savedPosition);
     }
-    if (this.outputServiceId) {
-      this.showChatList = false;
-      this.loading = true;
-      this.serviceApi.getServiceRequestById(this.outputServiceId).subscribe((res: any) => {
-        this.selectChat(res.data.data)
-      })
-    }
+    this.openSelectedServiceChat();
     this.searchControl.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((searchTerm) => {
         let id = Number(searchTerm);
-        if(id > 0) {
+        if (id > 0) {
           this.pageParams.serviceRequestId = Number(searchTerm);
         } else {
           this.pageParams.serviceRequestId = null;
@@ -152,13 +153,46 @@ export class ChatComponent implements OnInit {
         this.getChats();
       });
     this.getChats();
+
+    this.socketService.listen('newMessage').pipe(takeUntil(this.destroy$)).subscribe((event: any) => {
+      const eventChatId = event?.chatId ?? event?.data?.chatId;
+      const incomingMessage = event?.message ?? event?.data?.message;
+      const currentChat = this.chats.find((el: any) => String(el.id) === String(eventChatId));
+
+      if (currentChat) {
+        currentChat.unreadMessagesCount = (currentChat.unreadMessagesCount || 0) + 1;
+      }
+
+      if (this.selectedChat && String(this.selectedChat.id) === String(eventChatId) && incomingMessage) {
+        this.messages.push(incomingMessage);
+        this.scrollToBottom();
+      }
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['outputServiceId'] && !changes['outputServiceId'].firstChange) {
+      this.openSelectedServiceChat();
+    }
+  }
+
+  private openSelectedServiceChat(): void {
+    if (this.outputServiceId) {
+      this.showChatList = false;
+      this.loading = true;
+      this.serviceApi.getServiceRequestById(this.outputServiceId).subscribe((res: any) => {
+        this.selectChat(res.data.data)
+      });
+    }
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     if (this.sseSubscription) {
       this.sseSubscription.unsubscribe();
     }
-    // this.socketService.disconnect();
   }
   getChats() {
     this.loading = true;
@@ -207,6 +241,7 @@ export class ChatComponent implements OnInit {
     if (!chat) return;
     this.chat = chat;
     this.selectedChat = chat;
+    this.chatPanelService.open(this.resolveServiceId(chat), this.resolveChatId(chat));
     this.getChatMessages();
     if (chat.unreadMessagesCount) {
       this.patchUnreadCount();
@@ -224,6 +259,17 @@ export class ChatComponent implements OnInit {
     this.showChatList = true;
     this.selectedChat = null;
     this.messagesParams.pageIndex = 1
+    this.chatPanelService.open(null, null);
+  }
+
+  private resolveServiceId(chat: any): string | null {
+    const selectedServiceId = chat?.serviceRequests?.[0]?.id ?? chat?.id;
+    return selectedServiceId ? String(selectedServiceId) : null;
+  }
+
+  private resolveChatId(chat: any): string | null {
+    const selectedChatId = chat?.chat?.id ?? chat?.id;
+    return selectedChatId ? String(selectedChatId) : null;
   }
   sendMessage() {
     if (this.newMessage.trim() && this.selectedChat) {

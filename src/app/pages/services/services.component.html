@@ -162,7 +162,8 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of data; let i = index" (click)="showChatForService(item)">
+            <tr *ngFor="let item of data; let i = index" (dblclick)="showChatForService(item)"
+                [class.chat-open-row]="isOpenedChatRow(item)">
                 <td>{{ i + 1 }}</td>
                 <td>{{ item.id}} / {{ item.service.code}}</td>
                 <td class="ellipsis">{{ item.service.name }}</td>
@@ -232,7 +233,3 @@
 <ng-template #empty>
     <nz-empty></nz-empty>
 </ng-template>
-
-
-<app-chat *ngIf="showChat" [outputServiceId]="selectedServiceId" [outputChatId]="chatId" (closeChatEvent)="onChatClose()">
-</app-chat>

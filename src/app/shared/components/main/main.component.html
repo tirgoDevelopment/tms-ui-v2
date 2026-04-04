@@ -125,27 +125,33 @@
                 {{'logout' | translate}}
             </ul>
           </nz-dropdown-menu>
+
+          <div style="position: relative;" (click)="toggleChat()">
+            <nz-badge [nzCount]="newMessageCount" class="header-chat-trigger">
+              <div class="header-chat-trigger-content">
+                <i nz-icon nzType="wechat" nzTheme="outline"></i>
+              </div>
+            </nz-badge>
+          </div>
         </div>
       </div>
     </nz-header>
 
-    <nz-content>
-      <ng-template #indicatorTemplate> <img src="../assets/images/" alt=""> </ng-template>
-      <div class="inner-content">
-
-        <router-outlet></router-outlet>
-
-        <div style="position: relative;" (click)="toggleChat()">
-          <nz-badge [nzCount]="newMessageCount" class="chat-icon">
-            <div class="chat-icon-content">
-              <i nz-icon nzType="wechat" nzTheme="outline" style="color: #fff;"></i>
-            </div>
-          </nz-badge>
+    <nz-layout class="content-with-chat">
+      <nz-content>
+        <ng-template #indicatorTemplate> <img src="../assets/images/" alt=""> </ng-template>
+        <div class="inner-content">
+          <router-outlet></router-outlet>
         </div>
+      </nz-content>
+
+      <nz-sider class="chat-sidebar" nzWidth="420px" nzCollapsible [nzCollapsedWidth]="0" [nzTrigger]="null"
+        [nzCollapsed]="!isChatVisible">
         <app-chat *ngIf="isChatVisible" (newMessageCountChange)="updateNewMessageCount($event)"
-          (closeChatEvent)="closeChat()"></app-chat>
-      </div>
-    </nz-content>
+          (closeChatEvent)="closeChat()" [docked]="true" [outputServiceId]="selectedServiceId"
+          [outputChatId]="selectedChatId"></app-chat>
+      </nz-sider>
+    </nz-layout>
 
   </nz-layout>
 </nz-layout>

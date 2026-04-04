@@ -16,15 +16,14 @@ import { ServicesService } from './services/services.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { ServiceFormComponent } from './components/service-form/service-form.component';
-import { catchError, Observable, tap, throwError, Subscription } from 'rxjs';
+import { catchError, Observable, Subject, takeUntil, tap, throwError, Subscription } from 'rxjs';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { generateQueryFilter } from 'src/app/shared/pipes/queryFIlter';
-import { SocketService } from 'src/app/shared/services/socket.service';
 import { NzPopconfirmDirective } from 'ng-zorro-antd/popconfirm';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
-import { ChatComponent } from 'src/app/shared/components/chat/chat.component';
 import { DetailComponent } from './components/detail/detail.component';
+import { ChatPanelService } from 'src/app/shared/services/chat-panel.service';
 export enum ServicesRequestsStatusesCodes {
   Waiting = 0,
   Priced = 1,
@@ -58,8 +57,7 @@ export enum SseEventNames {
     NzModules,
     TranslateModule,
     IconsProviderModule,
-    PipeModule,
-    ChatComponent
+    PipeModule
   ],
   providers: [NzModalService],
   animations: [
@@ -71,10 +69,6 @@ export enum SseEventNames {
   ],
 })
 export class ServicesComponent implements OnInit, OnDestroy {
-
-  showChat: boolean = false;
-  selectedServiceId: string | null = null;
-  chatId: string | null = null;
   filteredServiceId
   currentUser: any;
   tirBalance: number = 0;
@@ -98,6 +92,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
   };
   totalItemsCount
   completedServicesTotalTirAmount
+  activeChatServiceId: string | null = null;
+  private readonly destroy$ = new Subject<void>();
   private sseSubscription: Subscription | null = null;
   constructor(
     private servicesService: ServicesService,
@@ -105,9 +101,9 @@ export class ServicesComponent implements OnInit, OnDestroy {
     private drawer: NzDrawerService,
     private translate: TranslateService,
     private toastr: NotificationService,
-    private socketService: SocketService,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private chatPanelService: ChatPanelService,
   ) { }
   ngOnInit(): void {
     this.currentUser = jwtDecode(localStorage.getItem('accessTokenTms') || '');
@@ -117,6 +113,10 @@ export class ServicesComponent implements OnInit, OnDestroy {
     //   this.handleSocketEvent(event);
     // });
     this.getBalance();
+
+    this.chatPanelService.state$.pipe(takeUntil(this.destroy$)).subscribe((state) => {
+      this.activeChatServiceId = state.isOpen ? state.serviceId : null;
+    });
   }
   handleSocketEvent(event: any): void {
     const service = this.data.find(i => i.id == event.data.requestId);
@@ -164,6 +164,9 @@ export class ServicesComponent implements OnInit, OnDestroy {
   ngAfterViewInit(): void {
   }
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     if (this.sseSubscription) {
       this.sseSubscription.unsubscribe();
     }
@@ -214,13 +217,7 @@ export class ServicesComponent implements OnInit, OnDestroy {
     });
   }
   showChatForService(item) {
-    this.selectedServiceId = item.id;
-    this.chatId = item.chat.id;
-    this.showChat = true;
-  }
-  onChatClose() {
-    this.showChat = false;
-    this.selectedServiceId = null;
+    this.chatPanelService.open(item?.id ? String(item.id) : null, item?.chat?.id ? String(item.chat.id) : null);
   }
   addService() {
     const drawerRef: any = this.drawer.create({
@@ -387,5 +384,9 @@ export class ServicesComponent implements OnInit, OnDestroy {
     else if (this.tabType === 1) {
       this.uniqueServices1 = this.uniqueServices.filter((service: any) => service.id === 15 || service.id === 16);
     }
+  }
+
+  isOpenedChatRow(item: any): boolean {
+    return !!this.activeChatServiceId && String(item?.id) === String(this.activeChatServiceId);
   }
 }
