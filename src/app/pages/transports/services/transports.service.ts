@@ -10,8 +10,8 @@ import { env } from "src/environments/environment";
   export class TransportsService { 
     constructor(private http: HttpClient) {}
     
-    getAll(filter: any) {
-      return this.http.get(`${env.apiUrl}/drivers/transports?${filter}`);
+    getAll(filter: any, params?: any) {
+      return this.http.get(`${env.apiUrl}/drivers/transports?${filter}`, { params });
     }
     getById(id) {
       return this.http.get(`${env.apiUrl}/drivers/transports/${id}`);

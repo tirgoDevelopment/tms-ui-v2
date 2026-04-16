@@ -18,7 +18,6 @@ import { authInterceptor } from "./shared/interceptors/api.interceptor";
 import { provideEnvironmentNgxMask } from "ngx-mask";
 import ru from '@angular/common/locales/ru'; 
 import { registerLocaleData } from "@angular/common";
-import { provideServiceWorker } from '@angular/service-worker';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, "./assets/i18n/", ".json");

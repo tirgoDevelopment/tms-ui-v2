@@ -59,7 +59,13 @@ export class TransportsComponent implements OnInit {
 
   getAll() {
     this.loader = true;
-    this.transportsService.getAll(generateQueryFilter(this.filter)).pipe(
+    const params = {
+      pageIndex: this.pageParams.pageIndex,
+      pageSize: this.pageParams.pageSize,
+      ...(this.pageParams.sortBy && { sortBy: this.pageParams.sortBy }),
+      ...(this.pageParams.sortType && { sortType: this.pageParams.sortType })
+    };
+    this.transportsService.getAll(generateQueryFilter(this.filter), params).pipe(
       tap((res: any) => {
         this.data = res?.success ? res.data.content : [];
         this.pageParams.totalPagesCount = res?.data?.totalPagesCount * this.pageParams.pageSize;
